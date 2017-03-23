@@ -52,11 +52,20 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.3\lib\net45\System.Web.Http.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
@@ -205,15 +214,48 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Context\AdminManagementDbOperation.cs" />
+    <Compile Include="Context\CPDBContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703230749220_Added-tables.cs" />
+    <Compile Include="Migrations\201703230749220_Added-tables.Designer.cs">
+      <DependentUpon>201703230749220_Added-tables.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703230756314_Added-radacct-table.cs" />
+    <Compile Include="Migrations\201703230756314_Added-radacct-table.Designer.cs">
+      <DependentUpon>201703230756314_Added-radacct-table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703231021062_change-in-modelDatatype.cs" />
+    <Compile Include="Migrations\201703231021062_change-in-modelDatatype.Designer.cs">
+      <DependentUpon>201703231021062_change-in-modelDatatype.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703231248565_Added-UserRoleAndRole-table.cs" />
+    <Compile Include="Migrations\201703231248565_Added-UserRoleAndRole-table.Designer.cs">
+      <DependentUpon>201703231248565_Added-UserRoleAndRole-table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Company.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\Nas.cs" />
+    <Compile Include="Models\Organisation.cs" />
+    <Compile Include="Models\Radacct.cs" />
+    <Compile Include="Models\RadGroupCheck.cs" />
+    <Compile Include="Models\RegisterViewModel.cs" />
+    <Compile Include="Models\ReturnModel.cs" />
+    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\Site.cs" />
+    <Compile Include="Models\UserRole.cs" />
+    <Compile Include="Models\Users.cs" />
+    <Compile Include="Models\UsersAddress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -273,6 +315,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Admin\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -284,6 +327,26 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CP.Lib\CP.Lib.csproj">
+      <Project>{031d7d86-068e-442a-b6f3-e4226de48653}</Project>
+      <Name>CP.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703230749220_Added-tables.resx">
+      <DependentUpon>201703230749220_Added-tables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703230756314_Added-radacct-table.resx">
+      <DependentUpon>201703230756314_Added-radacct-table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703231021062_change-in-modelDatatype.resx">
+      <DependentUpon>201703231021062_change-in-modelDatatype.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703231248565_Added-UserRoleAndRole-table.resx">
+      <DependentUpon>201703231248565_Added-UserRoleAndRole-table.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
