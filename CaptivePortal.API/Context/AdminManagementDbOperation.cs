@@ -20,7 +20,9 @@ namespace CaptivePortal.API.Context
                         var user = new Users
                         {
                             UserName = "captive@loc8.com",
-                            UserPassword = "Tes@123"
+                            Password = "Tes@123",
+                            CreationDate = DateTime.Now,
+                            UpdateDate=DateTime.Now
                         };
 
                         db.Users.Add(user);

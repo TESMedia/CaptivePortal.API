@@ -40,8 +40,8 @@ namespace CaptivePortal.API.Models
         [StringLength(32)]
         public string NasPortType { get; set; }
 
-        public DateTime AcctstopTime { get; set; }
-        public DateTime AcctstartTime { get; set; }
+        public string AcctstopTime { get; set; }
+        public string AcctstartTime { get; set; }
 
         public int AcctsessionTime { get; set; }
 

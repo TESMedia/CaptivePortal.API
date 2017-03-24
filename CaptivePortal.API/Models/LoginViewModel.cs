@@ -16,9 +16,9 @@ namespace CaptivePortal.API.Models
     public class AdminLoginViewModel
     {
         [Required(ErrorMessage = "Email address is required")]
-        [Display(Name = "Email")]
+        [Display(Name = "UserName")]
         [EmailAddress(ErrorMessage = "Invalid Email address")]
-        public string Email { get; set; }
+        public string UserName { get; set; }
         [Required]
         public string Password { get; set; }
 

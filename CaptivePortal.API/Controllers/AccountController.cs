@@ -41,7 +41,7 @@ namespace CaptivePortal.API.Controllers
                     _objUser.CreationBy = objRegisterModel.CreationBy;
                     _objUser.CreationDate = System.DateTime.Now;
                     _objUser.UpdateDate = System.DateTime.Now;
-                    _objUser.UserPassword = objRegisterModel.UserPassword;
+                    _objUser.Password = objRegisterModel.UserPassword;
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table

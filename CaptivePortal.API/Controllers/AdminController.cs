@@ -21,9 +21,9 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
-                if (!string.IsNullOrEmpty(admin.Email) && !string.IsNullOrEmpty(admin.Password))
+                if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
-                    Users user = db.Users.Where(m => m.UserName == admin.Email).FirstOrDefault();
+                    Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
                     if (user != null)
                     {
                         retString = Convert.ToString(user);
@@ -31,18 +31,26 @@ namespace CaptivePortal.API.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("Login", "AdminManagement");
+                    return RedirectToAction("Login", "Admin");
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return RedirectToAction("Index", "AdminIndex");
+            return RedirectToAction("Index", "Admin");
         }
 
         // GET: AdminManagement
         public ActionResult Login()
+        {
+            return View();
+        }
+
+
+
+        // GET: AdminIndex
+        public ActionResult Index()
         {
             return View();
         }
