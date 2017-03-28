@@ -90,8 +90,8 @@ namespace CaptivePortal.API.Controllers
             try
             {
                 var args = new string[4];
-                // args[0] = "122.166.202.201";
-                args[0] = "192.168.1.15";
+                args[0] = "122.166.202.201";
+                //args[0] = "192.168.1.15";
                 args[1] = "testing123";
                 args[2] = objLoginModel.UserName;
                 args[3] = objLoginModel.UserPassword;

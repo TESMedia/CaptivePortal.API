@@ -13,7 +13,7 @@ namespace CP.Lib
         //int length;
         public RegisterDB()
         {
-            myConnectionString = "Server=192.168.1.15; Port = 3306; Database = radius; Uid=root;Pwd=av3c5Ys";
+            myConnectionString = "Server=122.166.202.201; Port = 3306; Database = radius; Uid=root;Pwd=av3c5Ys";
         }
         public int CreateNewUser(string userName, string password, string Email)
         {
