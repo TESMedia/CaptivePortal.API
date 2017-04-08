@@ -241,3 +241,4 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 /CaptivePortal.API/Properties/PublishProfiles
+/CaptivePortal.API/Logs/log.txt

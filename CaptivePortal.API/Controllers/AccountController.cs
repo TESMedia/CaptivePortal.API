@@ -10,14 +10,18 @@ using System.IO;
 using System.Net.Http.Headers;
 using CaptivePortal.API.Context;
 using System.Web.Script.Serialization;
+using log4net;
+using System.Net.Mime;
+using System.Reflection;
+
 
 namespace CaptivePortal.API.Controllers
 {
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
-    {
-       // private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
+    {   
+        private static ILog Log { get; set;}
+        ILog log =LogManager.GetLogger(typeof(AccountController));
         private RegisterDB objRegisterDB = new RegisterDB();
         private ReturnModel ObjReturnModel = new ReturnModel();
         CPDBContext db = new CPDBContext();
@@ -90,8 +94,8 @@ namespace CaptivePortal.API.Controllers
             try
             {
                 var args = new string[4];
-                args[0] = "122.166.202.201";
-                //args[0] = "192.168.1.15";
+                //args[0] = "122.166.202.201";
+                args[0] = "192.168.1.10";
                 args[1] = "testing123";
                 args[2] = objLoginModel.UserName;
                 args[3] = objLoginModel.UserPassword;
@@ -103,11 +107,16 @@ namespace CaptivePortal.API.Controllers
 
                 try
                 {
+                    log.Info("enter login Authenticate()");
                     Authenticate.Authentication(args).Wait();
+
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    log.Error(e.Message);
+                    throw (e);
+
+
                 }
 
                 return new HttpResponseMessage()
@@ -121,17 +130,11 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
-        [HttpGet]
-        public HttpResponseMessage GetFile()
-        {
-            string localFilePath = HttpContext.Current.Server.MapPath("~/App_Data/log.txt");
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StreamContent(new FileStream(localFilePath, FileMode.Open, FileAccess.Read));
-            response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-            response.Content.Headers.ContentDisposition.FileName = "log.txt";
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
 
-            return response;
-        }
+
+
     }
+           
+
+    
 }
