@@ -47,6 +47,11 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
+        public ActionResult Register()
+        {
+            return View();
+        }
+
 
 
         // GET: AdminIndex
