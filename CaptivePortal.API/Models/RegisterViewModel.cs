@@ -37,6 +37,10 @@ namespace CaptivePortal.API.Models
 
         public string Notes { get; set; }
 
+        public string Gender { get; set; }
+
+        public string Age { get; set; }
+
 
 
     }

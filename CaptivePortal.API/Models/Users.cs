@@ -17,6 +17,8 @@ namespace CaptivePortal.API.Models
         public string CreationBy { get; set; }
         public DateTime UpdateDate { get; set; }
         public string UpdatedBy { get; set; }
+        public string Gender { get; set; }
+        public  string Age { get; set; }
       
     }
 }

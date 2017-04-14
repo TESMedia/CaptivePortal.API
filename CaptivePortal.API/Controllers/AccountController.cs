@@ -46,6 +46,8 @@ namespace CaptivePortal.API.Controllers
                     _objUser.CreationDate = System.DateTime.Now;
                     _objUser.UpdateDate = System.DateTime.Now;
                     _objUser.Password = objRegisterModel.UserPassword;
+                    _objUser.Gender = objRegisterModel.Gender;
+                    _objUser.Age = objRegisterModel.Age;
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table
@@ -94,8 +96,8 @@ namespace CaptivePortal.API.Controllers
             try
             {
                 var args = new string[4];
-                //args[0] = "122.166.202.201";
-                args[0] = "192.168.1.10";
+                args[0] = "122.166.202.201";
+               // args[0] = "192.168.1.12";
                 args[1] = "testing123";
                 args[2] = objLoginModel.UserName;
                 args[3] = objLoginModel.UserPassword;
