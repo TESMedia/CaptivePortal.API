@@ -22,7 +22,10 @@ namespace CaptivePortal.API.Context
         public DbSet<RadGroupCheck> RadGroupCheck { get; set; }
         public DbSet<Radacct> Radacct { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
-        public DbSet<Role> Role { get; set; } 
+        public DbSet<Role> Role { get; set; }
+        public DbSet <Form> Form { get; set; }
+        public DbSet <FormControl> FormControl { get; set; }
+
 
     }
 }

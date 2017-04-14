@@ -253,10 +253,25 @@
     <Compile Include="Migrations\201703240819310_Added_Radacct-table.Designer.cs">
       <DependentUpon>201703240819310_Added_Radacct-table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704130514555_added-Form-And-FormControl-Table.cs" />
+    <Compile Include="Migrations\201704130514555_added-Form-And-FormControl-Table.Designer.cs">
+      <DependentUpon>201704130514555_added-Form-And-FormControl-Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.cs" />
+    <Compile Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.Designer.cs">
+      <DependentUpon>201704130729382_added-column-siteId-as-foreignkey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704131322367_added-column-SiteUrl.cs" />
+    <Compile Include="Migrations\201704131322367_added-column-SiteUrl.Designer.cs">
+      <DependentUpon>201704131322367_added-column-SiteUrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Form.cs" />
+    <Compile Include="Models\FormControl.cs" />
+    <Compile Include="Models\FormViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\Nas.cs" />
@@ -333,6 +348,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Style\DropDown.css" />
     <Content Include="Vendors\animate.css\animate.css" />
     <Content Include="Vendors\animate.css\animate.min.css" />
     <Content Include="Vendors\animate.css\gulpfile.js" />
@@ -4515,6 +4531,9 @@
     <Content Include="Vendors\validator\README.md" />
     <Content Include="Vendors\validator\validator.jquery.json" />
     <Content Include="Views\Admin\Register.cshtml" />
+    <Content Include="Views\Admin\FormLogin.cshtml" />
+    <Content Include="Views\Admin\CreateNewSite.cshtml" />
+    <Content Include="Views\Admin\ConfigureSite.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4552,6 +4571,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703240819310_Added_Radacct-table.resx">
       <DependentUpon>201703240819310_Added_Radacct-table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704130514555_added-Form-And-FormControl-Table.resx">
+      <DependentUpon>201704130514555_added-Form-And-FormControl-Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.resx">
+      <DependentUpon>201704130729382_added-column-siteId-as-foreignkey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704131322367_added-column-SiteUrl.resx">
+      <DependentUpon>201704131322367_added-column-SiteUrl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

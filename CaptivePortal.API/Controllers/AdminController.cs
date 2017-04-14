@@ -52,7 +52,45 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
+        public ActionResult FormLogin()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult OnFormLoginSubmit(FormCollection form)
+        {
+            Site result = db.Site.First();
+           
+            Form objForm = new Form
+            {
+                FormName = form["formName"],
+                SiteId= result.SiteId
+            };
+            db.Form.Add(objForm);
+            var res=db.SaveChanges();
+            var id = objForm.FormId;
 
+            FormControl objFormControl = new FormControl
+            {
+                FormId = id,
+                ControlType = form["controlType"],
+                LabelName=form["labelName"],
+                SiteUrl=form["siteUrl"]
+            };
+            db.FormControl.Add(objFormControl);
+            db.SaveChanges();
+            return Content("hi");
+        }
+
+        public ActionResult CreateNewSite()
+        {
+            return View();
+        }
+
+        public ActionResult ConfigureSite()
+        {
+            return View();
+        }
 
         // GET: AdminIndex
         public ActionResult Index()

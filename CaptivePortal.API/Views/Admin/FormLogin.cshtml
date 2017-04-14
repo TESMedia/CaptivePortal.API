@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewBag.Title = "FormLogin";
+}
+
+<h2>Manage Company Account</h2>
+<br />
+<br />
+
+@*<form class="form-horizontal">*@
+    @using (Html.BeginForm("OnFormLoginSubmit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="FormName">
+            Choose Form Name:
+        </label>
+        <select class="form-control" name="formName" id="NameOfForm">
+            <option value=0>Select Form Name</option>
+            <option value=Login>Login</option>
+            <option value=Register>Register</option>
+        </select>
+    </div>
+    @*<div class="form-group">
+        <label class="control-label col-sm-2" for="OrganisationName">
+            Choose Organisation Name:
+        </label>
+        <select class="form-control" name="organisationName" id="NameOfOrganisation">
+            <option value=0>Select Organisation Name</option>
+            <option value=1></option>
+            <option value=2></option>
+            <option value=3></option>
+            <option value=4></option>
+        </select>
+    </div>*@
+
+    @*<div class="form-group">
+        <label class="control-label col-sm-2" for="CompanyName">
+            Choose Company :
+        </label>
+        <select class="form-control" name="companyName" id="NameOfCompany">
+            <option value=0>Select Company Name</option>
+            <option value=1></option>
+            <option value=2></option>
+            <option value=3></option>
+            <option value=4></option>
+        </select>
+    </div>*@
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="SiteName">
+            Choose Site Name:
+        </label>
+        <select class="form-control" name="siteName" id="NameOfSite">
+            <option value=0>Select Site Name</option>
+            <option value=1></option>
+            <option value=2></option>
+            <option value=3></option>
+            <option value=4></option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="ColumnName">
+            Choose Column Name:
+        </label>
+        <select class="form-control" name="columnName" id="NameOfColumn">
+            <option value=0>Select Column Name</option>
+            <option value=1>FirstName</option>
+            <option value=2>LastName</option>
+            <option value=3>MobileNumber</option>
+            <option value=4>DateOfBirth</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="ControlType">
+            Choose Control Name:
+        </label>
+        <select class="form-control" name="controlType" id="NameOfInputType">
+            <option value=0>Select Control Type</option>
+            <option value=text>text</option>
+            <option value=Password>Password</option>
+            <option value=Radio>Radio</option>
+            <option value=Checkbox>Checkbox</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="LabelName">Label Name:
+        </label>
+            <input type="text" class="form-control" id="text" name="labelName">   
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="SiteUrl">
+            Site Url:
+        </label>
+        <input type="text" class="form-control" id="text" name="siteUrl">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default" id="btnSubmitContent">Submit</button>
+        </div>
+    </div>
+    }
+@*</form>*@
