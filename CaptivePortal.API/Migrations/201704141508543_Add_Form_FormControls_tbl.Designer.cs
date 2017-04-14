@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class addedFormAndFormControlTable : IMigrationMetadata
+    public sealed partial class Add_Form_FormControls_tbl : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addedFormAndFormControlTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Add_Form_FormControls_tbl));
         
         string IMigrationMetadata.Id
         {
-            get { return "201704130514555_added-Form-And-FormControl-Table"; }
+            get { return "201704141508543_Add_Form_FormControls_tbl"; }
         }
         
         string IMigrationMetadata.Source

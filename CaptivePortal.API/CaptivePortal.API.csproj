@@ -261,17 +261,9 @@
     <Compile Include="Migrations\201704141315135_AddedFieldsFor-UserTable.Designer.cs">
       <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201704130514555_added-Form-And-FormControl-Table.cs" />
-    <Compile Include="Migrations\201704130514555_added-Form-And-FormControl-Table.Designer.cs">
-      <DependentUpon>201704130514555_added-Form-And-FormControl-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.cs" />
-    <Compile Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.Designer.cs">
-      <DependentUpon>201704130729382_added-column-siteId-as-foreignkey.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704131322367_added-column-SiteUrl.cs" />
-    <Compile Include="Migrations\201704131322367_added-column-SiteUrl.Designer.cs">
-      <DependentUpon>201704131322367_added-column-SiteUrl.cs</DependentUpon>
+    <Compile Include="Migrations\201704141508543_Add_Form_FormControls_tbl.cs" />
+    <Compile Include="Migrations\201704141508543_Add_Form_FormControls_tbl.Designer.cs">
+      <DependentUpon>201704141508543_Add_Form_FormControls_tbl.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4584,20 +4576,14 @@
     <EmbeddedResource Include="Migrations\201703240819310_Added_Radacct-table.resx">
       <DependentUpon>201703240819310_Added_Radacct-table.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704130514555_added-Form-And-FormControl-Table.resx">
-      <DependentUpon>201704130514555_added-Form-And-FormControl-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704130729382_added-column-siteId-as-foreignkey.resx">
-      <DependentUpon>201704130729382_added-column-siteId-as-foreignkey.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704131322367_added-column-SiteUrl.resx">
-      <DependentUpon>201704131322367_added-column-SiteUrl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704140720104_changeFieldIn_userTable.resx">
       <DependentUpon>201704140720104_changeFieldIn_userTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704141315135_AddedFieldsFor-UserTable.resx">
       <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704141508543_Add_Form_FormControls_tbl.resx">
+      <DependentUpon>201704141508543_Add_Form_FormControls_tbl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
