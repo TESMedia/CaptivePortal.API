@@ -41,11 +41,16 @@ namespace CaptivePortal.API.Controllers
 
                     //save user data in user table
                     Users _objUser = new Users();
-                   _objUser.UserName = objRegisterModel.UserName;
+                   _objUser.UserName = objRegisterModel.Email;
+                    _objUser.FirstName = objRegisterModel.FirstName;
+                    _objUser.LastName = objRegisterModel.LastName;
+                    _objUser.Email = objRegisterModel.Email;
                     _objUser.CreationBy = objRegisterModel.CreationBy;
                     _objUser.CreationDate = System.DateTime.Now;
                     _objUser.UpdateDate = System.DateTime.Now;
                     _objUser.Password = objRegisterModel.UserPassword;
+                    _objUser.Gender = objRegisterModel.Gender;
+                    _objUser.Age = objRegisterModel.Age;
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table
@@ -67,7 +72,7 @@ namespace CaptivePortal.API.Controllers
                     //db.Site.Add(_objSite);
                     db.SaveChanges();
 
-                    objRegisterDB.CreateNewUser(objRegisterModel.UserName, objRegisterModel.UserPassword, objRegisterModel.Email);
+                    objRegisterDB.CreateNewUser(objRegisterModel.Email, objRegisterModel.UserPassword, objRegisterModel.Email,objRegisterModel.FirstName,objRegisterModel.LastName);
                     ObjReturnModel.Id = 1;
                     ObjReturnModel.Message = "Success";
                     dbContextTransaction.Commit();
@@ -94,8 +99,8 @@ namespace CaptivePortal.API.Controllers
             try
             {
                 var args = new string[4];
-                //args[0] = "122.166.202.201";
-                args[0] = "192.168.1.10";
+                args[0] = "122.166.202.201";
+               // args[0] = "192.168.1.12";
                 args[1] = "testing123";
                 args[2] = objLoginModel.UserName;
                 args[3] = objLoginModel.UserPassword;
