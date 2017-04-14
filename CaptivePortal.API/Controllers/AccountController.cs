@@ -41,7 +41,10 @@ namespace CaptivePortal.API.Controllers
 
                     //save user data in user table
                     Users _objUser = new Users();
-                   _objUser.UserName = objRegisterModel.UserName;
+                   _objUser.UserName = objRegisterModel.Email;
+                    _objUser.FirstName = objRegisterModel.FirstName;
+                    _objUser.LastName = objRegisterModel.LastName;
+                    _objUser.Email = objRegisterModel.Email;
                     _objUser.CreationBy = objRegisterModel.CreationBy;
                     _objUser.CreationDate = System.DateTime.Now;
                     _objUser.UpdateDate = System.DateTime.Now;
@@ -69,7 +72,7 @@ namespace CaptivePortal.API.Controllers
                     //db.Site.Add(_objSite);
                     db.SaveChanges();
 
-                    objRegisterDB.CreateNewUser(objRegisterModel.UserName, objRegisterModel.UserPassword, objRegisterModel.Email);
+                    objRegisterDB.CreateNewUser(objRegisterModel.Email, objRegisterModel.UserPassword, objRegisterModel.Email,objRegisterModel.FirstName,objRegisterModel.LastName);
                     ObjReturnModel.Id = 1;
                     ObjReturnModel.Message = "Success";
                     dbContextTransaction.Commit();

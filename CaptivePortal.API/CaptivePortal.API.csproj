@@ -257,6 +257,10 @@
     <Compile Include="Migrations\201704140720104_changeFieldIn_userTable.Designer.cs">
       <DependentUpon>201704140720104_changeFieldIn_userTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704141315135_AddedFieldsFor-UserTable.cs" />
+    <Compile Include="Migrations\201704141315135_AddedFieldsFor-UserTable.Designer.cs">
+      <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -4563,6 +4567,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704140720104_changeFieldIn_userTable.resx">
       <DependentUpon>201704140720104_changeFieldIn_userTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704141315135_AddedFieldsFor-UserTable.resx">
+      <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

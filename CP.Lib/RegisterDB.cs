@@ -15,7 +15,7 @@ namespace CP.Lib
         {
             myConnectionString = "Server=122.166.202.201; Port = 3306; Database = radius; Uid=root;Pwd=av3c5Ys";
         }
-        public int CreateNewUser(string userName, string password, string Email)
+        public int CreateNewUser(string userName, string UserPassword, string Email,string firstname,string lastname)
         {
 
             int retCode = 0;
@@ -33,9 +33,9 @@ namespace CP.Lib
             myCommand.Transaction = myTrans;
             try
             {
-                myCommand.CommandText = "insert into radcheck (username,attribute,op,value) VALUES('" + userName + "','user-password',':=','" + password + "')";
+                myCommand.CommandText = "insert into radcheck (username,attribute,op,value) VALUES('" + userName + "','user-password',':=','" + UserPassword + "')";
                 myCommand.ExecuteNonQuery();
-                myCommand.CommandText = "insert into userinfo (username, email) VALUES('" + userName + "','" + Email + "')";
+                myCommand.CommandText = "insert into userinfo (username, email,firstname,lastname) VALUES('" + userName + "','" + Email + "','" + firstname + "','" + lastname + "')";
                 myCommand.ExecuteNonQuery();
                 myTrans.Commit();
                 // Console.WriteLine("Both records are written to database.");
