@@ -13,11 +13,11 @@ namespace CaptivePortal.API.Models
         public int SiteId { get; set; }
         public string SiteName { get; set; }
         // Foreign key 
-        public int UserId { get; set; }
+        //public int UserId { get; set; }
         public int CompanyId { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual Users Users { get; set; }
+        //[ForeignKey("UserId")]
+        //public virtual Users Users { get; set; }
         [ForeignKey("CompanyId")]
         public virtual Company Company { get; set; }
 

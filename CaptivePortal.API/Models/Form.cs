@@ -16,6 +16,15 @@ namespace CaptivePortal.API.Models
         //Foreign key
         public int SiteId { get; set; }
 
+        public string BannerIcon { get; set; }
+        public string BackGroundColor { get; set; }
+        public string LoginWindowColor { get; set; }
+        public bool IsPasswordRequire { get; set; }
+        public string LoginPageTitle { get; set; }
+        public string RegistrationPageTitle { get; set; }
+        public string HtmlCodeForLogin { get; set; }
+       
+
         [ForeignKey("SiteId")]
         public virtual Site Site { get; set; }
     }
