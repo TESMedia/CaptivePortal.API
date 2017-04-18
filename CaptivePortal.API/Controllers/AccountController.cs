@@ -77,10 +77,9 @@ namespace CaptivePortal.API.Controllers
                     ObjReturnModel.Message = "Success";
                     dbContextTransaction.Commit();
                     JavaScriptSerializer objSerializer = new JavaScriptSerializer();
-                    return new HttpResponseMessage
-                    {
-                        Content = new StringContent(objSerializer.Serialize(ObjReturnModel))
-                    };
+                    var response = Request.CreateResponse(HttpStatusCode.Moved);
+                    response.Headers.Location = new Uri("http://planetsbrainvm.cloudapp.net/login.aspx");
+                    return response;
                 }
                 catch (Exception ex)
                 {
