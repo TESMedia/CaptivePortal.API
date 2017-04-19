@@ -4,19 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using log4net;
+using System.Configuration;
 
 namespace CP.Lib
 {
     public class RegisterDB
     {
         private string myConnectionString;
+        private static ILog Log { get; set; }
+        ILog log = LogManager.GetLogger(typeof(RegisterDB));
+
         //int length;
         public RegisterDB()
         {
-            myConnectionString = "Server=122.166.202.201; Port = 3306; Database = radius; Uid=root;Pwd=av3c5Ys";
+            myConnectionString = ConfigurationManager.ConnectionStrings["radiusConnectonString"].ToString();
+
         }
         public int CreateNewUser(string userName, string UserPassword, string Email,string firstname,string lastname)
         {
+            
 
             int retCode = 0;
             MySqlConnection myConnection = new MySqlConnection(myConnectionString);
@@ -38,7 +45,8 @@ namespace CP.Lib
                 myCommand.CommandText = "insert into userinfo (username, email,firstname,lastname) VALUES('" + userName + "','" + Email + "','" + firstname + "','" + lastname + "')";
                 myCommand.ExecuteNonQuery();
                 myTrans.Commit();
-                // Console.WriteLine("Both records are written to database.");
+                log.Info("Users records are written to database.");
+              
             }
             catch (Exception e)
             {
@@ -51,14 +59,14 @@ namespace CP.Lib
                 {
                     if (myTrans.Connection != null)
                     {
-                        Console.WriteLine("An exception of type " + ex.GetType() +
+                   
+                        log.Info("An exception of type " + ex.GetType() +
                         " was encountered while attempting to roll back the transaction.");
                     }
                 }
 
-                Console.WriteLine("An exception of type " + e.GetType() +
-                " was encountered while inserting the data.");
-                Console.WriteLine("Neither record was written to database.");
+                log.Info("An exception of type " + e.GetType() +"was encountered while inserting the data.");
+                log.Info("Neither record was written to database.");
             }
             finally
             {

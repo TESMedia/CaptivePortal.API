@@ -45,7 +45,10 @@ namespace CaptivePortal.API.Models
 
         public string Age { get; set; }
 
+        public string Term_conditions { get; set; }
 
+        public bool promotional_email { get; set; }
 
+        
     }
 }
