@@ -1,0 +1,29 @@
+﻿body {
+}
+div.radios > label > input {
+    visibility: hidden;
+}
+
+div.radios > label {
+    display: inline-block;
+    margin: 0 0 0 -10px;
+    padding: 0 0 10px 0;  
+    height: 20px;
+  cursor:pointer;
+}
+
+div.radios > label > img {
+    display: inline-block;
+    padding: 0px;
+    height:20px;
+    width:20px;
+    background: none;
+    vertical-align:top;
+}
+
+div.radios > label > input:checked +img {  
+    background: url(https://cdn2.iconfinder.com/data/icons/picons-essentials/71/no-24.png);
+    background-repeat: no-repeat;
+    background-position:center center;
+    background-size:20px 20px;
+}

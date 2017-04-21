@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CaptivePortal.API.Models.FormViewModel
+@{
+
     Layout = null;
 }
 <!DOCTYPE html>
@@ -61,14 +63,14 @@
                             <h3>General</h3>
                             <ul class="nav side-menu">
                                 <li>
-                                    <a><i class="fa fa-home"></i> Home </a>
+                                    <a href="Index"><i class="fa fa-home"></i> Home </a>
 
                                 </li>
                                 <li>
                                     <a><i class="fa fa-edit"></i> My Estate <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="CreateNewSite">Create new site</a></li>
-                                        <li><a href="ConfigureSite">Configure site</a></li>
+                                        <li><a href="SiteDetails">Configure site</a></li>
                                     </ul>
                                 </li>
                                 <li>
@@ -124,95 +126,112 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <br />
-                                    <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
-
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                    <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+                                        @using (Html.BeginForm("UpdateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="form-group" style="display:none;">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Id:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @Html.EditorFor(model => model.SiteId, new { htmlAttributes = new { @class = "form-control", @name = "SiteId" } })
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group" style="display:none;">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Form Id:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @Html.EditorFor(model => model.FormId, new { htmlAttributes = new { @class = "form-control", @name = "FormId" } })
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Organisation Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @Html.EditorFor(model => model.SiteName, new { htmlAttributes = new { @class = "form-control", @name = "sitename" } })
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login and Registration Page configuration:</label>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
+                                                   
+                                                </div>
+                                                <div style="margin-top:-15px;">
+                                                    Create New Company
+                                                </div>
+                                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxCompany" onclick="showCompanyTextBox()" name="CreateNewCompany" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
+                                            <div class="form-group">
+                                                <label for="organisation-name" class="control-label col-md-3 col-sm-3 col-xs-12">Organisation Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="organisation-name" class="form-control col-md-7 col-xs-12" type="text" name="OrganisationName" style="display:none">
+                                                    <select id="organisationDdl" class="form-control" name="organisationDdl">
+                                                        <option value="0">--Select the organisations--</option>
+                                                    </select>
+                                                   
+                                                </div>
+                                                <div style="margin-top:-15px;">
+                                                    Create New Organisation
+                                                </div>
+                                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxOrganisation" onclick="showOrganistationTextBox()" name="CreateNewOrganisation" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
+                                            <div class="form-group">
+                                                <label for="middle-name" >Login and Registration Page configuration:</label>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name" style="width:30px;">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @*<input type="file" name="BannerIcon" id="banner-icon" accept="image/*">*@
+                                                    <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="bgColor" class="form-control col-md-7 col-xs-12" type="color"  name="middle-name" style="width:70px;">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Registration Page Title:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="loginColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name"  style="width:70px;">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Field Label / Type:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="IsPasswordRequire" style="width:30px;">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12"></label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @Html.EditorFor(model => model.LoginPageTitle, new { htmlAttributes = new { @class = "form-control", @name = "txtLoginPageTitle" } })
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12"></label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Registration Page Title:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @Html.EditorFor(model => model.RegistrationPageTitle, new { htmlAttributes = new { @class = "form-control", @name = "txtRegistrationPageTitle" } })
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                <button type="button" class="btn btn-success pull-right">Add Field</button>
+                                            <div class="form-group">
+                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Field Label / Type:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="ln_solid"></div>
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                <button type="button" class="btn btn-success">Update</button>
+                                            <div class="form-group">
+                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                    <button type="button" class="btn btn-success pull-right">Add Field</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </form>
+                                            <div class="ln_solid"></div>
+                                            <div class="form-group">
+                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                    <button type="submit" class="btn btn-success">Update</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -266,5 +285,41 @@
 
 </body>
 </html>
+<script type="text/javascript">
 
+    function showCompanyTextBox() {
+        if ($('#checkboxCompany').is(':checked')) {
+            $('#CompanyDdl').hide();
+            $('#company-name').show();
+        } else {
+            $('#CompanyDdl').show();
+            $('#company-name').hide();
+        }
+    }
 
+    function showOrganistationTextBox() {
+        if ($('#checkboxOrganisation').is(':checked')) {
+            $('#organisationDdl').hide();
+            $('#organisation-name').show();
+        } else {
+            $('#organisationDdl').show();
+            $('#organisation-name').hide();
+        }
+    }
+
+    $(function () {
+        document.getElementById("bgColor").value = "@Model.BackGroundColor";
+        document.getElementById("loginColor").value="@Model.LoginWindowColor";
+        $("#CompanyDdl").val(@Model.CompanyDdl);
+        $("#imgLogo").attr('src','@Model.BannerIcon')
+        $('#organisationDdl').val('');
+
+        $.getJSON("/Admin/GetOrganisations?companyId=" + @Model.CompanyDdl, function (data) {
+            var items = [];
+            $.each(data, function (key, value) {
+                items.push("<option value=" + this.value + ">" + this.text + "</option>");
+            });
+            $("#organisationDdl").html(items.join(' '));
+        })
+    });
+</script>

@@ -290,6 +290,10 @@
     <Compile Include="Migrations\201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.Designer.cs">
       <DependentUpon>201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704210911546_Update_Site_Company_tbl.cs" />
+    <Compile Include="Migrations\201704210911546_Update_Site_Company_tbl.Designer.cs">
+      <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -308,6 +312,7 @@
     <Compile Include="Models\ReturnModel.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Site.cs" />
+    <Compile Include="Models\SiteViewModel.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\Users.cs" />
     <Compile Include="Models\UsersAddress.cs" />
@@ -379,6 +384,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Style\CheckBox.css" />
     <Content Include="Style\DropDown.css" />
     <Content Include="Vendors\animate.css\animate.css" />
     <Content Include="Vendors\animate.css\animate.min.css" />
@@ -4565,6 +4571,7 @@
     <Content Include="Views\Admin\FormLogin.cshtml" />
     <Content Include="Views\Admin\CreateNewSite.cshtml" />
     <Content Include="Views\Admin\ConfigureSite.cshtml" />
+    <Content Include="Views\Admin\SiteDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4627,6 +4634,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.resx">
       <DependentUpon>201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704210911546_Update_Site_Company_tbl.resx">
+      <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

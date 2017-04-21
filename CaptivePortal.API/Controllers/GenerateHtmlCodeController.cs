@@ -17,39 +17,9 @@ namespace CaptivePortal.API.Controllers
 
         CPDBContext db = new CPDBContext();
         [HttpPost]
-        public string GenerateHtmlForLogin(GeneratingHtmlViewModel objHtmlViewModel)
-        {
-            
-
-            string data = null;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(objHtmlViewModel.LoginUrl);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader readStream = null;
-
-                if (response.CharacterSet == null)
-                {
-                    readStream = new StreamReader(receiveStream);
-                }
-                else
-                {
-                    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-                }
-                data = readStream.ReadToEnd();
-                response.Close();
-                readStream.Close();
-            }
-            return data;
-        }
-
-
-        [HttpPost]
         public string GenerateHtmlForLoginTest(GeneratingHtmlViewModel htmlViewModel)
         {
             var formResult = db.Form.Where(m => m.SiteId == htmlViewModel.SiteId).ToList();
-
             string html = null;
             HtmlWeb web = new HtmlWeb();
             string urlAddress = htmlViewModel.LoginUrl;
@@ -78,6 +48,37 @@ namespace CaptivePortal.API.Controllers
             }
             return html;
         }
+        [HttpPost]
+        public JsonResult GetLoginFormData(FormData formdata)
+        {
+            var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
+            var jsonFormData = formResult[0];
+            ReturnLoginFormData objLoginFormData =new ReturnLoginFormData();
+            objLoginFormData.SiteId = formdata.SiteId;
+            objLoginFormData.BannerIcon = jsonFormData.BannerIcon;
+            objLoginFormData.BackGroundColor = jsonFormData.BackGroundColor;
+            objLoginFormData.IsPasswordRequire =jsonFormData.IsPasswordRequire;
+            objLoginFormData.LoginWindowColor = jsonFormData.LoginWindowColor;
+            objLoginFormData.LoginPageTitle = jsonFormData.LoginPageTitle;
+            
+            return Json(objLoginFormData);
+        }
+        [HttpPost]
+        public JsonResult GetRegisterHtmlDynamicCode(FormData formdata)
+        {
+            var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
+            var jsonFormData = formResult[0];
+            ReturnLoginFormData objLoginFormData = new ReturnLoginFormData();
+            objLoginFormData.SiteId = formdata.SiteId;
+            objLoginFormData.HtmlCodeForRegister = jsonFormData.HtmlCodeForLogin;
+            string formatedHtml = objLoginFormData.HtmlCodeForRegister;
+            formatedHtml = formatedHtml.Replace("\"","'");
+            formatedHtml = Server.HtmlDecode(formatedHtml);
+            return Json(formatedHtml);
+        }
+
+
+
 
         // GET: GenerateHtmlCode
         public ActionResult Index()

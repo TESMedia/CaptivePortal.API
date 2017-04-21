@@ -1,7 +1,7 @@
 ﻿@using CaptivePortal.API.Models
 @model FormViewModel
 
-@{ 
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -34,7 +34,10 @@
     <link href="../vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
+    <link href="~/Style/CheckBox.css" rel="stylesheet" />
+
 </head>
+
 <body class="nav-md">
     <div class="container body">
         <div class="main_container">
@@ -64,14 +67,14 @@
                             <h3>General</h3>
                             <ul class="nav side-menu">
                                 <li>
-                                    <a><i class="fa fa-home"></i> Home </a>
+                                    <a href="Index"><i class="fa fa-home"></i> Home </a>
 
                                 </li>
                                 <li>
                                     <a><i class="fa fa-edit"></i> My Estate <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">
                                         <li><a href="CreateNewSite">Create new site</a></li>
-                                        <li><a href="ConfigureSite">Configure site</a></li>
+                                        <li><a href="SiteDetails">Configure site</a></li>
                                     </ul>
                                 </li>
                                 <li>
@@ -110,7 +113,7 @@
                         <div class="nav toggle">
                             <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                         </div>
-                        
+
                     </nav>
                 </div>
             </div>
@@ -120,7 +123,7 @@
                 <div class="">
                     <div class="page-title">
                         <div class="title_left">
-                            
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -130,122 +133,147 @@
                                 <div class="x_content">
                                     <br />
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
-@using (Html.BeginForm("CreateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-                                        <div class="form-group">
-                                            <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName">
+                                        @using (Html.BeginForm("CreateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="form-group">
+                                                <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName">
+                                            <div class="form-group">
+                                                <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
+                                                </div>
+                                                <div style="margin-top:-15px;">
+                                                    Create New Company
+                                                </div>
+                                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxCompany" onclick="showCompanyTextBox()" name="CreateNewCompany" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="organisation-name" class="control-label col-md-3 col-sm-3 col-xs-12">Organisation Name:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="organisation-name" class="form-control col-md-7 col-xs-12" type="text" name="OrganisationName">
+                                            <div class="form-group">
+                                                <label for="organisation-name" class="control-label col-md-3 col-sm-3 col-xs-12">Organisation Name:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="organisation-name" class="form-control col-md-7 col-xs-12" type="text" name="OrganisationName" style="display:none">
+                                                    <select id="organisationDdl" class="form-control" name="organisationDdl">
+                                                        <option value="0">--Select the organisations--</option>
+                                                    </select>
+                                                </div>
+                                                <div style="margin-top:-15px;">
+                                                    Create New Organisation
+                                                </div>
+                                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxOrganisation" onclick="showOrganistationTextBox()" name="CreateNewOrganisation" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login and Registration Page configuration:</label>
-                                        </div>
-                                        @*<div class="form-group">
-                                            <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="banner-icon" class="form-control col-md-7 col-xs-12" type="text" name="banner-icon">
-                                            </div>
-                                        </div>*@
+                                                <div class="form-group">
+                                                    <label for="middle-name">Login and Registration Page configuration:</label>
+                                                </div>
+                                                @*<div class="form-group">
+                                                        <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            <input id="banner-icon" class="form-control col-md-7 col-xs-12" type="text" name="banner-icon">
+                                                        </div>
+                                                    </div>*@
 
-                                        <div class="form-group">
-                                            <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                            <div class="col-md-6">
-                                                <input type="file"   name="BannerIcon" id="banner-icon" accept="image/*">
-                                            </div>
-                                        </div>
+                                                <div class="form-group">
+                                                    <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                    <div class="col-md-6">
+                                                        <input type="file" name="BannerIcon" id="banner-icon" accept="image/*">
+                                                    </div>
+                                                </div>
 
-                                        @*<div class="form-group">
-                                            <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                @Html.TextBoxFor(model => model.BannerIcon, new { type = "text", id = "textBannerIcon", name = "textBannerIcon", @class = "form-control col-xs-4 col-sm-4 col-lg-4" })
-                                                @Html.TextBoxFor(model => model.BannerIcon, new { type = "file", id = "fileBannerIcon", name = "fileBannerIcon",@class="hidden", style = "height:28px;color:black;", accept = "image/*", onchange = "document.getElementById('textBannerIcon').value = this.value;UploadImage(this.id)" })
-                                            </div>
-                                            <input type="button" value="Upload" id="uploadPicture" onclick="document.getElementById('fileBannerIcon').click()">
-                                        </div>*@
-                                        <div class="form-group">
-                                            <label for="background-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="background-colour" class="form-control col-md-7 col-xs-12" type="color" name="BackGroundColor"  style="width:70px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="loginwindow-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="loginwindow-colour" class="form-control col-md-7 col-xs-12" type="color" name="LoginWindowColor"  style="width:70px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="IsPasswordRequire"  style="width:30px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="login-title" class="form-control col-md-7 col-xs-12" type="text" name="LoginPageTitle">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="registration-title" class="control-label col-md-3 col-sm-3 col-xs-12">Registration Page Title:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="registration-title" class="form-control col-md-7 col-xs-12" type="text" name="RegistrationPageTitle">
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="form-group">
-                                            <label for="label-name" class="control-label col-md-3 col-sm-3 col-xs-12">Label Name / Control Type:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="label-name" class="form-control col-md-7 col-xs-12" type="text" name="label-name" style="width:40%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                @*<input id="field-label" class="form-control col-md-7 col-xs-12" type="text" name="field-label" style="width:40%">*@
-                                                <select class="form-control col-md-7 col-xs-12" name="controlType" id="field-label" style="width:40%">
-                                                    <option value=0>Select Control Type</option>
-                                                    <option value=text>text</option>
-                                                    <option value=password>password</option>
-                                                    <option value=radio>radio</option>
-                                                    <option value=checkbox>checkbox</option>
-                                                    <option value=date>date</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12">Field Label / Type:</label>
-                                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                                <input id="field-label" class="form-control col-md-7 col-xs-12" type="text" name="field-label" style="width:40%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                @*<input id="field-label" class="form-control col-md-7 col-xs-12" type="text" name="field-label" style="width:40%">*@
-                                                <select class="form-control col-md-7 col-xs-12" name="dataType" id="data-type" style="width:40%">
-                                                    <option value=0>Select Data Type</option>
-                                                    <option value=string>string</option>
-                                                    <option value=int>int</option>
-                                                    <option value=date>date</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                <button type="button" id="addField" class="btn btn-success pull-right">Save</button>
-                                            </div>
-                                        </div>
-                                        <div class="ln_solid"></div>
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                <input type="submit" id="createSiteOrLoginRegisterConf" class="btn btn-success" value="Create"/>
-                                            </div>
-                                        </div>
-}
+                                                @*<div class="form-group">
+                                                        <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                                            @Html.TextBoxFor(model => model.BannerIcon, new { type = "text", id = "textBannerIcon", name = "textBannerIcon", @class = "form-control col-xs-4 col-sm-4 col-lg-4" })
+                                                            @Html.TextBoxFor(model => model.BannerIcon, new { type = "file", id = "fileBannerIcon", name = "fileBannerIcon",@class="hidden", style = "height:28px;color:black;", accept = "image/*", onchange = "document.getElementById('textBannerIcon').value = this.value;UploadImage(this.id)" })
+                                                        </div>
+                                                        <input type="button" value="Upload" id="uploadPicture" onclick="document.getElementById('fileBannerIcon').click()">
+                                                    </div>*@
+                                                <div class="form-group">
+                                                    <label for="background-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="background-colour" class="form-control col-md-7 col-xs-12" type="color" name="BackGroundColor" style="width:70px;">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="loginwindow-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="loginwindow-colour" class="form-control col-md-7 col-xs-12" type="color" name="LoginWindowColor" style="width:70px;">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="IsPasswordRequire" style="width:30px;">
+                                                    </div>
+                                                </div>
+
+                                                @*<div class='radios'>
+                                                    <label title="item1" style="margin-left: 11%;">
+                                                        Require Password:<input type="checkbox" value="0" /> <img />
+                                                    </label>
+                                                </div>
+                                                <br />*@
+                                                <div class="form-group">
+                                                    <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="login-title" class="form-control col-md-7 col-xs-12" type="text" name="LoginPageTitle">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="registration-title" class="control-label col-md-3 col-sm-3 col-xs-12">Registration Page Title:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input id="registration-title" class="form-control col-md-7 col-xs-12" type="text" name="RegistrationPageTitle">
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="control-group" id="fields">
+                                                    <label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12"></label>
+                                                    <div class="controls">
+                                                        <div role="form" autocomplete="off">
+                                                            <div class="row">
+                                                                <div class="voca">
+                                                                    <div class="col-md-3">
+                                                                        <input class="form-control" placeholder="Add Field" name="fieldLabel" type="text" >
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <select class="form-control" name="dataType">
+                                                                            <option value=0>Select Data Type</option>
+                                                                            <option value=string>VARCHAR </option>
+                                                                            <option value=int>int</option>
+                                                                            <option value=date>date</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        <select class="form-control" name="controlType">
+                                                                            <option value=0>Select Control Type</option>
+                                                                            <option value=text>text</option>
+                                                                            <option value=password>password</option>
+                                                                            <option value=radio>radio</option>
+                                                                            <option value=checkbox>checkbox</option>
+                                                                            <option value=date>date</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-success btn-add">
+                                                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add more
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                                <div class="ln_solid"></div>
+                                                <div class="form-group">
+                                                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                                        <input type="submit" id="createSiteOrLoginRegisterConf" class="btn btn-success" value="Create" />
+                                                    </div>
+                                                </div>
+                                        }
                                     </div>
 
                                 </div>
@@ -254,10 +282,14 @@
                     </div>
                 </div>
             </div>
+
+
+
+
             <!-- /page content -->
             <!-- footer content -->
             <footer>
-               
+
                 <div class="clearfix"></div>
             </footer>
             <!-- /footer content -->
@@ -304,36 +336,62 @@
 </html>
 
 <script type="text/javascript">
-    //add new filed to User table.
-    $('#addField').click(function (e) {
-        alert(document.getElementById("data-type").value);
-        e.preventDefault(); 
-        var element = this;
-        $.ajax({
-            url: "/Admin/AddField",
-            type: "POST",
-            data: JSON.stringify({
-                'inputField': $('input[name=field-label]').val(),
-                'inputType': document.getElementById("data-type").value
-            }),
-            dataType: "json",
-            traditional: true,
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                if (data.status == "Success") {
-                    alert("Done");
-                    $(element).closest("form").submit(); 
-                } else {
-                    alert("Error occurs on the Database level!");
-                }
-            },
-            error: function () {
-                alert("An error has occured!!!");
+    function showCompanyTextBox() {
+        if ($('#checkboxCompany').is(':checked')) {
+            $('#CompanyDdl').hide();
+            $('#company-name').show();
+        } else {
+            $('#CompanyDdl').show();
+            $('#company-name').hide();
+        }
+    }
+
+    function showOrganistationTextBox() {
+        if ($('#checkboxOrganisation').is(':checked')) {
+            $('#organisationDdl').hide();
+            $('#organisation-name').show();
+        } else {
+            $('#organisationDdl').show();
+            $('#organisation-name').hide();
+        }
+    }
+
+
+    $(function () {
+        $("#CompanyDdl").change(function () {
+            if ($(this).val() != "") {
+                $('#organisationDdl').val('');
+                var id = $(this).val();
+                $.getJSON("/Admin/GetOrganisations?companyId=" + id, function (data) {
+                    var items = [];
+                    $.each(data, function (key, value) {
+                        items.push("<option value=" + this.value + ">" + this.text + "</option>");
+                    });
+                    $("#organisationDdl").html(items.join(' '));
+                });
             }
         });
+
+        $(document).on('click', '.btn-add', function (e) {
+            e.preventDefault();
+
+            var controlForm = $('.controls'),
+                currentEntry = $(this).parents('.voca:first'),
+                newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+            newEntry.find('input').val('');
+            controlForm.find('.btn-add:not(:last)')
+                .removeClass('btn-default').addClass('btn-danger')
+                .removeClass('btn-add').addClass('btn-remove')
+
+                .html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Remove   ');
+        }).on('click', '.btn-remove', function (e) {
+            $(this).parents('.voca:first').remove();
+
+            e.preventDefault();
+            return false;
+        });
     });
-
-
 
     var loadFile = function (event) {
         var output = document.getElementById('output');
@@ -348,102 +406,8 @@
         } else {
             $(this).attr('value', 'false');
         }
-        //$('#checkbox-value').text($('#checkbox1').val());
+
     });
-
-
-    
-   
-   
-
-    //function UploadImage(Id){
-    //    var fileUpload = document.getElementById(Id);
-    //    var files = fileUpload.files;
-
-    //    //Get reference of FileUpload.
-    //    //var fileUpload = $("#fileUpload")[0];
-    //    if (typeof (fileUpload.files) != "undefined") {
-    //        //Initiate the FileReader object.
-    //        var reader = new FileReader();
-    //        //Read the contents of Image File.
-    //        reader.readAsDataURL(fileUpload.files[0]);
-    //        reader.onload = function (e) {
-    //            //Initiate the JavaScript Image object.
-    //            var image = new Image();
-    //            //Set the Base64 string return from FileReader as source.
-    //            image.src = e.target.result;
-    //            image.onload = function () {
-    //                //Determine the Height and Width.
-    //                var height = this.height;
-    //                var width = this.width;
-    //                // Create FormData object
-    //                var fileData = new FormData();
-
-    //                // Looping over all files and add it to FormData object
-    //                for (var i = 0; i < files.length; i++) {
-    //                    fileData.append(files[i].name, files[i]);
-    //                }
-
-                   
-
-    //                $.ajax({
-    //                    url: "/Admin/UploadFile",
-    //                    type: "POST",
-    //                    processData: false,
-    //                    contentType: false,
-    //                    data: fileData,
-    //                    success: function (response) {
-    //                       // bootbox.alert(response);
-    //                        //code after success
-    //                        //$(".uploadImg").val("");
-    //                        //$("#txtImg").val(response);
-    //                        //$("#imgPreview").attr('src', '/Upload/' + response);
-    //                    },
-    //                    error: function (er) {
-    //                        //bootbox.alert(er);
-    //                    }
-    //                });
-    //                return true;
-    //            }
-    //        };
-    //    }
-    //}
-                
-    //configure Site or loginAndRegister
-    //$('#createSiteOrLoginRegisterConf').click(function () {
-    //    $.ajax({
-    //        url: "/Admin/CreateSiteAndLoginRegisterConf",
-    //        type: "POST",
-    //        data: JSON.stringify({
-    //            'SiteName': $('input[name=site-name]').val(),
-    //            'CompanyName': $('input[name=company-name]').val(),
-    //            'OrganisationName': $('input[name=organisation-name]').val(),
-    //            'BannerIcon': $('input[name=banner-icon]').val(),
-    //            'BackGroundColor': $('input[name=banner-icon]').val(),
-    //            'LoginWindowColor': $('input[name=banner-icon]').val(),
-    //            'IsPasswordRequire': $('input[name=banner-icon]').val(),
-    //            'LoginPageTitle': $('input[name=banner-icon]').val(),
-    //            'RegistrationPageTitle': $('input[name=banner-icon]').val()
-    //        }),
-    //        dataType: "json",
-    //        traditional: true,
-    //        contentType: "application/json; charset=utf-8",
-    //        success: function (data) {
-    //            if (data.status == "Success") {
-    //                alert("Done");
-    //                $(element).closest("form").submit();
-    //            } else {
-    //                alert("Error occurs on the Database level!");
-    //            }
-    //        },
-    //        error: function () {
-    //            alert("An error has occured!!!");
-    //        }
-    //    });
-    //});
-
-
-
 </script>
 
 
