@@ -21,7 +21,9 @@ namespace CaptivePortal.API.Models
         public DateTime UpdateDate { get; set; }
         public string UpdatedBy { get; set; }
         public string Gender { get; set; }
-        public  string Age { get; set; }
-      
+        public string Age { get; set; }
+        public string Term_conditions {get;set;}
+        public bool promotional_email { get; set; }
+               
     }
 }

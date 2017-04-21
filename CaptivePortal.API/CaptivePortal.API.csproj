@@ -294,6 +294,10 @@
     <Compile Include="Migrations\201704210911546_Update_Site_Company_tbl.Designer.cs">
       <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs" />
+    <Compile Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.Designer.cs">
+      <DependentUpon>201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -4637,6 +4641,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704210911546_Update_Site_Company_tbl.resx">
       <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.resx">
+      <DependentUpon>201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

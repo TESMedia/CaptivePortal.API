@@ -13,7 +13,7 @@ using System.Web.Script.Serialization;
 using log4net;
 using System.Net.Mime;
 using System.Reflection;
-
+using System.Configuration;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -35,13 +35,11 @@ namespace CaptivePortal.API.Controllers
             {
                 try
                 {
-                    // Log.Info("enter in register");
-
-                   
-
+                    log.Info("enter in Register Method");
+                    
                     //save user data in user table
-                    Users _objUser = new Users();
-                   _objUser.UserName = objRegisterModel.Email;
+                     Users _objUser = new Users();
+                    _objUser.UserName = objRegisterModel.Email;
                     _objUser.FirstName = objRegisterModel.FirstName;
                     _objUser.LastName = objRegisterModel.LastName;
                     _objUser.Email = objRegisterModel.Email;
@@ -51,6 +49,8 @@ namespace CaptivePortal.API.Controllers
                     _objUser.Password = objRegisterModel.UserPassword;
                     _objUser.Gender = objRegisterModel.Gender;
                     _objUser.Age = objRegisterModel.Age;
+                    _objUser.Term_conditions = ConfigurationManager.AppSettings["Version"];
+                    _objUser.promotional_email = objRegisterModel.promotional_email;
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table
@@ -63,7 +63,6 @@ namespace CaptivePortal.API.Controllers
                     _objUserAddress.Notes = objRegisterModel.Notes;
                     db.UsersAddress.Add(_objUserAddress);
                     
-
                     ////save user site information in Site table
                     //Site _objSite = new Site();
                     //_objSite.SiteName = objRegisterModel.SiteName;
@@ -71,6 +70,7 @@ namespace CaptivePortal.API.Controllers
                     
                     //db.Site.Add(_objSite);
                     db.SaveChanges();
+                    log.Info("User Data saved in user Table");
 
                     objRegisterDB.CreateNewUser(objRegisterModel.Email, objRegisterModel.UserPassword, objRegisterModel.Email,objRegisterModel.FirstName,objRegisterModel.LastName);
                     ObjReturnModel.Id = 1;
@@ -83,7 +83,7 @@ namespace CaptivePortal.API.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log.Error(ex.Message);
+                    log.Error(ex.Message);
                     dbContextTransaction.Rollback();
                     throw ex;
                 }
@@ -91,48 +91,48 @@ namespace CaptivePortal.API.Controllers
 
         }
 
-        [HttpPost]
-        [Route("Login")]
-        public HttpResponseMessage Login(LoginViewModel objLoginModel)
-        {
-            try
-            {
-                var args = new string[4];
-                args[0] = "122.166.202.201";
-               // args[0] = "192.168.1.12";
-                args[1] = "testing123";
-                args[2] = objLoginModel.UserName;
-                args[3] = objLoginModel.UserPassword;
+        //[HttpPost]
+        //[Route("Login")]
+        //public HttpResponseMessage Login(LoginViewModel objLoginModel)
+        //{
+        //    try
+        //    {
+        //        var args = new string[4];
+        //        args[0] = "122.166.202.201";
+        //       // args[0] = "192.168.1.12";
+        //        args[1] = "testing123";
+        //        args[2] = objLoginModel.UserName;
+        //        args[3] = objLoginModel.UserPassword;
 
-                if (args.Length != 4)
-                {
-                    Authenticate.ShowUsage();
-                }
+        //        if (args.Length != 4)
+        //        {
+        //            Authenticate.ShowUsage();
+        //        }
 
-                try
-                {
-                    log.Info("enter login Authenticate()");
-                    Authenticate.Authentication(args).Wait();
+        //        try
+        //        {
+        //            log.Info("enter login Authenticate()");
+        //            Authenticate.Authentication(args).Wait();
 
-                }
-                catch (Exception e)
-                {
-                    log.Error(e.Message);
-                    throw (e);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            log.Error(e.Message);
+        //            throw (e);
 
 
-                }
+        //        }
 
-                return new HttpResponseMessage()
-                {
-                    Content = new StringContent("success")
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //        return new HttpResponseMessage()
+        //        {
+        //            Content = new StringContent("success")
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
 
 
