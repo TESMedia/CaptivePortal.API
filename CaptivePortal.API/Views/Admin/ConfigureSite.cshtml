@@ -2,6 +2,18 @@
 @{
 
     Layout = null;
+    var ControlTypeList = new[]{
+                          new SelectListItem() { Text = "text", Value = "text" },
+                          new SelectListItem() { Text = "password", Value = "password"},
+                          new SelectListItem() { Text = "radio", Value = "radio"},
+                          new SelectListItem() { Text = "checkbox", Value = "checkbox"},
+                          new SelectListItem() { Text = "date", Value="date"},
+                          new SelectListItem() { Text="tel",Value="tel"},
+                          new SelectListItem() { Text = "time", Value="time"},
+                          new SelectListItem() { Text="tel",Value="tel"}
+                            };
+    //List<string>  ShipNames = new List<string> () { "A", "A B", "A B C" };
+
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -37,71 +49,7 @@
 <body class="nav-md">
     <div class="container body">
         <div class="main_container">
-            <div class="col-md-3 left_col">
-                <div class="left_col scroll-view">
-
-
-                    <div class="clearfix"></div>
-
-                    <!-- menu profile quick info -->
-                    <div class="profile clearfix">
-                        <div class="profile_pic">
-                            <img src="images/img.jpg" alt="..." class="img-circle profile_img">
-                        </div>
-                        <div class="profile_info">
-                            <span>Welcome,</span>
-                            <h2>Admin</h2>
-                        </div>
-                    </div>
-                    <!-- /menu profile quick info -->
-
-                    <br />
-
-                    <!-- sidebar menu -->
-                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                        <div class="menu_section">
-                            <h3>General</h3>
-                            <ul class="nav side-menu">
-                                <li>
-                                    <a href="Index"><i class="fa fa-home"></i> Home </a>
-
-                                </li>
-                                <li>
-                                    <a><i class="fa fa-edit"></i> My Estate <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="CreateNewSite">Create new site</a></li>
-                                        <li><a href="SiteDetails">Configure site</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a><i class="fa fa-desktop"></i> Dashboard <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="general_elements.html">Dashboard1</a></li>
-                                        <li><a href="media_gallery.html">Dashboard2</a></li>
-                                        <li><a href="typography.html">Dashboard3</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a><i class="fa fa-table"></i> User Management <span class="fa fa-chevron-down"></span></a>
-                                    <ul class="nav child_menu">
-                                        <li><a href="tables.html">View Users</a></li>
-                                        <li><a href="tables_dynamic.html">Register User</a></li>
-                                    </ul>
-                                </li>
-
-                            </ul>
-                        </div>
-                        <div class="menu_section">
-
-                            <ul class="nav side-menu"></ul>
-                        </div>
-
-                    </div>
-                    <!-- /sidebar menu -->
-                    <!-- /menu footer buttons -->
-                    <!-- /menu footer buttons -->
-                </div>
-            </div>
+            @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
             <!-- top navigation -->
             <div class="top_nav">
                 <div class="nav_menu">
@@ -152,7 +100,7 @@
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
                                                     @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
-                                                   
+
                                                 </div>
                                                 <div style="margin-top:-15px;">
                                                     Create New Company
@@ -166,7 +114,7 @@
                                                     <select id="organisationDdl" class="form-control" name="organisationDdl">
                                                         <option value="0">--Select the organisations--</option>
                                                     </select>
-                                                   
+
                                                 </div>
                                                 <div style="margin-top:-15px;">
                                                     Create New Organisation
@@ -174,7 +122,7 @@
                                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxOrganisation" onclick="showOrganistationTextBox()" name="CreateNewOrganisation" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
                                             <div class="form-group">
-                                                <label for="middle-name" >Login and Registration Page configuration:</label>
+                                                <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
@@ -186,13 +134,13 @@
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="bgColor" class="form-control col-md-7 col-xs-12" type="color"  name="middle-name" style="width:70px;">
+                                                    <input id="bgColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="loginColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name"  style="width:70px;">
+                                                    <input id="loginColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -213,18 +161,109 @@
                                                     @Html.EditorFor(model => model.RegistrationPageTitle, new { htmlAttributes = new { @class = "form-control", @name = "txtRegistrationPageTitle" } })
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Field Label / Type:</label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="middle-name" class="form-control col-md-7 col-xs-12" type="text" name="middle-name">
+                                            foreach (var item in Model.FormControls)
+                                            {
+                                                <div class="control-group" id="fields">
+                                                    <label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12"></label>
+                                                    <div class="controls">
+                                                        <div role="form" autocomplete="off">
+                                                            <div class="row">
+                                                                <div class="voca">
+                                                                    @*<div class="col-md-1">
+                                                                            @Html.HiddenFor(model=>item.FormControlId)
+                                                                        </div>*@
+                                                                    <div class="col-md-3">
+                                                                        @*<input class="form-control" placeholder="Add Field" name="fieldLabel" type="text">*@
+                                                                        @Html.EditorFor(model => item.LabelName, new { htmlAttributes = new { @class = "form-control", @name = "fieldLabel" } })
+                                                                    </div>
+                                                                    <div class="col-md-2">
+                                                                        @Html.DropDownListFor(Model => item.ControlType, new SelectList(ControlTypeList as IEnumerable<SelectListItem>, "Value", "Text", item.ControlType)
+                                                             , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })
+                                                                    </div>
+                                                                    <div class="col-md-1">
+
+                                                                    </div>
+                                                                    @*<button type="button" class="btn btn-danger" id="btnDelete">
+                                                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
+                                                                        </button>*@
+                                                                    <a href="@Url.Action("DeleteFormControl","Admin",new { Id=item.FormControlId })" class="btn btn-danger">Delete Field</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="form-group pull-right">
+                                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#myModal">Add Field</button>
+                                            </div>
+                                            <div class="modal fade" id="myModal" role="dialog">
+                                                <div class="modal-dialog" style="width:60%">
+
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title">Modal Header</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="control-group" id="fields">
+                                                                <label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12">Field Name/Type</label>
+                                                                <div class="controls">
+                                                                    <div role="form" autocomplete="off">
+                                                                        <div class="row">
+                                                                            <div class="voca">
+                                                                                <div class="col-md-3">
+                                                                                    @Html.DropDownListFor(x => x.fieldlabel, new SelectList(Model.fieldlabel), "Select Filed Name", new { @style = "width:180px", @class = "form-control", @name = "controlType" })
+                                                                                </div>
+                                                                                <div class="col-md-2">
+                                                                                    <select class="form-control" name="controlType" id="controlType">
+                                                                                        <option value=0>Select Control Type</option>
+                                                                                        <option value=text>text</option>
+                                                                                        <option value=password>password</option>
+                                                                                        <option value=date>date</option>
+                                                                                        <option value=tel>tel</option>
+                                                                                        <option value=radio>time</option>
+                                                                                        <option value=checkbox>checkbox</option>
+                                                                                        <option value=dropdown>dropdown</option>
+                                                                                        <option value=radio>radio</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-2">
+                                                                                <button type="button" class="btn btn-success btn-add" id="btnSave">
+                                                                                    <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Save
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <br>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                    <button type="button" class="btn btn-success pull-right">Add Field</button>
+
+
+
+                                            @*<div class="ln_solid"></div>*@
+                                            <div class="form-group" id="optionBlock" style="display:none">
+                                                <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Add Option Value</label>
+                                                <div class="col-md-9 col-sm-9 col-xs-9" id="txtDiv">
+                                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                                        <input type="text" name="optionval" id="optionval" class="form-control col-md-2" />
+                                                    </div>
+                                                    <div class="col-md-2 col-lg-2 col-xs-2 pull-right">
+                                                        <input type="button" class="btn btn-success" name="plus" id="plus" value="+"> <input type="button" class="btn btn-danger" name="minus" id="minus" value="-">
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="ln_solid"></div>
+
                                             <div class="form-group">
                                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                                     <button type="submit" class="btn btn-success">Update</button>
@@ -308,6 +347,22 @@
     }
 
     $(function () {
+
+        $("#controlType").change(function () {
+            var selectedText = $(this).find("option:selected").text();
+            var selectedValue = $(this).val();
+            alert("Selected Text: " + selectedText + " Value: " + selectedValue);
+            if (selectedValue == "checkbox" || selectedValue == "dropdown" || selectedValue == "radio")
+            {
+                $("#optionBlock").show();
+            }
+            else
+            {
+                $("#optionBlock").hide();
+            }
+
+        });
+
         document.getElementById("bgColor").value = "@Model.BackGroundColor";
         document.getElementById("loginColor").value="@Model.LoginWindowColor";
         $("#CompanyDdl").val(@Model.CompanyDdl);
@@ -322,4 +377,57 @@
             $("#organisationDdl").html(items.join(' '));
         })
     });
+
+    //$(document).on('click', '.btn-add', function (e) {
+    //    e.preventDefault();
+
+    //    var controlForm = $('.controls'),
+    //        currentEntry = $(this).parents('.voca:first'),
+    //        newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+    //    newEntry.find('input').val('');
+    //    controlForm.find('.btn-add:not(:last)')
+    //        .removeClass('btn-default').addClass('btn-danger')
+    //        .removeClass('btn-add').addClass('btn-remove')
+
+    //        .html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span> Remove   ');
+    //}).on('click', '.btn-remove', function (e) {
+    //    $(this).parents('.voca:first').remove();
+
+    //    e.preventDefault();
+    //    return false;
+    //});
+
+    //$("#plus").on("click", function () {
+    //    $("#fieldsDiv").append('<div name="blockAppend"><label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12"></label><div class="controls"><div role="form" autocomplete="off"><div class="row"><div class="voca"><div class="col-md-3"><input class="form-control" placeholder="Add Field" name="fieldLabel" type="text"></div><div class="col-md-2"><select class="form-control" name="dataType"><option value=0>Select Data Type</option><option value=string>VARCHAR </option><option value=int>int</option><option value=date>date</option></select></div> <div class="col-md-2"> <select class="form-control" name="controlType"><option value=0>Select Control Type</option> <option value=text>text</option><option value=password>password</option><option value=radio>radio</option></select> </div>  <button type="button" class="btn btn-success btn-add" id="minus"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> Remove Field </button></div></div></div><br></div></div>')
+    //});
+    //$("#minus").on("click", function () {
+
+    //    if ($("input[name='blockAppend']").length > 1) {
+    //        $("input[name='blockAppend']:eq(" + (length - 1) + ")").remove();
+    //    }
+    //});
+
+
+    $("#btnSave").on("click", function () {
+        var arrData = [];
+        $.each($("input[name='optionval']"), function () {
+            arrData.push($(this).val());
+        });
+        alert(arrData);
+        var data= {arrayValue:arrData,FormId:$("#FormId").val(),controlType:$("#controlType").val(),fieldlabel:$("#fieldlabel").val()}
+        $.post("/Admin/SaveFormControls/",data, function (e) {
+            location.reload();
+        });
+    });
+    $("#plus").on("click", function () {
+        $("#txtDiv").append('<div class="col-md-2 col-sm-2 col-lg-2"> <input class="form-control text-box single-line" id="optionval" name="optionval" type="text"><span class="field-validation-valid text-danger" data-valmsg-for="optionval" data-valmsg-replace="true"></span></div>');
+    });
+    $("#minus").on("click", function () {
+        if ($("input[name='optionval']").length > 1) {
+            $("input[name='optionval']:eq(" + (length - 1) + ")").remove();
+        }
+    });
+
+
 </script>

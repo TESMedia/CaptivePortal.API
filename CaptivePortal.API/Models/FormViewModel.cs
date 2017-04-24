@@ -25,14 +25,20 @@ namespace CaptivePortal.API.Models
         public string LoginPageTitle { get; set; }
         public string RegistrationPageTitle { get; set; }
 
-        public string [] dataType { get; }
-        public string [] controlType { get;}
-        public string [] fieldlabel { get; }
+        public string[] dataType { get; }
+        public string[] controlType { get; }
+        public List<string> fieldlabel { get; set; }
 
         public List<FormControl> FormControls { get; set; }
     }
 
-  
+    public class ReturnSiteDetails
+    {
 
-
+        public ReturnSiteDetails()
+        {
+            Sites = new List<Site>();
+        }
+        public List<Site> Sites { get; set; }
+    }
 }

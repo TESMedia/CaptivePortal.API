@@ -78,6 +78,8 @@
     <None Include="Radius\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="Radius\obj\Debug\Radius.csprojResolveAssemblyReference.cache" />
     <None Include="Radius\Radius.nuspec" />
+    <None Include="Scripts\jquery-3.1.1.min.map" />
+    <None Include="Scripts\jquery-3.1.1.slim.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Debug\CP.Lib.dll" />
@@ -91,6 +93,11 @@
     <Content Include="Radius\obj\Debug\Radius.csproj.FileListAbsolute.txt" />
     <Content Include="Radius\obj\Debug\Radius.dll" />
     <Content Include="Radius\obj\Debug\Radius.pdb" />
+    <Content Include="Scripts\jquery-3.1.1-vsdoc.js" />
+    <Content Include="Scripts\jquery-3.1.1.js" />
+    <Content Include="Scripts\jquery-3.1.1.min.js" />
+    <Content Include="Scripts\jquery-3.1.1.slim.js" />
+    <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\Release\" />

@@ -11,6 +11,7 @@ using System.Text;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
+using System.Text.RegularExpressions;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -18,16 +19,26 @@ namespace CaptivePortal.API.Controllers
     {
         CPDBContext db = new CPDBContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
-
-        //private AdminManagementDbContext db = new AdminManagementDbContext();
-
-        string retString = "-1";
+        //int orgId = 0;
+        //int compId = 0;
+        //int siteId = 0;
+        //int formId = 0;
+        //string imagepath = null;
+        //Form objForm = new Form();
+       
+        
+        /// <summary>
+        /// login operation for global admin.
+        /// </summary>
+        /// <param name="admin"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("GAlogin")]
         public ActionResult GALogin(AdminLoginViewModel admin)
         {
             try
             {
+                string retString = "-1";
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
@@ -48,49 +59,23 @@ namespace CaptivePortal.API.Controllers
             return RedirectToAction("Index", "Admin");
         }
 
-        // GET: AdminManagement
+        // GET: Global Admin
         public ActionResult Login()
         {
             return View();
         }
-
+        //Get:Admin will create user.
         public ActionResult Register()
         {
             return View();
         }
 
-        public ActionResult FormLogin()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult OnFormLoginSubmit(FormCollection form)
-        {
-            Site result = db.Site.First();
-
-            Form objForm = new Form
-            {
-                FormName = form["formName"],
-                SiteId = result.SiteId
-            };
-            db.Form.Add(objForm);
-            var res = db.SaveChanges();
-            var id = objForm.FormId;
-
-            FormControl objFormControl = new FormControl
-            {
-                FormId = id,
-                ControlType = form["controlType"],
-                LabelName = form["labelName"],
-                SiteUrl = form["siteUrl"]
-            };
-            db.FormControl.Add(objFormControl);
-            db.SaveChanges();
-            return Content("hi");
-        }
-
+        /// <summary>
+        /// Populate company list in dropdown.
+        /// </summary>
+        /// <returns>Company details</returns>
+        ///Get:Create new site 
         public ActionResult CreateNewSite()
-
         {
             ViewBag.companies = from item in db.Company.ToList()
                                 select new SelectListItem()
@@ -101,6 +86,11 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
+        /// <summary>
+        /// papulate organisation list in dropdown on select of company.
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
         public JsonResult GetOrganisations(int companyId)
         {
             var result = from item in db.Company.Where(m => m.CompanyId == companyId).ToList()
@@ -111,6 +101,16 @@ namespace CaptivePortal.API.Controllers
                          };
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+ 
+        /// <summary>
+        /// Create new site/org/comp/field.
+        /// </summary>
+        /// <param name="inputData"></param>
+        /// <param name="fc"></param>
+        /// <param name="dataType"></param>
+        /// <param name="controlType"></param>
+        /// <param name="fieldLabel"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult CreateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc, string[] dataType, string[] controlType, string[] fieldLabel)
         {
@@ -120,6 +120,8 @@ namespace CaptivePortal.API.Controllers
                 string imagepath = null;
                 int orgId = inputData.organisationDdl;
                 int compId = inputData.CompanyDdl;
+
+                //organisation
                 if (inputData.OrganisationName != null)
                 {
                     Organisation objOrganisation = new Organisation
@@ -128,10 +130,9 @@ namespace CaptivePortal.API.Controllers
                     };
                     db.Organisation.Add(objOrganisation);
                     db.SaveChanges();
-                    orgId = objOrganisation.OrganisationId;
+                     orgId = objOrganisation.OrganisationId;
                 }
-
-
+                //company
                 if (inputData.CompanyName != null)
                 {
                     Company objCompany = new Company
@@ -141,9 +142,10 @@ namespace CaptivePortal.API.Controllers
                     };
                     db.Company.Add(objCompany);
                     db.SaveChanges();
-                    compId = objCompany.CompanyId;
+                     compId = objCompany.CompanyId;
                 }
 
+                //site
                 Site objSite = new Site
                 {
                     SiteName = inputData.SiteName,
@@ -152,7 +154,7 @@ namespace CaptivePortal.API.Controllers
                 db.Site.Add(objSite);
                 db.SaveChanges();
 
-
+                //image path
                 if (Request.Files["BannerIcon"].ContentLength > 0)
                 {
                     var httpPostedFile = Request.Files["BannerIcon"];
@@ -167,6 +169,8 @@ namespace CaptivePortal.API.Controllers
                     httpPostedFile.SaveAs(completePath);
                     inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
                 }
+
+                //Form
                 Form objForm = new Form
                 {
                     SiteId = objSite.SiteId,
@@ -180,38 +184,40 @@ namespace CaptivePortal.API.Controllers
                 };
                 db.Form.Add(objForm);
                 db.SaveChanges();
+                var formId = objForm.FormId;
 
-                string dynamicHtmlCode = null;
-                if (dataType.Length != 0)
+                //Alter table with generating dynamic html code.
+                //string dynamicHtmlCode = null;
+                if (fieldLabel.Length > 1)
                 {
                     int i;
                     for (i = 0; i < dataType.Length; i++)
                     {
                         var datatype = dataType[i];
-                        var controltype = controlType[i];
+                        //var controltype = controlType[i];
                         var fieldlabel = fieldLabel[i];
                         string sqlString = "alter table [Users] add" + " " + fieldlabel + " " + datatype + " " + "NULL";
                         db.Database.ExecuteSqlCommand(sqlString);
-                        StringBuilder sb = new StringBuilder(string.Empty);
+                        //StringBuilder sb = new StringBuilder(string.Empty);
 
-                        FormControl objFormControl = new FormControl();
-                        objFormControl.ControlType = controltype;
-                        objFormControl.LabelName = fieldlabel;
-                        objFormControl.FormId = objForm.FormId;
-                        db.FormControl.Add(objFormControl);
-                        db.SaveChanges();
-                        //div start
-                        sb.Append("<div>");
-                        sb.Append("<input type=" + '"' + controltype + '"' + " " + "id=" + '"' + fieldlabel + '"' + " " + "name=" + '"' + fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + fieldlabel + '"' + "/>");
-                        //div end
-                        sb.Append("</div>");
+                        //FormControl objFormControl = new FormControl();
+                        //objFormControl.ControlType = controltype;
+                        //objFormControl.LabelName = fieldlabel;
+                        //objFormControl.FormId = objForm.FormId;
+                        //db.FormControl.Add(objFormControl);
+                        //db.SaveChanges();
+                        ////div start
+                        //sb.Append("<div>");
+                        //sb.Append("<input type=" + '"' + controltype + '"' + " " + "id=" + '"' + fieldlabel + '"' + " " + "name=" + '"' + fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + fieldlabel + '"' + "/>");
+                        ////div end
+                        //sb.Append("</div>");
 
-                        dynamicHtmlCode += sb.ToString();
+                        //dynamicHtmlCode += sb.ToString();
                     }
                 }
-                objForm.HtmlCodeForLogin = dynamicHtmlCode;
-                db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
+                //objForm.HtmlCodeForLogin = dynamicHtmlCode;
+                //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
+                //db.SaveChanges();
                 return Content("Configured successfully!");
             }
             catch (Exception ex)
@@ -220,86 +226,11 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc)
-        {
-            if(inputData.CompanyName==null)
-            {
-                Form objForm = new Form
-                {
-                    FormId=inputData.FormId,
-                    SiteId = inputData.SiteId,
-                    LoginPageTitle = inputData.LoginPageTitle,
-                    RegistrationPageTitle=inputData.RegistrationPageTitle
-                };
-                db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-            }
-            return Content("hi");
-        }
-
-
-       [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult UploadFile(FormCollection fc)
-        {
-            if (Request.Files.Count > 0)
-            {
-                try
-                {
-                    //  Get all files from Request object  
-                    HttpFileCollectionBase files = Request.Files;
-                    HttpPostedFileBase file = Request.Files[0];
-                    string fname;
-
-                    // Checking for Internet Explorer  
-                    if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
-                    {
-                        string[] testfiles = file.FileName.Split(new char[] { '\\' });
-                        fname = testfiles[testfiles.Length - 1];
-                    }
-                    else
-                    {
-                        fname = file.FileName;
-                    }
-
-                    // Get the complete folder path and store the file inside it.  
-                    fname = Path.Combine(Server.MapPath("~/Images/" + fc["fanSpaceAppId"]));
-                    string completePath = fname + "\\" + file.FileName;
-                    CheckDirectory(fname);
-                    file.SaveAs(completePath);
-
-                    // Returns message that successfully uploaded  
-                    return Json("File Uploaded Successfully!");
-                }
-                catch (Exception ex)
-                {
-                    return Json("Error occurred. Error details: " + ex.Message);
-                }
-            }
-            else
-            {
-                return Json("No files selected.");
-            }
-        }
-
-        public void CheckDirectory(string folderPath)
-        {
-            if (!System.IO.Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-        }
-
-
-        [HttpPost]
-        public ActionResult AddField(string inputField, string inputType)
-        {
-            string sqlString = "alter table [Users] add" + " " + inputField + " " + inputType + " " + "NULL";
-            db.Database.ExecuteSqlCommand(sqlString);
-            return Content("Field Added!!");
-        }
-
-
+        /// <summary>
+        /// Show existing site details.
+        /// </summary>
+        /// <returns></returns>
+        /// Get:Site details.
         public ActionResult SiteDetails()
         {
             var lstSite = (from item in db.Site.ToList()
@@ -313,15 +244,11 @@ namespace CaptivePortal.API.Controllers
             return View(lstSite);
         }
 
-
-        [HttpGet]
-        public JsonResult GetCompanyAndOrganistaionDetails()
-        {
-            var companyResult = db.Company.Select(x => x.CompanyName).ToList();
-
-            return Json(companyResult);
-        }
-
+        /// <summary>
+        /// Populate Site details or form details of existing site Or create new org/comp/field/.
+        /// </summary>
+        /// <param name="SiteId"></param>
+        /// <returns></returns>
         public ActionResult ConfigureSite(int SiteId)
         {
             try
@@ -332,7 +259,7 @@ namespace CaptivePortal.API.Controllers
                                         Text = item.CompanyName,
                                         Value = item.CompanyId.ToString(),
                                     };
-
+                List<string> columnsList = db.Database.SqlQuery<string>("select column_name from information_schema.columns where table_name = 'users'").ToList();
                 FormViewModel objViewModel = new FormViewModel();
 
                 Form objForm = db.Form.FirstOrDefault(m => m.SiteId == SiteId);
@@ -345,12 +272,11 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.IsPasswordRequire = objForm.IsPasswordRequire;
                 objViewModel.LoginPageTitle = objForm.LoginPageTitle;
                 objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
+                objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {
                     objViewModel.CompanyDdl = (int)db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId;
                 }
-               
-
                 objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
                 return View(objViewModel);
             }
@@ -360,12 +286,283 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
+        /// <summary>
+        /// On Update site Detail Submit
+        /// </summary>
+        /// <param name="inputData"></param>
+        /// <param name="fc"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public void UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc)
+        {
+            if (inputData.CompanyName == null)
+            {
+                //form
+                Form objForm = new Form
+                {
+                    FormId = inputData.FormId,
+                    SiteId = inputData.SiteId,
+                    LoginPageTitle = inputData.LoginPageTitle,
+                    RegistrationPageTitle = inputData.RegistrationPageTitle
+                };
+                db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
 
+        [HttpPost]
+        public JsonResult SaveFormControls(FormControlViewModel model)
+        {
+            try
+            {
+                Form objForm = db.Form.FirstOrDefault(m => m.FormId == model.FormId);
+                StringBuilder sb = new StringBuilder(String.Empty);
+                if (model.controlType == "dropdown")
+                {
+                    sb.Append("<div>");
+                    sb.Append("<select name=" + '"' + model.fieldlabel + '"' + ">");
+                    foreach (var item in model.arrayValue)
+                    {
+                        sb.Append("<option value=" + '"' + item + '"' + ">" + item + "</option>");
+                    }
+                    sb.Append("</select>");
+                    sb.Append("</div>");
+                }
+                else if (model.controlType == "checkbox")
+                {
+                    sb.Append("<div>");
+                    foreach (var item in model.arrayValue)
+                    {
+                        sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
+                    }
+                    sb.Append("</div>");
+                }
+                else if (model.controlType == "radio")
+                {
+                    sb.Append("<div>");
+                    foreach (var item in model.arrayValue)
+                    {
+                        sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
+                    }
+                    sb.Append("</div>");
+                }
+                else
+                {
+                    //div start
+                    sb.Append("<div>");
+                    sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + model.fieldlabel + '"' + "/>");
+                    sb.Append("</div>");
+                    //div end
+                }
+
+                FormControl objFormControl = new FormControl();
+                objFormControl.ControlType = model.controlType;
+                objFormControl.LabelName = model.fieldlabel;
+                objFormControl.FormId = model.FormId;
+                objFormControl.HtmlString = sb.ToString();
+                db.FormControl.Add(objFormControl);
+
+                //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
+                //objForm.HtmlCodeForLogin = sb.ToString();
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return Json("Failure");
+            }
+            return Json("Success");
+        }
+
+        [HttpGet]
+        public ActionResult DeleteFormControl(int Id)
+        {
+            FormControl objFormControl = null;
+            Form objForm = null;
+            try
+            {
+                objFormControl = db.FormControl.FirstOrDefault(m => m.FormControlId == Id);
+                objForm = db.FormControl.FirstOrDefault(m => m.FormControlId == Id).Forms;
+                db.FormControl.Remove(objFormControl);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return RedirectToAction("ConfigureSite", new { SiteId = objForm.SiteId });
+        }
+
+        //public ActionResult FormLogin()
+        //{
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public ActionResult OnFormLoginSubmit(FormCollection form)
+        //{
+        //    Site result = db.Site.First();
+
+        //    Form objForm = new Form
+        //    {
+        //        FormName = form["formName"],
+        //        SiteId = result.SiteId
+        //    };
+        //    db.Form.Add(objForm);
+        //    var res = db.SaveChanges();
+        //    var id = objForm.FormId;
+
+        //    FormControl objFormControl = new FormControl
+        //    {
+        //        FormId = id,
+        //        ControlType = form["controlType"],
+        //        LabelName = form["labelName"],
+        //        SiteUrl = form["siteUrl"]
+        //    };
+        //    db.FormControl.Add(objFormControl);
+        //    db.SaveChanges();
+        //    return Content("hi");
+        //}
 
         // GET: AdminIndex
         public ActionResult Index()
         {
+            //GetFormDataController objGetFormDataController = new GetFormDataController();
+            //var result = objGetFormDataController.GetSiteDetailsTest();
+            //string orgCompList=result.Replace(@"\", "");
+            //ViewData["OrgCompList"] = result;
             return View();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult UserDetails()
+        {
+            var userList = (from item in db.Users.ToList()
+                           select new UserViewModel()
+                           {
+                               UserId=item.UserId,
+                               UserName=item.UserName,
+                               FirstName=item.FirstName,
+                               LastName=item.LastName,
+                               CreationDate=item.CreationDate
+                           }).ToList();
+            return View(userList);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <returns></returns>
+        public ActionResult UserWithProfile(int UserId)
+        {
+            return View();
+        }
+
+        //#region
+        //private void InsertIntoOrganisation(FormViewModel inputData)
+        //{
+        //    try
+        //    {
+        //        Organisation objOrganisation = new Organisation
+        //        {
+        //            OrganisationName = inputData.OrganisationName
+        //        };
+        //        db.Organisation.Add(objOrganisation);
+        //        db.SaveChanges();
+        //        var orgId = objOrganisation.OrganisationId;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+        //private void InsertIntoCompany(FormViewModel inputData)
+        //{
+        //    try
+        //    {
+        //        Company objCompany = new Company
+        //        {
+        //            CompanyName = inputData.CompanyName,
+        //            //OrganisationId = orgId,
+        //        };
+        //        db.Company.Add(objCompany);
+        //        db.SaveChanges();
+        //        var compId = objCompany.CompanyId;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+        //private void InsertIntoSite(FormViewModel inputData)
+        //{
+        //    try
+        //    {
+        //        Site objSite = new Site
+        //        {
+        //            SiteName = inputData.SiteName,
+        //            //CompanyId = compId
+        //        };
+        //        db.Site.Add(objSite);
+        //        db.SaveChanges();
+        //        var siteId = objSite.SiteId;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+        //private JsonResult InsertIntoForm(FormViewModel inputData)
+        //{
+        //    try
+        //    {
+        //        Form objForm = new Form
+        //        {
+        //            SiteId = siteId,
+        //            BannerIcon = imagepath,
+        //            BackGroundColor = inputData.BackGroundColor,
+        //            LoginWindowColor = inputData.LoginWindowColor,
+        //            IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
+        //            LoginPageTitle = inputData.LoginPageTitle,
+        //            RegistrationPageTitle = inputData.RegistrationPageTitle,
+        //            //HtmlCodeForLogin = dynamicHtmlCode
+        //        };
+        //        db.Form.Add(objForm);
+        //        db.SaveChanges();
+        //        formId = objForm.FormId;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    return Json(formId);
+        //}
+
+        //private void UpadteForm(FormViewModel inputData)
+        //{
+        //    try
+        //    {
+        //        Form objForm = new Form
+        //        {
+        //            FormId = inputData.FormId,
+        //            SiteId = inputData.SiteId,
+        //            LoginPageTitle = inputData.LoginPageTitle,
+        //            RegistrationPageTitle = inputData.RegistrationPageTitle
+        //        };
+        //        db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
+        //        db.SaveChanges();
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+        //#endregion
     }
 }

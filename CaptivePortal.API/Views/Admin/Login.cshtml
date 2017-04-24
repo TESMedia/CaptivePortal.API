@@ -23,7 +23,7 @@
 </head>
 
 
-<body class="logged-out   env-production windows  session-authentication page-responsive min-width-0" style="max-width: 100%;overflow-x: hidden;overflow-y:hidden">
+<body class="logged-out   env-production windows  session-authentication page-responsive min-width-0" style="max-width: 100%;overflow-x: hidden;overflow-y:hidden" onload="myFunction()">
     <div class="header header-logged-out width-full" role="banner">
         <div class="container clearfix width-full">
             <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,icon:logo-wordmark">
@@ -46,7 +46,7 @@
     </div>
     <div role="main" class="main-content" style="margin-top:-40px;">
         <div class="auth-form p-3" id="login">
-            @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
             {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -76,3 +76,15 @@
     </div>
 </body>
 </html>
+
+<script type="text/javascript">
+    //function myFunction() {
+    //    var data = { SiteId: 2 }
+    //    $.post("/GenerateHtmlCode/GetRegisterHtmlDynamicCode/", data, function (e) {
+    //        $('form#formid').append(e);
+    //    });
+    //}
+</script>
+
+
+

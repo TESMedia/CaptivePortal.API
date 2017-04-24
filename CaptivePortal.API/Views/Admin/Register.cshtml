@@ -4,46 +4,64 @@
 }
 
 <h2>Register</h2>
+<body onload="myFunction()">
+    @using (Html.BeginForm("Register", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+    {
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="FirstName">First Name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="text" placeholder="Enter first name">
+                </div>
+            </div>
 
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="FirstName">Last Name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="text" placeholder="Enter last name">
+                </div>
+            </div>
 
-<form class="form-horizontal">
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="FirstName">First Name:</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="text" placeholder="Enter first name">
-        </div>
-    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="email">Email:</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="email" placeholder="Enter email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="pwd">Password:</label>
+                <div class="col-sm-10">
+                    <input type="password" class="form-control" id="pwd" placeholder="Enter password">
+                </div>
+            </div>
+            <div class="form-group">
+                <div id="divend">
 
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="FirstName">Last Name:</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="text" placeholder="Enter last name">
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="email">Email:</label>
-        <div class="col-sm-10">
-            <input type="email" class="form-control" id="email" placeholder="Enter email">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="pwd">Password:</label>
-        <div class="col-sm-10">
-            <input type="password" class="form-control" id="pwd" placeholder="Enter password">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <div class="checkbox">
-                <label><input type="checkbox"> Remember me</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="checkbox">
+                        <label><input type="checkbox"> Remember me</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-            <button type="submit" class="btn btn-default">Submit</button>
-        </div>
-    </div>
-</form>
+    }
+</body>
 
+
+<script type="text/javascript">
+    function myFunction() {
+        var data = { SiteId: 1004 }
+        $.post("/GetFormData/GetRegisterHtmlDynamicCode/", data, function (e) {
+            $('form#formid').append(e);
+        });
+    }
+
+</script>

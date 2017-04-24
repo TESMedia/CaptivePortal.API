@@ -16,6 +16,7 @@ namespace CaptivePortal.API.Models
         public string ControlType { get; set; }
         public string LabelName { get; set; }
         public string SiteUrl { get; set; }
+        public string HtmlString { get; set; }
 
         [ForeignKey("FormId")]
         public virtual Form Forms { get; set; }
