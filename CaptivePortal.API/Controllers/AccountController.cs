@@ -52,6 +52,8 @@ namespace CaptivePortal.API.Controllers
                     _objUser.Term_conditions = ConfigurationManager.AppSettings["Version"];
                     _objUser.promotional_email = objRegisterModel.promotional_email;
                     _objUser.AutoLogin = Convert.ToBoolean(objRegisterModel.AutoLogin);
+                    _objUser.MacAddress = objRegisterModel.MacAddress;
+                    
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table
@@ -78,9 +80,10 @@ namespace CaptivePortal.API.Controllers
                     ObjReturnModel.Message = "Success";
                     dbContextTransaction.Commit();
                     JavaScriptSerializer objSerializer = new JavaScriptSerializer();
-                    var response = Request.CreateResponse(HttpStatusCode.Moved);
-                    response.Headers.Location = new Uri("http://planetsbrainvm.cloudapp.net/login.aspx");
-                    return response;
+                    return new HttpResponseMessage
+                    {
+                        Content = new StringContent(objSerializer.Serialize(ObjReturnModel))
+                    };
                 }
                 catch (Exception ex)
                 {
@@ -92,48 +95,7 @@ namespace CaptivePortal.API.Controllers
 
         }
 
-        //[HttpPost]
-        //[Route("Login")]
-        //public HttpResponseMessage Login(LoginViewModel objLoginModel)
-        //{
-        //    try
-        //    {
-        //        var args = new string[4];
-        //        args[0] = "122.166.202.201";
-        //       // args[0] = "192.168.1.12";
-        //        args[1] = "testing123";
-        //        args[2] = objLoginModel.UserName;
-        //        args[3] = objLoginModel.UserPassword;
-
-        //        if (args.Length != 4)
-        //        {
-        //            Authenticate.ShowUsage();
-        //        }
-
-        //        try
-        //        {
-        //            log.Info("enter login Authenticate()");
-        //            Authenticate.Authentication(args).Wait();
-
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            log.Error(e.Message);
-        //            throw (e);
-
-
-        //        }
-
-        //        return new HttpResponseMessage()
-        //        {
-        //            Content = new StringContent("success")
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+       
 
 
 
