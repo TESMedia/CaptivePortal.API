@@ -1,8 +1,8 @@
 ﻿@using CaptivePortal.API.Models
 @model IEnumerable<UserViewModel>
-    @{ 
-        Layout = null;
-    }
+@{
+    Layout = null;
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -96,38 +96,76 @@
                                                     </tr>
                                                 </thead>
                                                 @if (Model != null)
-                                                    {
-                                                        <tbody class="pointer" id="SiteDetails">
-                                                            @foreach (var item in Model)
-                                                            {
-                                                                <tr>
-                                                                    <td style="display:none;" id="SiteId">
-                                                                        @Html.DisplayFor(modelItem => item.UserId)
-                                                                    </td>
-                                                                    <td>
+                                                {
+                                                    <tbody class="pointer" id="SiteDetails">
+                                                        @foreach (var item in Model)
+                                                        {
+                                                            <tr>
+                                                                <td style="display:none;" id="SiteId">
+                                                                    @Html.DisplayFor(modelItem => item.UserId)
+                                                                </td>
+                                                                <td>
+                                                                    @*<input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">*@
+                                                                    @*<a href="@Url.Action("UserWithProfile","Admin",new { UserId= item.UserId})" type="checkbox">Edit</a>*@
+                                                                    <input type="checkbox" onclick="location.href='@Url.Action("UserWithProfile","Admin",new { UserId=item.UserId})'" />
 
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.UserName)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.FirstName)
-                                                                    </td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.LastName)
-                                                                    </td>
-                                                                    <td>
-                                                                    <td>
-                                                                        @Html.DisplayFor(modelItem => item.CreationDate)
-                                                                    </td>
-                                                                    
-                                                                </tr>
-                                                            }
-                                                        </tbody>
-                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.UserName)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.FirstName)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.LastName)
+                                                                </td>
+                                                                <td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.CreationDate)
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                }
                                             </table>
 
                                         </div>
+                                    </div>
+
+                                    <div>
+                                        @*@Html.Partial("~/Views/Shared/_UserWithProfile.cshtml")*@
+                                        @*<ul class="nav nav-tabs nav-justified">
+                                                <li class="active"><a href="#">User Details</a></li>
+                                                <li><a href="#">Password</a></li>
+                                                <li><a href="#">Devices</a></li>
+
+                                            </ul>*@
+
+                                        <div role="tabpanel">
+                                            <ul class="nav nav-tabs nav-justified" role="tablist" >
+                                                <li role="presentation" class="active"><a href="#UserProfile" aria-controls="UserProfile" role="tab" data-toggle="tab">User Details</a></li>
+                                                <li role="presentation"><a href="#UserPassword" aria-controls="UserPassword" role="tab" data-toggle="tab">Password</a></li>
+                                                <li role="presentation"><a href="#Device" aria-controls="Devices" role="tab" data-toggle="tab">Devices</a></li>
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div role="tabpanel" class="tab-pane fade in active" id="UserProfile">
+                                                    @using (Ajax.BeginForm("UserWithProfile", "Admin", new AjaxOptions { UpdateTargetId = "staff" }, new { id = "form-staff" }))
+                                                    { @Html.Partial("~/Views/Shared/_UserWithProfile.cshtml")                                                     }
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane fade" id="UserPassword">
+                                                    @using (Ajax.BeginForm("UpdatePassword", "Admin", new AjaxOptions { UpdateTargetId = "experience" }, new { id = " form-experience" }))
+                                                    {@Html.Partial("~/Views/Shared/_UpdatePassword.cshtml") }
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane fade" id="Device">
+                                                    @using (Ajax.BeginForm("MacAddress", "Admin", new AjaxOptions { UpdateTargetId = "experience" }, new { id = " form-experience" }))
+                                                    {@Html.Partial("~/Views/Shared/_Devices.cshtml") }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
                                     </div>
                                 </div>
                             </div>
@@ -182,3 +220,19 @@
 
 </body>
 </html>
+<script type="text/javascript">
+    var userId = document.getElementById("").value;
+    function UserWithProfile() {
+        var data = { UserId: userId }
+        $.post("/Admin/UserWithProfile/", data, function (e) {
+            $("#imageLogo").attr('src', e.BannerIcon)
+            $("#titleID").text(e.LoginPageTitle);
+            if (e.IsPasswordRequire == false) {
+                $('#divPas').addClass("hidden");
+            }
+            else {
+                $('#divPas').removeClass("hidden");
+            }
+        });
+    }
+</script>

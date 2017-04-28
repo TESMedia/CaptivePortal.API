@@ -22,7 +22,7 @@ namespace CaptivePortal.API.Models
         public bool IsPasswordRequire { get; set; }
         public string LoginPageTitle { get; set; }
         public string RegistrationPageTitle { get; set; }
-        public string HtmlCodeForLogin { get; set; }
+       
        
 
         [ForeignKey("SiteId")]

@@ -121,32 +121,62 @@
                                                 </div>
                                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxOrganisation" onclick="showOrganistationTextBox()" name="CreateNewOrganisation" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
+
+                                            <div class="form-group">
+                                                <label for="auto-login" class="control-label col-md-3 col-sm-3 col-xs-12">Auto-login users:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="term-condition" class="control-label col-md-3 col-sm-3 col-xs-12">Terms & Conditions:</label>
+                                                <div class="col-md-1">
+                                                    <input id="term-condition" class="form-control col-md-1" type="text" name="Term_conditions">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="term-condition" class="form-control col-md-3" type="text" name="Term_conditions">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="term-condition" type="file" name="Term_conditions">
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
-                                            <div class="form-group">
+                                            @*<div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @*<input type="file" name="BannerIcon" id="banner-icon" accept="image/*">*@
+                                                    <input type="file" name="BannerIcon"  accept="image/*" id="imgLogo" >
+                                                    <button onclick="UploadFile()"> UploadFile</button>
+                                                    <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
+                                                </div>
+                                            </div>*@
+                                            <div class="form-group">
+                                                <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                <div class="col-md-6">
+                                                    <input type="file" name="BannerIcon" id="banner-icon" accept="image/*">
+                                                </div>
+                                                <div class="col-md-3">
                                                     <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="bgColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
+                                                    <input id="bgColor" class="form-control col-md-7 col-xs-12" type="color" name="BackGroundColor" style="width:70px;">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Login window colour:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="loginColor" class="form-control col-md-7 col-xs-12" type="color" name="middle-name" style="width:70px;">
+                                                    <input id="loginColor" class="form-control col-md-7 col-xs-12" type="color" name="LoginWindowColor" style="width:70px;">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="IsPasswordRequire" style="width:30px;">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbPwd" name="IsPasswordRequire" style="width:30px;">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -180,9 +210,9 @@
                                                                         @Html.DropDownListFor(Model => item.ControlType, new SelectList(ControlTypeList as IEnumerable<SelectListItem>, "Value", "Text", item.ControlType)
                                                              , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })
                                                                     </div>
-                                                                    <div class="col-md-1">
-
-                                                                    </div>
+                                                                    @*<div class="col-md-1">
+                                                                        <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">
+                                                                    </div>*@
                                                                     @*<button type="button" class="btn btn-danger" id="btnDelete">
                                                                              <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
                                                                         </button>*@
@@ -228,6 +258,9 @@
                                                                                         <option value=dropdown>dropdown</option>
                                                                                         <option value=radio>radio</option>
                                                                                     </select>
+                                                                                </div>
+                                                                                <div class="col-md-1">
+                                                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand"  value="required" style="width:30px;">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-2">
@@ -326,6 +359,17 @@
 </html>
 <script type="text/javascript">
 
+
+    $('#checkbox-value').text($('#cbPwd').val());
+    $("#cbPwd").on('change', function () {
+        if ($(this).is(':checked')) {
+            $(this).attr('value', 'true');
+        } else {
+            $(this).attr('value', 'false');
+        }
+
+    });
+
     function showCompanyTextBox() {
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
@@ -408,14 +452,22 @@
     //    }
     //});
 
-
+    
     $("#btnSave").on("click", function () {
+        //var checkedValue = document.querySelector('.form-control:checked').value;
+        if(document.getElementById("checkbox1").checked) {
+            var checkedValue=true;
+        }
+        else
+        {
+            var checkedValue=false;
+        }
+
         var arrData = [];
         $.each($("input[name='optionval']"), function () {
             arrData.push($(this).val());
         });
-        alert(arrData);
-        var data= {arrayValue:arrData,FormId:$("#FormId").val(),controlType:$("#controlType").val(),fieldlabel:$("#fieldlabel").val()}
+        var data= {arrayValue:arrData,FormId:$("#FormId").val(),controlType:$("#controlType").val(),fieldlabel:$("#fieldlabel").val(),chkOptOrMand:checkedValue}
         $.post("/Admin/SaveFormControls/",data, function (e) {
             location.reload();
         });

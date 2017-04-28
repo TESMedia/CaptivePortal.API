@@ -1,66 +1,300 @@
 ﻿
 @{
-    ViewBag.Title = "Register";
+    Layout = null;
 }
 
-<h2>Register</h2>
-<body onload="myFunction()">
-    @using (Html.BeginForm("Register", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
-    {
-        <div class="form-horizontal">
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="FirstName">First Name:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="text" placeholder="Enter first name">
-                </div>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="FirstName">Last Name:</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="text" placeholder="Enter last name">
+    <title>CaptivePortal </title>
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="../vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="../vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- bootstrap-wysiwyg -->
+    <link href="../vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="../vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="../vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+    <!-- starrr -->
+    <link href="../vendors/starrr/dist/starrr.css" rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link href="../vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+</head>
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav>
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
+                    </nav>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="email">Email:</label>
-                <div class="col-sm-10">
-                    <input type="email" class="form-control" id="email" placeholder="Enter email">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-sm-2" for="pwd">Password:</label>
-                <div class="col-sm-10">
-                    <input type="password" class="form-control" id="pwd" placeholder="Enter password">
-                </div>
-            </div>
-            <div class="form-group">
-                <div id="divend">
-
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <div class="checkbox">
-                        <label><input type="checkbox"> Remember me</label>
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main">
+                <div class="">
+                    <div class="page-title">
+                        <div class="title_left">
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </div>
-            </div>
-        </div>
-    }
-</body>
+                    <div class="clearfix"></div>
+                    @*@using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+                        {*@
+                    <div class="form-horizontal">
 
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="FirstName">Username:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter user name">
+                            </div>
+                            <label class="control-label col-sm-2" for="FirstName">Address Line 1:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter user name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="FirstName">Forename:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter first name">
+                            </div>
+                            <label class="control-label col-sm-2" for="FirstName">Address Line 2:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter first name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="FirstName">Surname:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter last name">
+                            </div>
+                            <label class="control-label col-sm-2" for="FirstName">County:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="Enter last name">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="pwd">Password:</label>
+                            <div class="col-md-3">
+                                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="UserPassword">
+                            </div>
+                            <label class="control-label col-sm-2" for="pwd">Postcode:</label>
+                            <div class="col-md-3">
+                                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="UserPassword">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="mobileNumber">Mobile Number:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="mobileNumber" placeholder="Enter mobile number" name="MobileNumber">
+                            </div>
+                            <label class="control-label col-sm-2" for="mobileNumber">Country:</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="mobileNumber" placeholder="Enter mobile number" name="MobileNumber">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="email">Email:</label>
+                            <div class="col-md-3">
+                                <input type="email" class="form-control" id="email" placeholder="Enter email" name="UserName">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="gender">Gender:</label>
+                            <div class="col-md-3">
+                                <select class="form-control" name="dataType">
+                                    <option value=0>Select Gender</option>
+                                    <option value=1>Male</option>
+                                    <option value=2>Female</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="ageRange">Age Range:</label>
+                            <div class="col-md-3">
+                                <select class="form-control" name="dataType">
+                                    <option value=0>Select age range</option>
+                                    <option value=1>9-19</option>
+                                    <option value=2>19-29</option>
+                                    <option value=3>29-39</option>
+                                    <option value=4>39-49</option>
+                                    <option value=4>49-59</option>
+                                    <option value=4>59-69</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="birthDate">Birth Date:</label>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="birthDate" name="BirthDate">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="auto-login" class="control-label col-sm-2">Auto-login users:</label>
+                            <div class="col-md-3">
+                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+
+                        @*<div class="form-group">
+                                <label class="control-label col-sm-2" for="macAdd">Mac Address:</label>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="macAddress" placeholder="Enter mac address" name="MacAddress">
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="button" id="macAddress" class="btn btn-success" value="Add Mac Address" />
+                                </div>
+                            </div>*@
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="control-group" id="fields">
+                                    <label class="control-label col-sm-2" for="field1">Mac Address:</label>
+                                    <div class="controls">
+                                        <form role="form" autocomplete="off">
+                                            <div class="entry input-group col-xs-3">
+                                                <input class="form-control" name="fields[]" type="text" placeholder="Type something" />
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-success btn-add" type="button">
+                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="button" id="createUser" class="btn btn-success pull-right" onclick="CreateUser()" value="Create User" />
+                            </div>
+                        </div>
+                    </div>
+                    @*}*@
+                </div>
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            <footer>
+
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+    </div>
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- FastClick -->
+    <script src="../vendors/fastclick/lib/fastclick.js"></script>
+    <!-- NProgress -->
+    <script src="../vendors/nprogress/nprogress.js"></script>
+    <!-- bootstrap-progressbar -->
+    <script src="../vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <!-- iCheck -->
+    <script src="../vendors/iCheck/icheck.min.js"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="../vendors/moment/min/moment.min.js"></script>
+    <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <!-- bootstrap-wysiwyg -->
+    <script src="../vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+    <script src="../vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
+    <script src="../vendors/google-code-prettify/src/prettify.js"></script>
+    <!-- jQuery Tags Input -->
+    <script src="../vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
+    <!-- Switchery -->
+    <script src="../vendors/switchery/dist/switchery.min.js"></script>
+    <!-- Select2 -->
+    <script src="../vendors/select2/dist/js/select2.full.min.js"></script>
+    <!-- Parsley -->
+    <script src="../vendors/parsleyjs/dist/parsley.min.js"></script>
+    <!-- Autosize -->
+    <script src="../vendors/autosize/dist/autosize.min.js"></script>
+    <!-- jQuery autocomplete -->
+    <script src="../vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+    <!-- starrr -->
+    <script src="../vendors/starrr/dist/starrr.js"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+</body>
+</html>
 
 <script type="text/javascript">
-    function myFunction() {
-        var data = { SiteId: 1004 }
-        $.post("/GetFormData/GetRegisterHtmlDynamicCode/", data, function (e) {
-            $('form#formid').append(e);
+    $(function () {
+        $(document).on('click', '.btn-add', function (e) {
+            e.preventDefault();
+
+            var controlForm = $('.controls form:first'),
+                currentEntry = $(this).parents('.entry:first'),
+                newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+            newEntry.find('input').val('');
+            controlForm.find('.entry:not(:last) .btn-add')
+                .removeClass('btn-add').addClass('btn-remove')
+                .removeClass('btn-success').addClass('btn-danger')
+                .html('<span class="glyphicon glyphicon-minus"></span>');
+        }).on('click', '.btn-remove', function (e) {
+            $(this).parents('.entry:first').remove();
+
+            e.preventDefault();
+            return false;
+        });
+    });
+
+
+    $('#checkbox-value').text($('#checkbox1').val());
+    $("#checkbox1").on('change', function () {
+        if ($(this).is(':checked')) {
+            $(this).attr('value', 'true');
+        } else {
+            $(this).attr('value', 'false');
+        }
+
+    });
+
+
+
+    function CreateUser() {
+        var data = {
+            Email: $('#email').val(),
+            UserPassword: $('#pwd').val(),
+            AutoLogin: $('#checkbox1').val()
+        }
+        $.post("http://localhost:55205/api/Account/register", data, function (e) {
         });
     }
 

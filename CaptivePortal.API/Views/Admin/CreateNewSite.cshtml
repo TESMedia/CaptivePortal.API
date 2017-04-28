@@ -103,15 +103,31 @@
                                                 </div>
                                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkboxOrganisation" onclick="showOrganistationTextBox()" name="CreateNewOrganisation" style="width:30px;float: right;margin-right: 15%;">
                                             </div>
+
+                                            <div class="form-group">
+                                                <label for="auto-login" class="control-label col-md-3 col-sm-3 col-xs-12">Auto-login users:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="term-condition" class="control-label col-md-3 col-sm-3 col-xs-12">Terms & Conditions:</label>
+                                                <div class="col-md-1">
+                                                    <input id="term-condition" class="form-control col-md-1" type="text" name="Term_conditions">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="term-condition" class="form-control col-md-3" type="text" name="Term_conditions">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="term-condition" type="file" name="Term_conditions">
+                                                </div>
+                                            </div>
+
                                             <div class="form-group">
                                                 <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
-                                                @*<div class="form-group">
-                                                        <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            <input id="banner-icon" class="form-control col-md-7 col-xs-12" type="text" name="banner-icon">
-                                                        </div>
-                                                    </div>*@
+                                              
 
                                                 <div class="form-group">
                                                     <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
@@ -120,14 +136,7 @@
                                                     </div>
                                                 </div>
 
-                                                @*<div class="form-group">
-                                                        <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                                            @Html.TextBoxFor(model => model.BannerIcon, new { type = "text", id = "textBannerIcon", name = "textBannerIcon", @class = "form-control col-xs-4 col-sm-4 col-lg-4" })
-                                                            @Html.TextBoxFor(model => model.BannerIcon, new { type = "file", id = "fileBannerIcon", name = "fileBannerIcon",@class="hidden", style = "height:28px;color:black;", accept = "image/*", onchange = "document.getElementById('textBannerIcon').value = this.value;UploadImage(this.id)" })
-                                                        </div>
-                                                        <input type="button" value="Upload" id="uploadPicture" onclick="document.getElementById('fileBannerIcon').click()">
-                                                    </div>*@
+                                             
                                                 <div class="form-group">
                                                     <label for="background-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -143,16 +152,11 @@
                                                 <div class="form-group">
                                                     <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="IsPasswordRequire" style="width:30px;">
+                                                        <input class="form-control col-md-7 col-xs-12" type="checkbox" id="IsPasswordRequire" name="IsPasswordRequire" style="width:30px;">
                                                     </div>
                                                 </div>
 
-                                                @*<div class='radios'>
-                                                        <label title="item1" style="margin-left: 11%;">
-                                                            Require Password:<input type="checkbox" value="0" /> <img />
-                                                        </label>
-                                                    </div>
-                                                    <br />*@
+                                              
                                                 <div class="form-group">
                                                     <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -339,6 +343,18 @@
         }
 
     });
+
+    $('#checkbox-value').text($('#IsPasswordRequire').val());
+    $("#IsPasswordRequire").on('change', function () {
+        if ($(this).is(':checked')) {
+            $(this).attr('value', 'true');
+        } else {
+            $(this).attr('value', 'false');
+        }
+
+    });
+
+    
     //$("#plus").on("click", function () {
     //    $("#txtDiv").append('<div class="col-md-2 col-sm-2 col-lg-2"> <input class="form-control text-box single-line" id="optionval" name="optionval" type="text"><span class="field-validation-valid text-danger" data-valmsg-for="optionval" data-valmsg-replace="true"></span></div>');
     //});

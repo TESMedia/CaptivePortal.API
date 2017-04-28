@@ -51,6 +51,7 @@ namespace CaptivePortal.API.Controllers
                     _objUser.Age = objRegisterModel.Age;
                     _objUser.Term_conditions = ConfigurationManager.AppSettings["Version"];
                     _objUser.promotional_email = objRegisterModel.promotional_email;
+                    _objUser.AutoLogin = Convert.ToBoolean(objRegisterModel.AutoLogin);
                     db.Users.Add(_objUser);
 
                     //save  user address in Address table

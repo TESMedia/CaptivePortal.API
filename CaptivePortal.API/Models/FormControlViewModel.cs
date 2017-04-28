@@ -11,5 +11,6 @@ namespace CaptivePortal.API.Models
         public string controlType { get; set; }
         public string[] arrayValue { get; set; }
         public int FormId { get; set; }
+        public string chkOptOrMand { get; set; }
     }
 }

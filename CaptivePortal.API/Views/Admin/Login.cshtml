@@ -27,11 +27,12 @@
     <div class="header header-logged-out width-full" role="banner">
         <div class="container clearfix width-full">
             <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,icon:logo-wordmark">
-                <img src="~/Images/wifi-297697_1280.png" style="height:50px;width:50px;" />
+                <img src="~/Images/wifi-297697_1280.png" style="height:50px;width:50px;" id="imageLogo" />
             </a>
         </div>
         <div class="auth-form-header">
-            <h1>Sign in to CaptivePortal</h1>
+            @*<h1 id="titleID"></h1>*@
+            <h1>Login to Captive Portal</h1>
         </div>
         <div class="auth-form-header" style="left:40%;">
             @if (@TempData["SuccessReset"] != null)
@@ -56,11 +57,13 @@
                     </label>
                     @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
                     @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                    <label for="password">
-                        Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
-                    </label>
-                    @Html.TextBoxFor(m => m.Password, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
-                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    <div class="divPas" id="divPas">
+                        <label for="password" id="pwd">
+                            Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
+                        </label>
+                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>  
                     <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" />
                 </div>
             }
@@ -79,9 +82,16 @@
 
 <script type="text/javascript">
     //function myFunction() {
-    //    var data = { SiteId: 2 }
-    //    $.post("/GenerateHtmlCode/GetRegisterHtmlDynamicCode/", data, function (e) {
-    //        $('form#formid').append(e);
+    //    var data = { SiteId: 1010 }
+    //    $.post("/GetFormData/GetLoginFormData/", data, function (e) {
+    //        $("#imageLogo").attr('src', e.BannerIcon)
+    //        $("#titleID").text(e.LoginPageTitle);
+    //        if (e.IsPasswordRequire == false) {
+    //            $('#divPas').addClass("hidden");
+    //        }
+    //        else {
+    //            $('#divPas').removeClass("hidden");
+    //        }
     //    });
     //}
 </script>

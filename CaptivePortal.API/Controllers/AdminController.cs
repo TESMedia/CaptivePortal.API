@@ -25,8 +25,8 @@ namespace CaptivePortal.API.Controllers
         //int formId = 0;
         //string imagepath = null;
         //Form objForm = new Form();
-       
-        
+
+
         /// <summary>
         /// login operation for global admin.
         /// </summary>
@@ -101,7 +101,7 @@ namespace CaptivePortal.API.Controllers
                          };
             return Json(result, JsonRequestBehavior.AllowGet);
         }
- 
+
         /// <summary>
         /// Create new site/org/comp/field.
         /// </summary>
@@ -130,7 +130,7 @@ namespace CaptivePortal.API.Controllers
                     };
                     db.Organisation.Add(objOrganisation);
                     db.SaveChanges();
-                     orgId = objOrganisation.OrganisationId;
+                    orgId = objOrganisation.OrganisationId;
                 }
                 //company
                 if (inputData.CompanyName != null)
@@ -142,14 +142,15 @@ namespace CaptivePortal.API.Controllers
                     };
                     db.Company.Add(objCompany);
                     db.SaveChanges();
-                     compId = objCompany.CompanyId;
+                    compId = objCompany.CompanyId;
                 }
 
                 //site
                 Site objSite = new Site
                 {
                     SiteName = inputData.SiteName,
-                    CompanyId = compId
+                    CompanyId = compId,
+                    AutoLogin=inputData.AutoLogin
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
@@ -180,6 +181,7 @@ namespace CaptivePortal.API.Controllers
                     IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
                     LoginPageTitle = inputData.LoginPageTitle,
                     RegistrationPageTitle = inputData.RegistrationPageTitle,
+                    
                     //HtmlCodeForLogin = dynamicHtmlCode
                 };
                 db.Form.Add(objForm);
@@ -218,7 +220,7 @@ namespace CaptivePortal.API.Controllers
                 //objForm.HtmlCodeForLogin = dynamicHtmlCode;
                 //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 //db.SaveChanges();
-                return Content("Configured successfully!");
+                return RedirectToAction("Index", "Admin");
             }
             catch (Exception ex)
             {
@@ -286,6 +288,29 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult UploadFile(FormCollection fc)
+        {
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    var file = Request.Files[fc["BannerIcon"]];
+                    byte[] fileBytes = new byte[file.ContentLength];
+                    file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                    return Json("File Uploaded Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    return Json("Error occurred. Error details: " + ex.Message);
+                }
+            }
+            else
+            {
+                return Json("No files selected.");
+            }
+        }
+
         /// <summary>
         /// On Update site Detail Submit
         /// </summary>
@@ -293,21 +318,41 @@ namespace CaptivePortal.API.Controllers
         /// <param name="fc"></param>
         /// <returns></returns>
         [HttpPost]
-        public void UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc)
+        public ActionResult UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc)
         {
             if (inputData.CompanyName == null)
             {
+                string imagepath = null;
+                if (Request.Files["BannerIcon"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["BannerIcon"];
+                    string savedPath = HostingEnvironment.MapPath("/Images/" + inputData.SiteId);
+                    imagepath = "/Images/" + inputData.SiteId + "/" + httpPostedFile.FileName;
+                    string completePath = Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
+                }
                 //form
                 Form objForm = new Form
                 {
                     FormId = inputData.FormId,
                     SiteId = inputData.SiteId,
+                    BannerIcon = imagepath,
+                    IsPasswordRequire=Convert.ToBoolean(inputData.IsPasswordRequire),
+                    BackGroundColor = inputData.BackGroundColor,
+                    LoginWindowColor = inputData.LoginWindowColor,
                     LoginPageTitle = inputData.LoginPageTitle,
                     RegistrationPageTitle = inputData.RegistrationPageTitle
                 };
                 db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
+            return RedirectToAction("Index", "Admin");
         }
 
         [HttpPost]
@@ -349,8 +394,18 @@ namespace CaptivePortal.API.Controllers
                 else
                 {
                     //div start
-                    sb.Append("<div>");
-                    sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + model.fieldlabel + '"' + "/>");
+                    //sb.Append("<div>");
+                    //sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + model.fieldlabel + '"' + "/>");
+                    //sb.Append("</div>");
+                    //div end
+                    //div start
+                    sb.Append("<div class='form-group'>");
+                    sb.Append("<label class='control-label col-sm-2'>"+ model.fieldlabel + "</label>");
+                    sb.Append("<div class='col-sm-10'>");
+                    sb.Append("<input type=" + '"' + model.controlType + '"' +'"'+""+ "class='form-control'"+" "+ "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + " /> ");
+                    sb.Append("</div>");
+                                    
+                                
                     sb.Append("</div>");
                     //div end
                 }
@@ -440,14 +495,14 @@ namespace CaptivePortal.API.Controllers
         public ActionResult UserDetails()
         {
             var userList = (from item in db.Users.ToList()
-                           select new UserViewModel()
-                           {
-                               UserId=item.UserId,
-                               UserName=item.UserName,
-                               FirstName=item.FirstName,
-                               LastName=item.LastName,
-                               CreationDate=item.CreationDate
-                           }).ToList();
+                            select new UserViewModel()
+                            {
+                                UserId = item.UserId,
+                                UserName = item.UserName,
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                CreationDate = item.CreationDate
+                            }).ToList();
             return View(userList);
         }
         /// <summary>
@@ -455,7 +510,23 @@ namespace CaptivePortal.API.Controllers
         /// </summary>
         /// <param name="UserId"></param>
         /// <returns></returns>
+       
         public ActionResult UserWithProfile(int UserId)
+        {
+            var userDetail = db.Users.FirstOrDefault(m => m.UserId == UserId);
+            UserViewModel objUserViewModel = new UserViewModel();
+            //objUserViewModel.MobileNumber = userDetail.MobileNumber;
+            objUserViewModel.Gender = userDetail.Gender;
+            objUserViewModel.AgeRange = userDetail.Age;
+            return View(objUserViewModel);
+        }
+
+        public ActionResult UpdatePassword(int UserId)
+        {
+            return View();
+        }
+
+        public ActionResult MacAddress(int UserId)
         {
             return View();
         }

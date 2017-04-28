@@ -24,6 +24,7 @@ namespace CaptivePortal.API.Models
         public bool IsPasswordRequire { get; set; }
         public string LoginPageTitle { get; set; }
         public string RegistrationPageTitle { get; set; }
+        public bool AutoLogin { get; set; }
 
         public string[] dataType { get; }
         public string[] controlType { get; }
