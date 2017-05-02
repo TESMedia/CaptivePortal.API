@@ -339,6 +339,10 @@
     <Compile Include="Migrations\201704281214324_added-MacAddress&amp;StatusField-inUserTable.Designer.cs">
       <DependentUpon>201704281214324_added-MacAddress&amp;StatusField-inUserTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.cs" />
+    <Compile Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.Designer.cs">
+      <DependentUpon>201705021205321_addedNullableto-SiteIdofUserTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -4726,6 +4730,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201704281214324_added-MacAddress&amp;StatusField-inUserTable.resx">
       <DependentUpon>201704281214324_added-MacAddress&amp;StatusField-inUserTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.resx">
+      <DependentUpon>201705021205321_addedNullableto-SiteIdofUserTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -27,7 +27,7 @@ namespace CaptivePortal.API.Models
         public bool promotional_email { get; set; }
         public int IntStatus { get; set; }
         public string MacAddress { get; set; }
-        public int SiteId { get; set; }
+        public int ? SiteId { get; set; }
 
         [ForeignKey("SiteId")]
         public Site Site { get; set; }

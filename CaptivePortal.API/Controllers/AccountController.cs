@@ -57,7 +57,7 @@ namespace CaptivePortal.API.Controllers
                             var User = db.Users.FirstOrDefault(m => m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId);
 
                             string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
-
+                           
                             using (WebClient client = new WebClient())
                             {
                                 System.Collections.Specialized.NameValueCollection postData =
