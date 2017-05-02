@@ -14,6 +14,8 @@ using log4net;
 using System.Net.Mime;
 using System.Reflection;
 using System.Configuration;
+using System.Linq;
+using System.Text;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -29,58 +31,50 @@ namespace CaptivePortal.API.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public HttpResponseMessage Register(RegisterViewModel objRegisterModel)
+        public HttpResponseMessage Register(Users objUser)
         {
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
                 try
                 {
                     log.Info("enter in Register Method");
-                    
-                    //save user data in user table
-                     Users _objUser = new Users();
-                    _objUser.UserName = objRegisterModel.Email;
-                    _objUser.FirstName = objRegisterModel.FirstName;
-                    _objUser.LastName = objRegisterModel.LastName;
-                    _objUser.Email = objRegisterModel.Email;
-                    _objUser.CreationBy = objRegisterModel.CreationBy;
-                    _objUser.CreationDate = System.DateTime.Now;
-                    _objUser.UpdateDate = System.DateTime.Now;
-                    _objUser.Password = objRegisterModel.UserPassword;
-                    _objUser.Gender = objRegisterModel.Gender;
-                    _objUser.Age = objRegisterModel.Age;
-                    _objUser.Term_conditions = ConfigurationManager.AppSettings["Version"];
-                    _objUser.promotional_email = objRegisterModel.promotional_email;
-                    _objUser.AutoLogin = Convert.ToBoolean(objRegisterModel.AutoLogin);
-                    db.Users.Add(_objUser);
+                    var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
 
-                    //save  user address in Address table
-                    UsersAddress _objUserAddress = new UsersAddress();
-                    _objUserAddress.Addresses = objRegisterModel.Addresses;
-                    _objUserAddress.City = objRegisterModel.City;
-                    _objUserAddress.State = objRegisterModel.State;
-                    _objUserAddress.Country = objRegisterModel.Country;
-                    _objUserAddress.Zip = objRegisterModel.Zip;
-                    _objUserAddress.Notes = objRegisterModel.Notes;
-                    db.UsersAddress.Add(_objUserAddress);
-                    
-                    ////save user site information in Site table
-                    //Site _objSite = new Site();
-                    //_objSite.SiteName = objRegisterModel.SiteName;
-                    //_objSite.CompanyId = comanies.CompanyId;
-                    
-                    //db.Site.Add(_objSite);
-                    db.SaveChanges();
-                    log.Info("User Data saved in user Table");
+                    if (!(db.Users.Any(m=>m.MacAddress==objUser.MacAddress && m.SiteId==objUser.SiteId)))
+                    {
+                        //Save all the users Data in SqlServer Global DataBase
+                        db.Users.Add(objUser);
+                        db.SaveChanges();
+                        log.Info("User Data saved in user Table");
 
-                    objRegisterDB.CreateNewUser(objRegisterModel.Email, objRegisterModel.UserPassword, objRegisterModel.Email,objRegisterModel.FirstName,objRegisterModel.LastName);
-                    ObjReturnModel.Id = 1;
-                    ObjReturnModel.Message = "Success";
-                    dbContextTransaction.Commit();
-                    JavaScriptSerializer objSerializer = new JavaScriptSerializer();
-                    var response = Request.CreateResponse(HttpStatusCode.Moved);
-                    response.Headers.Location = new Uri("http://planetsbrainvm.cloudapp.net/login.aspx");
-                    return response;
+                        //Save all the Users data in MySql DataBase
+                        objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
+
+                        //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
+                        if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
+                        {
+                            //If the user Not exist then we need to try
+                            var User = db.Users.FirstOrDefault(m => m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId);
+
+                            string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
+
+                            using (WebClient client = new WebClient())
+                            {
+                                System.Collections.Specialized.NameValueCollection postData =
+                                    new System.Collections.Specialized.NameValueCollection()
+                                   {
+                                      { "userid", User.UserName },
+                                      { "password", User.Password },
+                                   };
+                                string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
+                            }
+                        }
+
+                    }
+
+                    return new HttpResponseMessage() {
+                        Content = new StringContent("")
+                    };
                 }
                 catch (Exception ex)
                 {
@@ -92,54 +86,65 @@ namespace CaptivePortal.API.Controllers
 
         }
 
-        //[HttpPost]
-        //[Route("Login")]
-        //public HttpResponseMessage Login(LoginViewModel objLoginModel)
-        //{
-        //    try
-        //    {
-        //        var args = new string[4];
-        //        args[0] = "122.166.202.201";
-        //       // args[0] = "192.168.1.12";
-        //        args[1] = "testing123";
-        //        args[2] = objLoginModel.UserName;
-        //        args[3] = objLoginModel.UserPassword;
+        [HttpPost]
+        [Route("Login")]
+        public HttpResponseMessage Login(Users objUser)
+        {
+            try
+            {
+                var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
+                //check the particular UserName for a particular Site Is Exist or Not
+                if (db.Users.Any(m=>m.UserName==objUser.UserName && m.SiteId==objUser.SiteId))
+                {
+                   
+                    var User = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId);
+                    //if Exist then check the MacAddress is there or not
+                    if(string.IsNullOrEmpty(User.MacAddress))
+                    {
+                        User.MacAddress = objUser.MacAddress;
+                        db.Entry(User).State = System.Data.Entity.EntityState.Modified;
 
-        //        if (args.Length != 4)
-        //        {
-        //            Authenticate.ShowUsage();
-        //        }
+                        //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
+                        if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
+                        {
+                            string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
 
-        //        try
-        //        {
-        //            log.Info("enter login Authenticate()");
-        //            Authenticate.Authentication(args).Wait();
+                            using (WebClient client = new WebClient())
+                            {
+                                System.Collections.Specialized.NameValueCollection postData =
+                                    new System.Collections.Specialized.NameValueCollection()
+                                   {
+                              { "userid", User.UserName },
+                              { "password", User.Password },
+                                   };
+                                string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
+                            }
+                        }
+                    }
 
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            log.Error(e.Message);
-        //            throw (e);
+                }
+                //Then Users with this UserName for a particular Site not exist so need to Register first
+                else
+                {
 
+                }
 
-        //        }
-
-        //        return new HttpResponseMessage()
-        //        {
-        //            Content = new StringContent("success")
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent("success")
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
 
 
 
     }
-           
 
-    
+
+
 }

@@ -25,7 +25,8 @@ namespace CaptivePortal.API.Context
         public DbSet<Role> Role { get; set; }
         public DbSet <Form> Form { get; set; }
         public DbSet <FormControl> FormControl { get; set; }
-        public DbSet<UserSite> UserSite { get; set; }
+
+        //public DbSet<UserSite> UserSite { get; set; }
 
 
     }

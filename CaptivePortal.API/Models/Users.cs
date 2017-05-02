@@ -25,6 +25,21 @@ namespace CaptivePortal.API.Models
         public bool AutoLogin { get; set; }
         public string Term_conditions {get;set;}
         public bool promotional_email { get; set; }
-               
+        public int IntStatus { get; set; }
+        public string MacAddress { get; set; }
+        public int SiteId { get; set; }
+
+        [ForeignKey("SiteId")]
+        public Site Site { get; set; }
+
+    }
+
+    public enum DeviceStatus
+    {
+      Athenticate=0,
+      Authorize=1,
+      Active=2,
+      InActive=3,
+      Lock=4
     }
 }

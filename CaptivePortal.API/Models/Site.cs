@@ -16,11 +16,14 @@ namespace CaptivePortal.API.Models
         //public int UserId { get; set; }
         public  int ? CompanyId { get; set; }
         public bool AutoLogin { get; set; }
+        public string ControllerIpAddress { get; set; }
+        public string MySqlIpAddress { get; set; }
 
         //[ForeignKey("UserId")]
         //public virtual Users Users { get; set; }
         [ForeignKey("CompanyId")]
         public virtual Company Company { get; set; }
+
 
     }
 }
