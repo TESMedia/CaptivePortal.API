@@ -51,6 +51,10 @@ namespace CaptivePortal.API.Models
 
         public bool promotional_email { get; set; }
 
+        public string MacAddress { get; set; }
+
+        public string Status { get; set; }
+
         
     }
 }
