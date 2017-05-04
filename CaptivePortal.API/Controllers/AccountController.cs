@@ -38,42 +38,26 @@ namespace CaptivePortal.API.Controllers
                 try
                 {
                     log.Info("enter in Register Method");
-                    var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
 
                     if (!(db.Users.Any(m=>m.MacAddress==objUser.MacAddress && m.SiteId==objUser.SiteId)))
                     {
                         //Save all the users Data in SqlServer Global DataBase
+                        objUser.CreationDate = DateTime.Now;
+                        objUser.UpdateDate = DateTime.Now;
                         db.Users.Add(objUser);
+                        
                         db.SaveChanges();
                         log.Info("User Data saved in user Table");
 
                         //Save all the Users data in MySql DataBase
                         objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
 
-                        //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
-                        if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
-                        {
-                            //If the user Not exist then we need to try
-                            var User = db.Users.FirstOrDefault(m => m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId);
-
-                            string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
-                           
-                            using (WebClient client = new WebClient())
-                            {
-                                System.Collections.Specialized.NameValueCollection postData =
-                                    new System.Collections.Specialized.NameValueCollection()
-                                   {
-                                      { "userid", User.UserName },
-                                      { "password", User.Password },
-                                   };
-                                string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
-                            }
-                        }
+                       
 
                     }
-
+                    dbContextTransaction.Commit();
                     return new HttpResponseMessage() {
-                        Content = new StringContent("")
+                        Content = new StringContent("success")
                     };
                 }
                 catch (Exception ex)
@@ -96,31 +80,34 @@ namespace CaptivePortal.API.Controllers
                 //check the particular UserName for a particular Site Is Exist or Not
                 if (db.Users.Any(m=>m.UserName==objUser.UserName && m.SiteId==objUser.SiteId))
                 {
+                    log.Info("enter into if con..");
                    
                     var User = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId);
                     //if Exist then check the MacAddress is there or not
-                    if(string.IsNullOrEmpty(User.MacAddress))
-                    {
-                        User.MacAddress = objUser.MacAddress;
-                        db.Entry(User).State = System.Data.Entity.EntityState.Modified;
+                    //if(string.IsNullOrEmpty(User.MacAddress))
+                    //{
+                    //    User.MacAddress = objUser.MacAddress;
+                    //    db.Entry(User).State = System.Data.Entity.EntityState.Modified;
 
                         //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
                         if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
                         {
-                            string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
-
+                        log.Info("enter into if con2..");
+                        Uri URI = new Uri(User.Site.ControllerIpAddress);
+                            log.Info(URI);
                             using (WebClient client = new WebClient())
                             {
                                 System.Collections.Specialized.NameValueCollection postData =
                                     new System.Collections.Specialized.NameValueCollection()
                                    {
-                              { "userid", User.UserName },
-                              { "password", User.Password },
+                                      { "userid", User.UserName },
+                                      { "password", User.Password },
                                    };
-                                string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
+                                string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI.AbsoluteUri, postData));
+                                log.Info(pagesource);
                             }
                         }
-                    }
+                    //}
 
                 }
                 //Then Users with this UserName for a particular Site not exist so need to Register first
@@ -136,6 +123,7 @@ namespace CaptivePortal.API.Controllers
             }
             catch (Exception ex)
             {
+                log.Error(ex.Message);
                 throw ex;
             }
         }

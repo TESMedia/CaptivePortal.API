@@ -18,7 +18,8 @@ namespace CP.Lib
         //int length;
         public RegisterDB()
         {
-            myConnectionString = ConfigurationManager.ConnectionStrings["radiusConnectonString"].ToString();
+            myConnectionString = ConfigurationManager.ConnectionStrings["radiusConnectionString"].ToString();
+            log.Info(myConnectionString);
 
         }
         public int CreateNewUser(string userName, string UserPassword, string Email,string firstname,string lastname)
@@ -28,7 +29,7 @@ namespace CP.Lib
             int retCode = 0;
             MySqlConnection myConnection = new MySqlConnection(myConnectionString);
             myConnection.Open();
-
+            log.Info(myConnection.State);
             MySqlCommand myCommand = myConnection.CreateCommand();
             MySqlTransaction myTrans;
 
