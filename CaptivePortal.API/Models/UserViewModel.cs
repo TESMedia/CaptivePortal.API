@@ -19,5 +19,17 @@ namespace CaptivePortal.API.Models
         public string PromotionEmailOptIn { get; set; }
         public string ThirdPartyOptIn  { get; set; }
         public string Term_conditions { get; set; }
+        public string Password { get; set; }
+    }
+
+
+    public class UserlistViewModel
+    {
+        public UserlistViewModel()
+        {
+            UserViewlist = new List<UserViewModel>();
+        }
+        public List<UserViewModel> UserViewlist { get; set; }
+        public UserViewModel UserView { get; set; }
     }
 }

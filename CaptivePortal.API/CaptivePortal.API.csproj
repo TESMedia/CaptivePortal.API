@@ -4531,6 +4531,8 @@
     <Content Include="Views\Shared\_UserWithProfile.cshtml" />
     <Content Include="Views\Shared\_UpdatePassword.cshtml" />
     <Content Include="Views\Shared\_Devices.cshtml" />
+    <Content Include="Views\Shared\_Custom.cshtml" />
+    <Content Include="Views\Shared\_UserDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

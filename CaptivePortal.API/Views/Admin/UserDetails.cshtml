@@ -1,7 +1,12 @@
 ﻿@using CaptivePortal.API.Models
-@model IEnumerable<UserViewModel>
+@model UserlistViewModel
+
+
+
 @{
     Layout = null;
+    ViewBag.PageRange = 3;
+
 }
 
 <!DOCTYPE html>
@@ -63,6 +68,29 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <br />
+                                    <div class="col-md-12 text-center">
+                                        <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
+                                    </div>
+                                    <div class="container">
+
+                                        <form class="form-inline" id="searchForm">
+                                            <input type="button" id="btnSearch" class="btn btn-success" value="Filter" style="width:10%" />
+                                            <div class="form-group">
+                                                <label for="userName">Username:</label>
+                                                <input type="text" class="form-control" autofocus="autofocus" id="txtUserName" name="UserName" value="@ViewBag.userName" placeholder="Enter user name" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="foreName">Forename:</label>
+                                                <input type="text" class="form-control" autofocus="autofocus" id="txtForeName" name="FirstName" value="@ViewBag.foreName" placeholder="Enter forename" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="surName">Surname:</label>
+                                                <input type="text" class="form-control" autofocus="autofocus" id="txtSurName" name="LastName" value="@ViewBag.surName" placeholder="Enter surname" />
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                    <hr />
                                     <div class="row container-fluid">
 
                                         <div style="top:35px;">
@@ -95,19 +123,20 @@
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                @if (Model != null)
+                                                @if (Model.UserViewlist != null)
                                                 {
-                                                    <tbody class="pointer" id="SiteDetails">
-                                                        @foreach (var item in Model)
+                                                    <tbody class="pointer" id="UserDetails">
+                                                        @foreach (var item in Model.UserViewlist)
                                                         {
                                                             <tr>
-                                                                <td style="display:none;" id="SiteId">
+                                                                <td style="display:none;" id="UserId">
                                                                     @Html.DisplayFor(modelItem => item.UserId)
                                                                 </td>
                                                                 <td>
                                                                     @*<input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">*@
                                                                     @*<a href="@Url.Action("UserWithProfile","Admin",new { UserId= item.UserId})" type="checkbox">Edit</a>*@
-                                                                    <input type="checkbox" onclick="location.href='@Url.Action("UserWithProfile","Admin",new { UserId=item.UserId})'" />
+                                                                    @*<input type="checkbox" onclick="location.href='@Url.Action("UserDetails","Admin",new { userId=item.UserId})'" />*@
+                                                                    <input type="checkbox" id="chkPassport" onclick="ShowHideDiv(this);UserWithProfile(@item.UserId)" value="@item.UserId" />
 
                                                                 </td>
                                                                 <td>
@@ -128,6 +157,27 @@
                                                         }
                                                     </tbody>
                                                 }
+                                                <tfoot>
+                                                    <tr>
+                                                        <td>
+                                                            <ul class="pagination" id="div1">
+                                                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                                                {
+                                                                    if (i >= ViewBag.CurrentPage - ViewBag.PageRange && i <= ViewBag.CurrentPage + ViewBag.PageRange)
+                                                                    {
+                                                                        if (ViewBag.CurrentPage == i)
+                                                                        {
+                                                                            <li class="active"><a id="pageLink" href="#">@i</a></li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li><a id="pageLink" href="#" )">@i</a></li>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                    </tr>
+                                                </tfoot>
                                             </table>
 
                                         </div>
@@ -141,29 +191,22 @@
                                                 <li><a href="#">Devices</a></li>
 
                                             </ul>*@
+                                        @if (Model.UserView != null)
+                                        {
 
-                                        <div role="tabpanel">
-                                            <ul class="nav nav-tabs nav-justified" role="tablist" >
-                                                <li role="presentation" class="active"><a href="#UserProfile" aria-controls="UserProfile" role="tab" data-toggle="tab">User Details</a></li>
-                                                <li role="presentation"><a href="#UserPassword" aria-controls="UserPassword" role="tab" data-toggle="tab">Password</a></li>
-                                                <li role="presentation"><a href="#Device" aria-controls="Devices" role="tab" data-toggle="tab">Devices</a></li>
-                                            </ul>
+                                            <div role="tabpanel" id="dvPassport" style="display:none">
+                                                <ul class="nav nav-tabs nav-justified" role="tablist">
+                                                    <li role="presentation" class="active"><a href="#UserProfile" aria-controls="UserProfile" role="tab" data-toggle="tab">User Details</a></li>
+                                                    <li role="presentation"><a href="#UserPassword" aria-controls="UserPassword" role="tab" data-toggle="tab">Password</a></li>
+                                                    <li role="presentation"><a href="#Device" aria-controls="Devices" role="tab" data-toggle="tab">Devices</a></li>
+                                                    <li role="presentation"><a href="#Custom" aria-controls="Custom" role="tab" data-toggle="tab">Custom</a></li>
+                                                </ul>
 
-                                            <div class="tab-content">
-                                                <div role="tabpanel" class="tab-pane fade in active" id="UserProfile">
-                                                    @using (Ajax.BeginForm("UserWithProfile", "Admin", new AjaxOptions { UpdateTargetId = "staff" }, new { id = "form-staff" }))
-                                                    { @Html.Partial("~/Views/Shared/_UserWithProfile.cshtml")                                                     }
-                                                </div>
-                                                <div role="tabpanel" class="tab-pane fade" id="UserPassword">
-                                                    @using (Ajax.BeginForm("UpdatePassword", "Admin", new AjaxOptions { UpdateTargetId = "experience" }, new { id = " form-experience" }))
-                                                    {@Html.Partial("~/Views/Shared/_UpdatePassword.cshtml") }
-                                                </div>
-                                                <div role="tabpanel" class="tab-pane fade" id="Device">
-                                                    @using (Ajax.BeginForm("MacAddress", "Admin", new AjaxOptions { UpdateTargetId = "experience" }, new { id = " form-experience" }))
-                                                    {@Html.Partial("~/Views/Shared/_Devices.cshtml") }
+                                                <div class="tab-content" id="UserView">
+                                                    @Html.Partial("~/Views/Shared/_UserDetails.cshtml", Model.UserView)
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
                                     </div>
                                     <div>
                                     </div>
@@ -221,18 +264,55 @@
 </body>
 </html>
 <script type="text/javascript">
-    var userId = document.getElementById("").value;
-    function UserWithProfile() {
-        var data = { UserId: userId }
-        $.post("/Admin/UserWithProfile/", data, function (e) {
-            $("#imageLogo").attr('src', e.BannerIcon)
-            $("#titleID").text(e.LoginPageTitle);
-            if (e.IsPasswordRequire == false) {
-                $('#divPas').addClass("hidden");
-            }
-            else {
-                $('#divPas').removeClass("hidden");
+
+    $("#div1 a").click(function () {
+        $(location).attr('href', '/Admin/UserDetails?page=' + $(this).text()+'&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
+    });
+
+    $("#btnSearch").on("click", function () {
+        $(location).attr('href', '/Admin/UserDetails?userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
+    });
+
+    //on checkmark show the selected user details, on uncheck mark show nothing.
+    function ShowHideDiv(chkPassport) {
+        var dvPassport = document.getElementById("dvPassport");
+        dvPassport.style.display = chkPassport.checked ? "block" : "none";
+    }
+
+    //Viewdata for partial view of User details, password,devices, custom
+    function UserWithProfile(id) {
+        debugger;
+        var uri = '@Html.Raw(Url.Action("UserWithProfile", "Admin"))';
+        $.ajax({
+            url: uri,
+            type: 'POST',
+            traditional: true,
+            dataType: "HTML",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ 'UserId': id }),
+            success: function (result) {
+                debugger;
+                $("#UserView").html(result);
+            },
+            error: function (objAjaxRequest, strError) {
+                debugger;
+                var respText = objAjaxRequest.responseText;
+                console.log(respText);
             }
         });
     }
+
+
+
+    var tableToExcel = (function () {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+          , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+          , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+          , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+        return function (table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })()
 </script>

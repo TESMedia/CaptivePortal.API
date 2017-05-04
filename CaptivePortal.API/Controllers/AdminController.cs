@@ -150,7 +150,7 @@ namespace CaptivePortal.API.Controllers
                 {
                     SiteName = inputData.SiteName,
                     CompanyId = compId,
-                    AutoLogin=inputData.AutoLogin
+                    AutoLogin = inputData.AutoLogin
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
@@ -181,7 +181,7 @@ namespace CaptivePortal.API.Controllers
                     IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
                     LoginPageTitle = inputData.LoginPageTitle,
                     RegistrationPageTitle = inputData.RegistrationPageTitle,
-                    
+
                     //HtmlCodeForLogin = dynamicHtmlCode
                 };
                 db.Form.Add(objForm);
@@ -343,7 +343,7 @@ namespace CaptivePortal.API.Controllers
                     FormId = inputData.FormId,
                     SiteId = inputData.SiteId,
                     BannerIcon = imagepath,
-                    IsPasswordRequire=Convert.ToBoolean(inputData.IsPasswordRequire),
+                    IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
                     BackGroundColor = inputData.BackGroundColor,
                     LoginWindowColor = inputData.LoginWindowColor,
                     LoginPageTitle = inputData.LoginPageTitle,
@@ -400,12 +400,12 @@ namespace CaptivePortal.API.Controllers
                     //div end
                     //div start
                     sb.Append("<div class='form-group'>");
-                    sb.Append("<label class='control-label col-sm-2'>"+ model.fieldlabel + "</label>");
+                    sb.Append("<label class='control-label col-sm-2'>" + model.fieldlabel + "</label>");
                     sb.Append("<div class='col-sm-10'>");
-                    sb.Append("<input type=" + '"' + model.controlType + '"' +'"'+""+ "class='form-control'"+" "+ "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + " /> ");
+                    sb.Append("<input type=" + '"' + model.controlType + '"' + '"' + "" + "class='form-control'" + " " + "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + " /> ");
                     sb.Append("</div>");
-                                    
-                                
+
+
                     sb.Append("</div>");
                     //div end
                 }
@@ -492,35 +492,101 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails()
+        public ActionResult UserDetails(int? userId, int? page, string userName, string foreName, string surName)
         {
-            var userList = (from item in db.Users.ToList()
-                            select new UserViewModel()
-                            {
-                                UserId = item.UserId,
-                                UserName = item.UserName,
-                                FirstName = item.FirstName,
-                                LastName = item.LastName,
-                                CreationDate = item.CreationDate
-                            }).ToList();
-            return View(userList);
+            UserlistViewModel list = new UserlistViewModel();
+            list.UserViewlist = new List<UserViewModel>();
+            int currentPageIndex = page.HasValue ? page.Value : 1;
+            int PageSize = 5;
+            double TotalPages = 0;
+            var userList = db.Users.ToList();
+            //If Searching on the basis of the single parameter
+            if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
+            {
+                if (!string.IsNullOrEmpty(foreName))
+                {
+                    //For the parameter contain only foreName  for searching or filter
+                    if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(surName))
+                    {
+                        userList = db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(surName))
+                {
+                    //For the parameter contain only surName  for searching or filter
+                    if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(foreName))
+                    {
+                        userList = db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    //For the parameter contain only username  for searching or filter
+                    if (string.IsNullOrEmpty(foreName) && string.IsNullOrEmpty(surName))
+                    {
+                        userList = db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
+                    }
+                }
+            }
+            //If the Searching contain no parameter
+            else
+            {
+                userList = db.Users.ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
+            }
+            var userViewModelList = (from item in userList
+                                     select new UserViewModel()
+                                     {
+                                         UserId = item.UserId,
+                                         UserName = item.UserName,
+                                         FirstName = item.FirstName,
+                                         LastName = item.LastName,
+                                         CreationDate = item.CreationDate,
+                                         Password = item.Password
+                                     }).ToList();
+            list.UserViewlist.AddRange(userViewModelList);
+
+            if (userId != null)
+            {
+                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+            }
+            else
+            {
+                list.UserView = userViewModelList.FirstOrDefault();
+            }
+            ViewBag.CurrentPage = currentPageIndex;
+            ViewBag.PageSize = PageSize;
+            ViewBag.TotalPages = TotalPages;
+            ViewBag.foreName = foreName;
+            ViewBag.surName = surName;
+            ViewBag.userName = userName;
+            return View(list);
+
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="UserId"></param>
         /// <returns></returns>
-       
+        [HttpPost]
         public ActionResult UserWithProfile(int UserId)
         {
             var userDetail = db.Users.FirstOrDefault(m => m.UserId == UserId);
             UserViewModel objUserViewModel = new UserViewModel();
-            //objUserViewModel.MobileNumber = userDetail.MobileNumber;
-            objUserViewModel.Gender = userDetail.Gender;
-            objUserViewModel.AgeRange = userDetail.Age;
-            return View(objUserViewModel);
+            if (userDetail != null)
+            {
+                objUserViewModel.Password = userDetail.Password;
+                objUserViewModel.UserName = userDetail.UserName;
+                objUserViewModel.Gender = userDetail.Gender;
+                objUserViewModel.AgeRange = userDetail.Age;
+            }
+            return PartialView("_UserDetails", objUserViewModel);
         }
-
         public ActionResult UpdatePassword(int UserId)
         {
             return View();

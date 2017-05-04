@@ -1,0 +1,16 @@
+﻿@model CaptivePortal.API.Models.UserViewModel
+
+<div role="tabpanel" class="tab-pane fade in active" id="UserProfile">
+    @Html.Partial("~/Views/Shared/_UserWithProfile.cshtml", Model)
+</div>
+<div role="tabpanel" class="tab-pane fade" id="UserPassword">
+
+    @Html.Partial("~/Views/Shared/_UpdatePassword.cshtml", Model)
+</div>
+<div role="tabpanel" class="tab-pane fade" id="Device">
+    @Html.Partial("~/Views/Shared/_Devices.cshtml", Model)
+</div>
+<div role="tabpanel" class="tab-pane fade" id="Custom">
+
+    @Html.Partial("~/Views/Shared/_Custom.cshtml", Model)
+</div>

@@ -1,64 +1,64 @@
-﻿@using CaptivePortal.API.Models
-@model IEnumerable<UserViewModel>
+﻿
+@model CaptivePortal.API.Models.UserViewModel
 
 <br />
 <br />
-<div class="form-horizontal" style="margin-right: 40%;">
+<div class="form-horizontal">
     <div class="form-group">
         <label for="mobile-number" class="control-label col-md-3">Mobile Number:</label>
-        <div class="col-md-5">
+        <div class="col-md-3">
             <input id="mobile-number" class="form-control col-md-2" type="text" name="MobileNumber">
         </div>
+        <label class="control-label col-md-3" for="FirstName">Email:</label>
+        <div class="col-md-3">
+            @*<input type="text" class="form-control" id="text" placeholder="Enter user name">*@
+            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @name = "username" } })
+        </div>
     </div>
+
+
 
     <div class="form-group">
         <label for="gender" class="control-label col-md-3">Gender:</label>
-        <div class="col-md-5">
-            <input id="gender" class="form-control col-md-2" type="text" name="Gender">
+        <div class="col-md-3">
+            @*<input id="gender" class="form-control col-md-2" type="text" name="Gender">*@
+            @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control", @name = "Gender" } })
+            @*@Html.DropDownList("Gender", String.Empty)
+                @Html.DropDownList("GenderDdl", ViewBag.Gender as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "GenderDdl", @name = "GenderDdl" })*@
         </div>
-
+        <label class="control-label col-md-3" for="birthDate">Birth Date:</label>
+        <div class="col-md-3">
+            <input type="text" class="form-control" id="text" />
+        </div>
     </div>
     <div class="form-group">
         <label for="ageRange" class="control-label col-md-3">Age Range:</label>
-        <div class="col-md-5">
-            <input id="ageRange" class="form-control col-md-2" type="text" name="Age">
+        <div class="col-md-3">
+            @Html.EditorFor(model => model.AgeRange, new { htmlAttributes = new { @class = "form-control", @name = "Age" } })
+        </div>
+
+        <label for="auto-login" class="control-label col-md-3">Auto-login users:</label>
+        <div class="col-md-3">
+            <input class="form-control col-md-2" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label for="status" class="control-label col-md-3">Status:</label>
+        <div class="col-md-3">
+            <input class="form-control col-md-2" type="text" id="Status" name="Status">
         </div>
     </div>
 
     <div class="form-group">
         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
             <input type="submit" id="update" class="btn btn-success" value="Upadate User" />
+            <input type="submit" id="update" class="btn btn-danger pull-right" value="Delete User" />
         </div>
     </div>
-
-
-
-
-    <div class="form-group">
-        <label for="promotional_email" class="control-label col-md-3 col-sm-3 col-xs-12">Promotion email opt-in:</label>
-        <div class="col-md-6 col-sm-6 col-xs-12">
-            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="promotional_email" style="width:30px;">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="ThirdPartyOptIn" class="control-label col-md-3 col-sm-3 col-xs-12">3rd party opt-in:</label>
-        <div class="col-md-6 col-sm-6 col-xs-12">
-            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="ThirdPartyOptIn" style="width:30px;">
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="Term_conditions" class="control-label col-md-3">Terms & Conditions:</label>
-        <div class="col-md-5">
-            <input class="form-control col-md-7 col-xs-12" type="text" id="Term_conditions" name="Term_conditions">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-            <input type="submit" id="update" class="btn btn-danger" value="Delete User" />
-        </div>
-    </div>
-
 </div>
+
 
 
 
