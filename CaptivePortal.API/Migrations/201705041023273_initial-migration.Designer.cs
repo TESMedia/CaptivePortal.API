@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Added_PasswordColumnInUsertable : IMigrationMetadata
+    public sealed partial class initialmigration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Added_PasswordColumnInUsertable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initialmigration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201703231438301_Added_PasswordColumnInUser-table"; }
+            get { return "201705041023273_initial-migration"; }
         }
         
         string IMigrationMetadata.Source

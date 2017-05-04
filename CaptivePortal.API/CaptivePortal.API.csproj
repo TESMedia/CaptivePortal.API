@@ -235,113 +235,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201703230749220_Added-tables.cs" />
-    <Compile Include="Migrations\201703230749220_Added-tables.Designer.cs">
-      <DependentUpon>201703230749220_Added-tables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703230756314_Added-radacct-table.cs" />
-    <Compile Include="Migrations\201703230756314_Added-radacct-table.Designer.cs">
-      <DependentUpon>201703230756314_Added-radacct-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703231021062_change-in-modelDatatype.cs" />
-    <Compile Include="Migrations\201703231021062_change-in-modelDatatype.Designer.cs">
-      <DependentUpon>201703231021062_change-in-modelDatatype.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703231248565_Added-UserRoleAndRole-table.cs" />
-    <Compile Include="Migrations\201703231248565_Added-UserRoleAndRole-table.Designer.cs">
-      <DependentUpon>201703231248565_Added-UserRoleAndRole-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703231438301_Added_PasswordColumnInUser-table.cs" />
-    <Compile Include="Migrations\201703231438301_Added_PasswordColumnInUser-table.Designer.cs">
-      <DependentUpon>201703231438301_Added_PasswordColumnInUser-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703240819310_Added_Radacct-table.cs" />
-    <Compile Include="Migrations\201703240819310_Added_Radacct-table.Designer.cs">
-      <DependentUpon>201703240819310_Added_Radacct-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704140720104_changeFieldIn_userTable.cs" />
-    <Compile Include="Migrations\201704140720104_changeFieldIn_userTable.Designer.cs">
-      <DependentUpon>201704140720104_changeFieldIn_userTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704141315135_AddedFieldsFor-UserTable.cs" />
-    <Compile Include="Migrations\201704141315135_AddedFieldsFor-UserTable.Designer.cs">
-      <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704141508543_Add_Form_FormControls_tbl.cs" />
-    <Compile Include="Migrations\201704141508543_Add_Form_FormControls_tbl.Designer.cs">
-      <DependentUpon>201704141508543_Add_Form_FormControls_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704170605316_remove-UserId-from-Sites-table.cs" />
-    <Compile Include="Migrations\201704170605316_remove-UserId-from-Sites-table.Designer.cs">
-      <DependentUpon>201704170605316_remove-UserId-from-Sites-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704170616066_added-UserSite-Table.cs" />
-    <Compile Include="Migrations\201704170616066_added-UserSite-Table.Designer.cs">
-      <DependentUpon>201704170616066_added-UserSite-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704170627210_added-BannerIcon-in-Form-Table.cs" />
-    <Compile Include="Migrations\201704170627210_added-BannerIcon-in-Form-Table.Designer.cs">
-      <DependentUpon>201704170627210_added-BannerIcon-in-Form-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704170645314_added-BackGroundColor-LoginWindowColor-IsPasswordRequire-LoginPageTitle-RegistrationPageTitle-In-Form-Table.cs" />
-    <Compile Include="Migrations\201704170645314_added-BackGroundColor-LoginWindowColor-IsPasswordRequire-LoginPageTitle-RegistrationPageTitle-In-Form-Table.Designer.cs">
-      <DependentUpon>201704170645314_added-BackGroundColor-LoginWindowColor-IsPasswordRequire-LoginPageTitle-RegistrationPageTitle-In-Form-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.cs" />
-    <Compile Include="Migrations\201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.Designer.cs">
-      <DependentUpon>201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704210911546_Update_Site_Company_tbl.cs" />
-    <Compile Include="Migrations\201704210911546_Update_Site_Company_tbl.Designer.cs">
-      <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs" />
-    <Compile Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.Designer.cs">
-      <DependentUpon>201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704211556521_add_table.cs" />
-    <Compile Include="Migrations\201704211556521_add_table.Designer.cs">
-      <DependentUpon>201704211556521_add_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704241640459_added-HtmlString-Column-in-FormControl-Table.cs" />
-    <Compile Include="Migrations\201704241640459_added-HtmlString-Column-in-FormControl-Table.Designer.cs">
-      <DependentUpon>201704241640459_added-HtmlString-Column-in-FormControl-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704250506253_delete-colum-from-form-table.cs" />
-    <Compile Include="Migrations\201704250506253_delete-colum-from-form-table.Designer.cs">
-      <DependentUpon>201704250506253_delete-colum-from-form-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704280920509_added-AutoLogin-column-in-Users-table.cs" />
-    <Compile Include="Migrations\201704280920509_added-AutoLogin-column-in-Users-table.Designer.cs">
-      <DependentUpon>201704280920509_added-AutoLogin-column-in-Users-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704280935558_added-AutoLogin-column-in-Site-Table.cs" />
-    <Compile Include="Migrations\201704280935558_added-AutoLogin-column-in-Site-Table.Designer.cs">
-      <DependentUpon>201704280935558_added-AutoLogin-column-in-Site-Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704281252085_Update_Users_tbl.cs" />
-    <Compile Include="Migrations\201704281252085_Update_Users_tbl.Designer.cs">
-      <DependentUpon>201704281252085_Update_Users_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705010951320_Remove_UserSites_tbl.cs" />
-    <Compile Include="Migrations\201705010951320_Remove_UserSites_tbl.Designer.cs">
-      <DependentUpon>201705010951320_Remove_UserSites_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705010956295_Update_ByAdding_New_In_Users_tbl.cs" />
-    <Compile Include="Migrations\201705010956295_Update_ByAdding_New_In_Users_tbl.Designer.cs">
-      <DependentUpon>201705010956295_Update_ByAdding_New_In_Users_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705012317139_Update_Site_tbl.cs" />
-    <Compile Include="Migrations\201705012317139_Update_Site_tbl.Designer.cs">
-      <DependentUpon>201705012317139_Update_Site_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201704281214324_added-MacAddress&amp;StatusField-inUserTable.cs" />
-    <Compile Include="Migrations\201704281214324_added-MacAddress&amp;StatusField-inUserTable.Designer.cs">
-      <DependentUpon>201704281214324_added-MacAddress&amp;StatusField-inUserTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.cs" />
-    <Compile Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.Designer.cs">
-      <DependentUpon>201705021205321_addedNullableto-SiteIdofUserTable.cs</DependentUpon>
+    <Compile Include="Migrations\201705041023273_initial-migration.cs" />
+    <Compile Include="Migrations\201705041023273_initial-migration.Designer.cs">
+      <DependentUpon>201705041023273_initial-migration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4654,94 +4550,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703230749220_Added-tables.resx">
-      <DependentUpon>201703230749220_Added-tables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703230756314_Added-radacct-table.resx">
-      <DependentUpon>201703230756314_Added-radacct-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703231021062_change-in-modelDatatype.resx">
-      <DependentUpon>201703231021062_change-in-modelDatatype.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703231248565_Added-UserRoleAndRole-table.resx">
-      <DependentUpon>201703231248565_Added-UserRoleAndRole-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703231438301_Added_PasswordColumnInUser-table.resx">
-      <DependentUpon>201703231438301_Added_PasswordColumnInUser-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703240819310_Added_Radacct-table.resx">
-      <DependentUpon>201703240819310_Added_Radacct-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704140720104_changeFieldIn_userTable.resx">
-      <DependentUpon>201704140720104_changeFieldIn_userTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704141315135_AddedFieldsFor-UserTable.resx">
-      <DependentUpon>201704141315135_AddedFieldsFor-UserTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704141508543_Add_Form_FormControls_tbl.resx">
-      <DependentUpon>201704141508543_Add_Form_FormControls_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704170605316_remove-UserId-from-Sites-table.resx">
-      <DependentUpon>201704170605316_remove-UserId-from-Sites-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704170616066_added-UserSite-Table.resx">
-      <DependentUpon>201704170616066_added-UserSite-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704170627210_added-BannerIcon-in-Form-Table.resx">
-      <DependentUpon>201704170627210_added-BannerIcon-in-Form-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704170645314_added-BackGroundColor-LoginWindowColor-IsPasswordRequire-LoginPageTitle-RegistrationPageTitle-In-Form-Table.resx">
-      <DependentUpon>201704170645314_added-BackGroundColor-LoginWindowColor-IsPasswordRequire-LoginPageTitle-RegistrationPageTitle-In-Form-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.resx">
-      <DependentUpon>201704181307069_added-Column-HtmlCodeForLogin-in-Form-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704210911546_Update_Site_Company_tbl.resx">
-      <DependentUpon>201704210911546_Update_Site_Company_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.resx">
-      <DependentUpon>201704190722445_Added_promotionalEmail&amp;termsCondition_inUserTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704211556521_add_table.resx">
-      <DependentUpon>201704211556521_add_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704241640459_added-HtmlString-Column-in-FormControl-Table.resx">
-      <DependentUpon>201704241640459_added-HtmlString-Column-in-FormControl-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704250506253_delete-colum-from-form-table.resx">
-      <DependentUpon>201704250506253_delete-colum-from-form-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704280920509_added-AutoLogin-column-in-Users-table.resx">
-      <DependentUpon>201704280920509_added-AutoLogin-column-in-Users-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704280935558_added-AutoLogin-column-in-Site-Table.resx">
-      <DependentUpon>201704280935558_added-AutoLogin-column-in-Site-Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704281252085_Update_Users_tbl.resx">
-      <DependentUpon>201704281252085_Update_Users_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705010951320_Remove_UserSites_tbl.resx">
-      <DependentUpon>201705010951320_Remove_UserSites_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705010956295_Update_ByAdding_New_In_Users_tbl.resx">
-      <DependentUpon>201705010956295_Update_ByAdding_New_In_Users_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705012317139_Update_Site_tbl.resx">
-      <DependentUpon>201705012317139_Update_Site_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201704281214324_added-MacAddress&amp;StatusField-inUserTable.resx">
-      <DependentUpon>201704281214324_added-MacAddress&amp;StatusField-inUserTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705021205321_addedNullableto-SiteIdofUserTable.resx">
-      <DependentUpon>201705021205321_addedNullableto-SiteIdofUserTable.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <TypeScriptCompile Include="Vendors\devbridge-autocomplete\src\jquery.autocomplete.d.ts" />
     <TypeScriptCompile Include="Vendors\moment\moment.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201705041023273_initial-migration.resx">
+      <DependentUpon>201705041023273_initial-migration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
