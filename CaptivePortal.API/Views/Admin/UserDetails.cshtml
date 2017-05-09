@@ -68,11 +68,13 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <br />
+                                    <form>
+
+                                    </form>
                                     <div class="col-md-12 text-center">
                                         <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
                                     </div>
                                     <div class="container">
-                                        Site :<div id="SiteName"></div>
                                         <br />
                                         <form class="form-inline" id="searchForm">
                                             <input type="button" id="btnSearch" class="btn btn-success" value="Filter" style="width:10%" />
@@ -268,9 +270,9 @@
     
     var siteId = localStorage.getItem("SiteId");
     var siteName = localStorage.getItem("SiteName");
+    document.getElementsByTagName('form')[0].innerHTML = siteName;
     
-  
-
+    
     $("#div1 a").click(function () {
         $(location).attr('href', '/Admin/UserDetails?page=' + $(this).text()+'&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
