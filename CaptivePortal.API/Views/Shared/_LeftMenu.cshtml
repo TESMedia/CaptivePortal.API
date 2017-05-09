@@ -8,7 +8,7 @@
         <!-- menu profile quick info -->
         <div class="profile clearfix">
             <div class="profile_pic">
-                <img src="images/img.jpg" alt="..." class="img-circle profile_img">
+                <img src="~/Images/images.png" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
                 <span>Welcome,</span>
@@ -26,13 +26,12 @@
                 <ul class="nav side-menu">
                     <li>
                         <a href="Index"><i class="fa fa-home"></i> Home </a>
-
                     </li>
                     <li>
-                        <a><i class="fa fa-edit"></i> My Estate <span class="fa fa-chevron-down"></span></a>
+                        <a><i class="fa fa-cog fa-fw"></i> My Estate <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="CreateNewSite">Create new site</a></li>
-                            <li><a href="SiteDetails">Configure site</a></li>
+                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?SiteId=' + X; return false;">Configure site</a></li>
                         </ul>
                     </li>
                     <li>
@@ -44,9 +43,9 @@
                         </ul>
                     </li>
                     <li>
-                        <a><i class="fa fa-table"></i> User Management <span class="fa fa-chevron-down"></span></a>
+                        <a><i class="fa fa-users"></i> User Management <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="UserDetails">View Users</a></li>
+                            <li><a href="UserDetails" onclick="location.href = this.href + '?SiteId=' + X; return false;">View Users</a></li>
                             <li><a href="Register">Register User</a></li>
                         </ul>
                     </li>
@@ -64,3 +63,7 @@
         <!-- /menu footer buttons -->
     </div>
 </div>
+
+<script>
+    var X = localStorage.getItem("SiteId");
+</script>

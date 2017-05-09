@@ -39,7 +39,9 @@ namespace CaptivePortal.API.Models
         public ReturnSiteDetails()
         {
             Sites = new List<Site>();
+            Organisations = new List<Organisation>();
         }
         public List<Site> Sites { get; set; }
+        public List<Organisation> Organisations {get;set;}
     }
 }

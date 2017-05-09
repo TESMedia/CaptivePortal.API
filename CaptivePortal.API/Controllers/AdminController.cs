@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Text.RegularExpressions;
+using System.Data.Entity;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -481,25 +482,51 @@ namespace CaptivePortal.API.Controllers
         // GET: AdminIndex
         public ActionResult Index()
         {
-            //GetFormDataController objGetFormDataController = new GetFormDataController();
-            //var result = objGetFormDataController.GetSiteDetailsTest();
-            //string orgCompList=result.Replace(@"\", "");
-            //ViewData["OrgCompList"] = result;
+            ViewBag.sites = from item in db.Site.ToList()
+                            select new SelectListItem()
+                            {
+                                Value = item.SiteId.ToString(),
+                                Text = item.SiteName
+                            };
             return View();
         }
+
+        public JsonResult GetCompany(int orgId)
+        {
+            var result = from item in db.Company.Where(m => m.CompanyId == orgId).ToList()
+                         select new
+                         {
+                             value = item.CompanyId,
+                             text = item.CompanyName
+                         };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetSite(int compId)
+        {
+            var result = from item in db.Site.Where(m => m.CompanyId == compId).ToList()
+                         select new
+                         {
+                             value = item.SiteId,
+                             text = item.SiteName
+                         };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? userId, int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId,int? userId, int? page, string userName, string foreName, string surName)
         {
             UserlistViewModel list = new UserlistViewModel();
             list.UserViewlist = new List<UserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
             int PageSize = 5;
             double TotalPages = 0;
-            var userList = db.Users.ToList();
+            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
             if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
             {
@@ -536,12 +563,13 @@ namespace CaptivePortal.API.Controllers
             //If the Searching contain no parameter
             else
             {
-                userList = db.Users.ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                 TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
             }
             var userViewModelList = (from item in userList
                                      select new UserViewModel()
                                      {
+                                         SiteId=siteId.Value,
                                          UserId = item.UserId,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
@@ -587,6 +615,41 @@ namespace CaptivePortal.API.Controllers
             }
             return PartialView("_UserDetails", objUserViewModel);
         }
+
+        [HttpPost]
+        public ActionResult UpdateUser(FormCollection fc)
+        {
+            var UserNameBefore = fc["UserName"];
+            int userId = 0;
+
+            //Updating the Users table
+            if (db.Users.Any(m => m.UserName == UserNameBefore))
+            {
+                userId = db.Users.Where(m => m.UserName == UserNameBefore).FirstOrDefault().UserId;
+                var objUser = db.Users.Find(userId);
+                {
+                    objUser.UserName = fc["UserName"];
+                    objUser.Gender = fc["Gender"];
+                    objUser.Age = fc["AgeRange"];
+                    //objUser.MobileNumber = fc["MobileNumber"];
+                    //objUser.IntStatus = Convert.ToString(fc["Status"]);
+                    objUser.Email = fc["UserName"];
+                    db.Entry(objUser).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+                return RedirectToAction("UserDetails","Admin");
+        }
+
+        [HttpPost]
+        public ActionResult DeleteUser(int UserId)
+        {
+            Users user = db.Users.Find(UserId);
+            db.Users.Remove(user);
+            db.SaveChanges();
+            return RedirectToAction("UserDetails", "Admin");
+        }
+
         public ActionResult UpdatePassword(int UserId)
         {
             return View();
