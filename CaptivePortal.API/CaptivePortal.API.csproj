@@ -239,6 +239,10 @@
     <Compile Include="Migrations\201705041142323_Initial_Migration.Designer.cs">
       <DependentUpon>201705041142323_Initial_Migration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705041246221_changed-in-user-table-to-allow-null.cs" />
+    <Compile Include="Migrations\201705041246221_changed-in-user-table-to-allow-null.Designer.cs">
+      <DependentUpon>201705041246221_changed-in-user-table-to-allow-null.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\201705080318058_Change_Users_table.cs" />
     <Compile Include="Migrations\201705080318058_Change_Users_table.Designer.cs">
       <DependentUpon>201705080318058_Change_Users_table.cs</DependentUpon>
@@ -293,6 +297,7 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\images.png" />
     <Content Include="Images\wifi-297697_1280.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -4565,6 +4570,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201705041142323_Initial_Migration.resx">
       <DependentUpon>201705041142323_Initial_Migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705041246221_changed-in-user-table-to-allow-null.resx">
+      <DependentUpon>201705041246221_changed-in-user-table-to-allow-null.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705080318058_Change_Users_table.resx">
       <DependentUpon>201705080318058_Change_Users_table.cs</DependentUpon>

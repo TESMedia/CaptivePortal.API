@@ -45,7 +45,23 @@ namespace CaptivePortal.API.Controllers
             {
                 siteList.Sites = db.Site.ToList();
                 orgjson = new JavaScriptSerializer().Serialize(siteList.Sites);
-                
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            return orgjson;
+        }
+
+        [HttpGet]
+        public string GetOrgDetailsTest()
+        {
+            ReturnSiteDetails orgList = new ReturnSiteDetails();
+            string orgjson = string.Empty;
+            try
+            {
+                orgList.Organisations = db.Organisation.ToList();
+                orgjson = new JavaScriptSerializer().Serialize(orgList.Organisations);
             }
             catch (Exception ex)
             {

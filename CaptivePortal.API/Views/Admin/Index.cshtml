@@ -36,13 +36,14 @@
     <!-- Custom Theme Style -->
     <link href="~/build/css/custom.min.css" rel="stylesheet">
     <link href="~/Style/DropDown.css" rel="stylesheet" />
+    <link href="~/build/css/custom.css" rel="stylesheet" />
 </head>
 
 
 <body class="nav-md">
     <div class="container body">
         <div class="main_container">
-                        @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
+            @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
             <!-- top navigation -->
             <div class="top_nav">
                 <div class="nav_menu">
@@ -160,54 +161,20 @@
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-6">
-                                site 
+                                site
 
                                 <div class="btn-group">
                                     <div class="dropdown">
-                                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                                            Select
-                                            <span class="caret"></span>
-                                        </button>
-                                        @*@Html.DropDownList("OrganisationDdl", ViewBag.organisations as IEnumerable<SelectListItem>, "--Select--", new { @class = "form-control", @id = "OrganisationDdl", @name = "OrganisationDdl" })*@
-                                       
-                                         <ul class="dropdown-menu">
-                                           
-                                            <li><a tabindex="-1" href="#">pbOrg</a></li>
-                                             <li><a tabindex="-1" href="#">testOrg</a></li>
-                                             <li><a tabindex="-1" href="#">htmlTest</a></li>
-                                             <li><a tabindex="-1" href="#">villa</a></li>
-                                             <li><a tabindex="-1" href="#">pb</a></li>
-                                            <li class="dropdown-submenu">
-                                                <a class="test" tabindex="-1" href="#">New dropdown <span class="caret"></span></a>
-                                                <ul class="dropdown-menu">
-                                                    <li><a tabindex="-1" href="#">pbComp</a></li>
-                                                    <li><a tabindex="-1" href="#">testcomp</a></li>
-                                                    <li><a tabindex="-1" href="#">htmlTest</a></li>
-                                                    <li><a tabindex="-1" href="#">cooncord</a></li>
-                                                  
-                                                    <li class="dropdown-submenu">
-                                                        <a class="test" href="#">Another dropdown <span class="caret"></span></a>
-                                                        <ul class="dropdown-menu">
-                                                            <li><a href="#">htmlTest</a></li>
-                                                            <li><a href="#">Planetsbrain software pvt ltd</a></li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            
-                                        </ul>
-                                    
+
+                                        @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()" })
+
+
+
                                     </div>
                                 </div>
-                                </div>
+                            </div>
                             <div class="col-sm-6">
-                                <select class="btn btn-default dropdown-toggle">
-                                <option value="">Select</option>
-                                <option value="0">CurrentDate</option>
-                                <option value="1">Weekly</option>
-                                <option value="2">Monthly</option>
-                                <option value="3">Yearly</option>
-                                </select>    <input type="date"/>to<input type="date"/>
+                                Past 24 hours – Week – Month – Year – From <input type="date" /> to<input type="date" />
                             </div>
                         </div>
                     </div>
@@ -224,7 +191,13 @@
                                 <div class="col-md-6">
                                     <h3>Network Activities- <small>'Name of Site' </small></h3>
                                 </div>
-                               
+                                <div class="col-md-6">
+                                    <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
+                                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                        <span>April 7, 2017 - May 6, 2017</span> <b class="caret"></b>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="col-md-9 col-sm-9 col-xs-12">
@@ -306,13 +279,13 @@
 
                         </div>
                     </div>
-                   
+
 
                     <div class="col-md-4 col-sm-4 col-xs-12">
                         <div class="x_panel tile fixed_height_320 overflow_hidden">
                             <div class="x_title">
                                 <h2>Device Usage</h2>
-                               
+
                                 <div class="clearfix"></div>
                             </div>
                             <div class="x_content">
@@ -486,7 +459,7 @@
     <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="~/build/js/custom.js"></script>
+    <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
     <script>
 
@@ -508,6 +481,32 @@
         ga('create', 'UA-23581568-13', 'auto');
         ga('send', 'pageview');
 
+    </script>
+
+    <script>
+        
+        //store siteId and siteName in localstorage.
+        function saveToLocalStorage() {
+            var skillsSelect = document.getElementById("SiteDdl");
+            var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+            window.localStorage.setItem("SiteId", document.getElementById("SiteDdl").value);
+            window.localStorage.setItem('SiteName', selectedText);
+            //alert(localStorage.getItem("SiteId"));
+        }
+
+        function getComp(id) {
+            $.getJSON("/Admin/GetCompany?orgId=" + id, function (data) {
+                //var items = [];
+                $.each(data, function (key, value) {
+                    //document.getElementById("comp").innerHTML=this.text;
+                    //items=document.getElementById("comp").innerHTML;
+                    //items.push("<li><a tabindex='-1' href='#'"+ this.text + "</a>" +"</li>");
+                    $('#compAppend').append('<li><a tabindex="-1" href="#">' + this.text + '</a></li>');
+                });
+            });
+        }
+
+       
     </script>
 
 </body>

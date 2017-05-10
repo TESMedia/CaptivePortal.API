@@ -68,11 +68,14 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <br />
+                                    <form>
+
+                                    </form>
                                     <div class="col-md-12 text-center">
                                         <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
                                     </div>
                                     <div class="container">
-
+                                        <br />
                                         <form class="form-inline" id="searchForm">
                                             <input type="button" id="btnSearch" class="btn btn-success" value="Filter" style="width:10%" />
                                             <div class="form-group">
@@ -92,7 +95,7 @@
                                     </div>
                                     <hr />
                                     <div class="row container-fluid">
-
+                                        
                                         <div style="top:35px;">
                                             <table class="table table-hover table-striped table-responsive" id="cpTable">
                                                 <thead>
@@ -136,7 +139,7 @@
                                                                     @*<input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">*@
                                                                     @*<a href="@Url.Action("UserWithProfile","Admin",new { UserId= item.UserId})" type="checkbox">Edit</a>*@
                                                                     @*<input type="checkbox" onclick="location.href='@Url.Action("UserDetails","Admin",new { userId=item.UserId})'" />*@
-                                                                    <input type="checkbox" id="chkPassport" onclick="ShowHideDiv(this);UserWithProfile(@item.UserId)" value="@item.UserId" />
+                                                                    <input type="checkbox" id="chkPassport" onclick="ShowHideDiv(this);UserWithProfile(@item.UserId,@item.SiteId)" value="@item.UserId" />
 
                                                                 </td>
                                                                 <td>
@@ -264,13 +267,18 @@
 </body>
 </html>
 <script type="text/javascript">
-
+    
+    var siteId = localStorage.getItem("SiteId");
+    var siteName = localStorage.getItem("SiteName");
+    document.getElementsByTagName('form')[0].innerHTML = siteName;
+    
+    
     $("#div1 a").click(function () {
         $(location).attr('href', '/Admin/UserDetails?page=' + $(this).text()+'&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
 
     $("#btnSearch").on("click", function () {
-        $(location).attr('href', '/Admin/UserDetails?userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
+        $(location).attr('href', '/Admin/UserDetails?siteId=' +siteId+ '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
 
     //on checkmark show the selected user details, on uncheck mark show nothing.
@@ -279,8 +287,9 @@
         dvPassport.style.display = chkPassport.checked ? "block" : "none";
     }
 
+    
     //Viewdata for partial view of User details, password,devices, custom
-    function UserWithProfile(id) {
+    function UserWithProfile(id,siteId) {
         debugger;
         var uri = '@Html.Raw(Url.Action("UserWithProfile", "Admin"))';
         $.ajax({
