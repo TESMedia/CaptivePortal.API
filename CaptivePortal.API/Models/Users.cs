@@ -28,6 +28,10 @@ namespace CaptivePortal.API.Models
         public int IntStatus { get; set; }
         public string MacAddress { get; set; }
         public int ? SiteId { get; set; }
+        public string OperatingSystem { get; set; }
+        public bool IsMobile { get; set; }
+        public string Browser { get; set; }
+        public string UserAgentName { get; set; }
 
         [ForeignKey("SiteId")]
         public Site Site { get; set; }

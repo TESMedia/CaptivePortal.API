@@ -201,7 +201,13 @@
                                 </div>
                                 </div>
                             <div class="col-sm-6">
-                                Past 24 hours – Week – Month – Year – From <input type="date"/> to<input type="date"/>
+                                <select class="btn btn-default dropdown-toggle">
+                                <option value="">Select</option>
+                                <option value="0">CurrentDate</option>
+                                <option value="1">Weekly</option>
+                                <option value="2">Monthly</option>
+                                <option value="3">Yearly</option>
+                                </select>    <input type="date"/>to<input type="date"/>
                             </div>
                         </div>
                     </div>
@@ -480,7 +486,7 @@
     <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
     <!-- Custom Theme Scripts -->
-    <script src="../build/js/custom.min.js"></script>
+    <script src="~/build/js/custom.js"></script>
     <!-- Google Analytics -->
     <script>
 
