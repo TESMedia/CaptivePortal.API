@@ -17,9 +17,15 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Web.Http.Cors;
 
 namespace CaptivePortal.API.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
@@ -162,6 +168,7 @@ namespace CaptivePortal.API.Controllers
         {
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
+                AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
                 try
                 {
                     log.Info("enter in Register Method");
@@ -170,30 +177,49 @@ namespace CaptivePortal.API.Controllers
                     if (!(IsAnyMacAddressExist(objUser)))
                     {
                         //Save all the users Data in SqlServer Global DataBase
+                        objUser.CreationDate = DateTime.Now;
+                        objUser.UpdateDate = DateTime.Now;
+                        objUser.UserName = objUser.Email;
                         db.Users.Add(objUser);
                         db.SaveChanges();
                         log.Info("User Data saved in user Table");
 
                         //Save all the Users data in MySql DataBase
                         objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
-                        objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        objReturn.msg = "Successfully Creted the User";
+
+                        //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        //objReturn.msg = "Successfully Creted the User";
+                        objAutoLoginReturn.StatusReturn = new StatusReturn();
+                        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        objAutoLoginReturn.UserName = objUser.UserName;
+                        objAutoLoginReturn.Password = objUser.Password;
+                        dbContextTransaction.Commit();
+
+                        log.Info("Successfully Creted the User");
+
 
                     }
                 }
                 catch (Exception ex)
                 {
-                    objReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-                    objReturn.msg = "some problem occured";
+                    dbContextTransaction.Rollback();
+                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                    objAutoLoginReturn.StatusReturn.msg = "some problem occured";
                     log.Error(ex.Message);
                 }
                 JavaScriptSerializer objSerialization = new JavaScriptSerializer();
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(objSerialization.Serialize(objReturn))
+                    Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
                 };
+
+
             }
         }
+
+
+
+
 
 
         /// <summary>
@@ -233,22 +259,26 @@ namespace CaptivePortal.API.Controllers
             bool rtnMessage;
             try
             {
+                log.Info(model.MacAddress);
+                log.Info(model.SiteId);
                 //Check the MacAdress exist for the particular Site or not
                 if (db.Users.Any(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId))
                 {
+                    log.Info("Check the MacAdress exist for the particular Site or not");
                     rtnMessage = true;
                     //check the MacAddress is exist or not for particular User then allow to update 
-                    if (db.Users.Any(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId && m.UserId == model.UserId))
-                    {
-                        var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.UserId == model.UserId && m.SiteId == model.SiteId);
-                        //If MacAddres Not exist for the User then Save the MacAddress
-                        if (string.IsNullOrEmpty(objUser.MacAddress))
-                        {
-                            objUser.MacAddress = model.MacAddress;
-                            db.Entry(objUser).State = System.Data.Entity.EntityState.Modified;
-                            db.SaveChanges();
-                        }
-                    }
+                    //if (db.Users.Any(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId && m.UserId == model.UserId))
+                    //{
+                    //    var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.UserId == model.UserId && m.SiteId == model.SiteId);
+                    //    //If MacAddres Not exist for the User then Save the MacAddress
+                    //    if (string.IsNullOrEmpty(objUser.MacAddress))
+                    //    {
+                    //        log.Info("If MacAddres Not exist for the User");
+                    //        objUser.MacAddress = model.MacAddress;
+                    //        db.Entry(objUser).State = System.Data.Entity.EntityState.Modified;
+                    //        db.SaveChanges();
+                    //    }
+                    //}
                 }
                 else
                 {
@@ -259,7 +289,55 @@ namespace CaptivePortal.API.Controllers
             {
                 rtnMessage = false;
             }
+            log.Info(rtnMessage);
             return rtnMessage;
+        }
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("LoginWIthNewMacAddress")]
+        public HttpResponseMessage LoginWIthNewMacAddress(Users model)
+        {
+            AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
+            try
+            {
+                log.Info(model.UserName);
+                log.Info(model.Password);
+                var _userDetails = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault();
+                if (_userDetails.Password == model.Password)
+                {
+                    CreateUser(model);
+                    objAutoLoginReturn.StatusReturn = new StatusReturn();
+                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                    objAutoLoginReturn.UserName = model.UserName;
+                    objAutoLoginReturn.Password = model.Password;
+
+                }
+                else
+                {
+                    objAutoLoginReturn.StatusReturn = new StatusReturn();
+                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                
+            }
+
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
+            };
         }
 
 
@@ -272,32 +350,46 @@ namespace CaptivePortal.API.Controllers
         [Route("GetStatusOfUserForSite")]
         public HttpResponseMessage GetStatusOfUserForSite(Users model)
         {
+            AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
             try
             {
-                AutoLoginStatusReturn objReturn = new AutoLoginStatusReturn();
+
                 var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+                log.Info(objSite);
                 //Need to check the MacAddress exist for the particular Site with Autologin true
                 if (IsAnyMacAddressExist(model))
                 {
+                    log.Info("inside IsAnyMacAddressExist");
                     var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId);
 
                     //Check the AutoLogin of Site or User 
                     if (objUser.AutoLogin == true || objSite.AutoLogin == true)
                     {
-                        objReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        objReturn.UserName = objUser.UserName;
-                        objReturn.Password = objUser.Password;
+                        log.Info("Check the AutoLogin of Site or User");
+
+                        objAutoLoginReturn.StatusReturn = new StatusReturn();
+                        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        objAutoLoginReturn.UserName = objUser.UserName;
+                        objAutoLoginReturn.Password = objUser.Password;
+
                     }
                 }
+                else
+                {
+                    objAutoLoginReturn.StatusReturn = new StatusReturn();
+                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                }
+
             }
             catch (Exception ex)
             {
-                objReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                log.Error(ex.Message);
+                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
             }
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
             {
-                Content = new StringContent(objSerialization.Serialize(objReturn))
+                Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
             };
         }
     }
@@ -318,8 +410,8 @@ namespace CaptivePortal.API.Controllers
 
     public enum ReturnCode
     {
-        Success = 0,
-        Failure = 1
+        Success = 1,
+        Failure = -1
     }
 }
 
