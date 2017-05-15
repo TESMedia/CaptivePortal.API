@@ -15,6 +15,7 @@ namespace CaptivePortal.API.Models
         public int FormId { get; set; }
         public string ControlType { get; set; }
         public string LabelName { get; set; }
+        public string LabelNameToDisplay { get; set; }
         public string SiteUrl { get; set; }
         public string HtmlString { get; set; }
 

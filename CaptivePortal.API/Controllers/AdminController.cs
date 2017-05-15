@@ -20,6 +20,9 @@ namespace CaptivePortal.API.Controllers
     {
         CPDBContext db = new CPDBContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
+
+        StringBuilder sb = new StringBuilder(String.Empty);
+        FormControl objFormControl = new FormControl();
         //int orgId = 0;
         //int compId = 0;
         //int siteId = 0;
@@ -103,6 +106,14 @@ namespace CaptivePortal.API.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult doesSiteNameExist(string SiteName)
+        {
+            var site = db.Site.Any(x => x.SiteName == SiteName);
+            return Json(site);
+        }
+
+
         /// <summary>
         /// Create new site/org/comp/field.
         /// </summary>
@@ -113,14 +124,14 @@ namespace CaptivePortal.API.Controllers
         /// <param name="fieldLabel"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult CreateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc, string[] dataType, string[] controlType, string[] fieldLabel)
+        public ActionResult CreateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc, FormControlViewModel model, string[] dataType, string[] controlType, string[] fieldLabel)
         {
             try
             {
 
                 string imagepath = null;
                 int orgId = inputData.organisationDdl;
-                int compId = inputData.CompanyDdl;
+                string compId = inputData.CompanyDdl;
 
                 //organisation
                 if (inputData.OrganisationName != null)
@@ -143,14 +154,14 @@ namespace CaptivePortal.API.Controllers
                     };
                     db.Company.Add(objCompany);
                     db.SaveChanges();
-                    compId = objCompany.CompanyId;
+                    compId = objCompany.CompanyId.ToString();
                 }
 
                 //site
                 Site objSite = new Site
                 {
                     SiteName = inputData.SiteName,
-                    CompanyId = compId,
+                    CompanyId = compId==null?null:(int ?)Convert.ToInt32(compId),
                     AutoLogin = inputData.AutoLogin
                 };
                 db.Site.Add(objSite);
@@ -172,6 +183,22 @@ namespace CaptivePortal.API.Controllers
                     inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
                 }
 
+                //Term and condition
+                if (Request.Files["Term_conditions"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["Term_conditions"];
+                    string savedPath = HostingEnvironment.MapPath("/Upload/" + objSite.SiteId);
+                    imagepath = "/Upload/" + objSite.SiteId + "/" + httpPostedFile.FileName;
+                    string completePath = Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    inputData.BannerIcon = "/Upload/" + httpPostedFile.FileName;
+                }
+
                 //Form
                 Form objForm = new Form
                 {
@@ -191,16 +218,16 @@ namespace CaptivePortal.API.Controllers
 
                 //Alter table with generating dynamic html code.
                 //string dynamicHtmlCode = null;
-                if (fieldLabel.Length > 1)
-                {
-                    int i;
-                    for (i = 0; i < dataType.Length; i++)
-                    {
-                        var datatype = dataType[i];
+                //if (fieldLabel.Length > 1)
+                //{
+                //    int i;
+                //    for (i = 0; i < dataType.Length; i++)
+                //    {
+                //        var datatype = dataType[i];
                         //var controltype = controlType[i];
-                        var fieldlabel = fieldLabel[i];
-                        string sqlString = "alter table [Users] add" + " " + fieldlabel + " " + datatype + " " + "NULL";
-                        db.Database.ExecuteSqlCommand(sqlString);
+                        //var fieldlabel = fieldLabel[i];
+                        //string sqlString = "alter table [Users] add" + " " + fieldlabel + " " + datatype + " " + "NULL";
+                        //db.Database.ExecuteSqlCommand(sqlString);
                         //StringBuilder sb = new StringBuilder(string.Empty);
 
                         //FormControl objFormControl = new FormControl();
@@ -216,8 +243,8 @@ namespace CaptivePortal.API.Controllers
                         //sb.Append("</div>");
 
                         //dynamicHtmlCode += sb.ToString();
-                    }
-                }
+                    //}
+               // }
                 //objForm.HtmlCodeForLogin = dynamicHtmlCode;
                 //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 //db.SaveChanges();
@@ -274,11 +301,12 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.LoginWindowColor = objForm.LoginWindowColor;
                 objViewModel.IsPasswordRequire = objForm.IsPasswordRequire;
                 objViewModel.LoginPageTitle = objForm.LoginPageTitle;
+                objViewModel.AutoLogin = objForm.Site.AutoLogin;
                 objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {
-                    objViewModel.CompanyDdl = (int)db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId;
+                    objViewModel.CompanyDdl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId.ToString();
                 }
                 objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
                 return View(objViewModel);
@@ -319,7 +347,7 @@ namespace CaptivePortal.API.Controllers
         /// <param name="fc"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc)
+        public ActionResult UpdateSiteAndLoginRegisterConf(FormViewModel inputData, FormCollection fc, FormControlViewModel model, string[] fieldLabel)
         {
             if (inputData.CompanyName == null)
             {
@@ -356,17 +384,18 @@ namespace CaptivePortal.API.Controllers
             return RedirectToAction("Index", "Admin");
         }
 
+        
         [HttpPost]
         public JsonResult SaveFormControls(FormControlViewModel model)
         {
             try
             {
                 Form objForm = db.Form.FirstOrDefault(m => m.FormId == model.FormId);
-                StringBuilder sb = new StringBuilder(String.Empty);
-                if (model.controlType == "dropdown")
+
+                if (model.fieldlabel == "Custom3" || model.fieldlabel == "Custom5")
                 {
                     sb.Append("<div>");
-                    sb.Append("<select name=" + '"' + model.fieldlabel + '"' + ">");
+                    sb.Append("<select name=" + '"' + model.LabelNameToDisplay + '"' + ">");
                     foreach (var item in model.arrayValue)
                     {
                         sb.Append("<option value=" + '"' + item + '"' + ">" + item + "</option>");
@@ -374,46 +403,72 @@ namespace CaptivePortal.API.Controllers
                     sb.Append("</select>");
                     sb.Append("</div>");
                 }
-                else if (model.controlType == "checkbox")
+                else if (model.fieldlabel == "Gender")
+                {
+                    sb.Append("<div>");
+                    sb.Append("<select name=" + '"' + model.LabelNameToDisplay + '"' + ">");
+                    sb.Append("<option value=" + '"' + "male" + '"' + ">" + "male" + "</option>");
+                    sb.Append("<option value=" + '"' + "male" + '"' + ">" + "male" + "</option>");
+                    sb.Append("</select>");
+                    sb.Append("</div>");
+                }
+                else if (model.fieldlabel == "AgeRange")
+                {
+                    sb.Append("<div>");
+                    sb.Append("<select name=" + '"' + model.LabelNameToDisplay + '"' + ">");
+                    sb.Append("<option value=" + '"' + "9-19" + '"' + ">" + "9-19" + "</option>");
+                    sb.Append("<option value=" + '"' + "19-29" + '"' + ">" + "19-29" + "</option>");
+                    sb.Append("<option value=" + '"' + "29-39" + '"' + ">" + "29-39" + "</option>");
+                    sb.Append("<option value=" + '"' + "39-49" + '"' + ">" + "39-49" + "</option>");
+                    sb.Append("<option value=" + '"' + "49-59" + '"' + ">" + "49-59" + "</option>");
+                    sb.Append("<option value=" + '"' + "59-69" + '"' + ">" + "59-69" + "</option>");
+                    sb.Append("</select>");
+                    sb.Append("</div>");
+                }
+                else if (model.fieldlabel == "Custom5" || model.fieldlabel == "Custom6")
                 {
                     sb.Append("<div>");
                     foreach (var item in model.arrayValue)
                     {
-                        sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
+                        sb.Append("<input type=" + "checkbox" + " " + "id=" + '"' + model.LabelNameToDisplay + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
                     }
                     sb.Append("</div>");
                 }
-                else if (model.controlType == "radio")
-                {
-                    sb.Append("<div>");
-                    foreach (var item in model.arrayValue)
-                    {
-                        sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
-                    }
-                    sb.Append("</div>");
-                }
+                //else if (model.controlType == "radio")
+                //{
+                //    sb.Append("<div>");
+                //    foreach (var item in model.arrayValue)
+                //    {
+                //        sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "value=" + '"' + item + '"' + ">" + item);
+                //    }
+                //    sb.Append("</div>");
+                //}
                 else
                 {
-                    //div start
-                    //sb.Append("<div>");
-                    //sb.Append("<input type=" + '"' + model.controlType + '"' + " " + "id=" + '"' + model.fieldlabel + '"' + " " + "name=" + '"' + model.fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + model.fieldlabel + '"' + "/>");
-                    //sb.Append("</div>");
-                    //div end
-                    //div start
-                    sb.Append("<div class='form-group'>");
-                    sb.Append("<label class='control-label col-sm-2'>" + model.fieldlabel + "</label>");
-                    sb.Append("<div class='col-sm-10'>");
-                    sb.Append("<input type=" + '"' + model.controlType + '"' + '"' + "" + "class='form-control'" + " " + "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + " /> ");
-                    sb.Append("</div>");
-
-
-                    sb.Append("</div>");
-                    //div end
+                    if (model.chkOptOrMand == "true")
+                    {
+                        sb.Append("<div class='form-group'>");
+                        sb.Append("<label class='control-label col-sm-2'>" + model.LabelNameToDisplay + "</label>");
+                        sb.Append("<div class='col-sm-10'>");
+                        sb.Append("<input type=" + '"' + "text" + '"' + '"' + "" + "class='form-control'" + " " + "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + "required" + "/> ");
+                        sb.Append("</div>");
+                        sb.Append("</div>");
+                    }
+                    else
+                    {
+                        sb.Append("<div class='form-group'>");
+                        sb.Append("<label class='control-label col-sm-2'>" + model.LabelNameToDisplay + "</label>");
+                        sb.Append("<div class='col-sm-10'>");
+                        sb.Append("<input type=" + '"' + "text" + '"' + '"' + "" + "class='form-control'" + " " + "placeholder = " + '"' + "Enter" + " " + model.fieldlabel + '"' + " /> ");
+                        sb.Append("</div>");
+                        sb.Append("</div>");
+                    }
                 }
 
                 FormControl objFormControl = new FormControl();
                 objFormControl.ControlType = model.controlType;
                 objFormControl.LabelName = model.fieldlabel;
+                objFormControl.LabelNameToDisplay = model.LabelNameToDisplay;
                 objFormControl.FormId = model.FormId;
                 objFormControl.HtmlString = sb.ToString();
                 db.FormControl.Add(objFormControl);
@@ -612,6 +667,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.UserName = userDetail.UserName;
                 objUserViewModel.Gender = userDetail.Gender;
                 objUserViewModel.AgeRange = userDetail.Age;
+                objUserViewModel.AutoLogin = Convert.ToBoolean(userDetail.AutoLogin);
             }
             return PartialView("_UserDetails", objUserViewModel);
         }

@@ -17,7 +17,7 @@ namespace CaptivePortal.API.Models
         public string CompanyName { get; set; }
         public string OrganisationName { get; set; }
         public int organisationDdl { get; set; }
-        public int CompanyDdl { get; set; }
+        public string CompanyDdl { get; set; }
         public string BannerIcon { get; set; }
         public string BackGroundColor { get; set; }
         public string LoginWindowColor { get; set; }

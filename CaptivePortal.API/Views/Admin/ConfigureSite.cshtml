@@ -125,7 +125,7 @@
                                             <div class="form-group">
                                                 <label for="auto-login" class="control-label col-md-3 col-sm-3 col-xs-12">Auto-login users:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" checked="@Model.AutoLogin" style="width:30px;">
                                                 </div>
                                             </div>
 
@@ -145,13 +145,13 @@
                                                 <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
                                             @*<div class="form-group">
-                                                <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input type="file" name="BannerIcon"  accept="image/*" id="imgLogo" >
-                                                    <button onclick="UploadFile()"> UploadFile</button>
-                                                    <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
-                                                </div>
-                                            </div>*@
+                    <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="file" name="BannerIcon"  accept="image/*" id="imgLogo" >
+                        <button onclick="UploadFile()"> UploadFile</button>
+                        <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
+                    </div>
+                </div>*@
                                             <div class="form-group">
                                                 <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
                                                 <div class="col-md-6">
@@ -176,7 +176,7 @@
                                             <div class="form-group">
                                                 <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbPwd" name="IsPasswordRequire" style="width:30px;">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbPwd" name="IsPasswordRequire" style="width:30px;" checked="@Model.IsPasswordRequire">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -200,22 +200,23 @@
                                                             <div class="row">
                                                                 <div class="voca">
                                                                     @*<div class="col-md-1">
-                                                                            @Html.HiddenFor(model=>item.FormControlId)
-                                                                        </div>*@
+                                            @Html.HiddenFor(model=>item.FormControlId)
+                                        </div>*@
                                                                     <div class="col-md-3">
                                                                         @*<input class="form-control" placeholder="Add Field" name="fieldLabel" type="text">*@
                                                                         @Html.EditorFor(model => item.LabelName, new { htmlAttributes = new { @class = "form-control", @name = "fieldLabel" } })
                                                                     </div>
                                                                     <div class="col-md-2">
-                                                                        @Html.DropDownListFor(Model => item.ControlType, new SelectList(ControlTypeList as IEnumerable<SelectListItem>, "Value", "Text", item.ControlType)
-                                                             , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })
+                                                                        <input class="form-control" name="LabelNameToDisplay" type="text" id="labelNameToDisplay" value="@item.LabelNameToDisplay">
+                                                                        @*@Html.DropDownListFor(Model => item.ControlType, new SelectList(ControlTypeList as IEnumerable<SelectListItem>, "Value", "Text", item.ControlType)
+                                            , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })*@
                                                                     </div>
                                                                     @*<div class="col-md-1">
-                                                                        <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">
-                                                                    </div>*@
+                                            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">
+                                        </div>*@
                                                                     @*<button type="button" class="btn btn-danger" id="btnDelete">
-                                                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
-                                                                        </button>*@
+                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
+                                        </button>*@
                                                                     <a href="@Url.Action("DeleteFormControl","Admin",new { Id=item.FormControlId })" class="btn btn-danger">Delete Field</a>
                                                                 </div>
                                                             </div>
@@ -244,23 +245,24 @@
                                                                         <div class="row">
                                                                             <div class="voca">
                                                                                 <div class="col-md-3">
-                                                                                    @Html.DropDownListFor(x => x.fieldlabel, new SelectList(Model.fieldlabel), "Select Filed Name", new { @style = "width:180px", @class = "form-control", @name = "controlType" })
+                                                                                    @Html.DropDownListFor(x => x.fieldlabel, new SelectList(Model.fieldlabel), "Select Filed Name", new { @style = "width:180px", @class = "form-control", @name = "controlType", @id = "fieldlabel" })
                                                                                 </div>
                                                                                 <div class="col-md-2">
-                                                                                    <select class="form-control" name="controlType" id="controlType">
-                                                                                        <option value=0>Select Control Type</option>
-                                                                                        <option value=text>text</option>
-                                                                                        <option value=password>password</option>
-                                                                                        <option value=date>date</option>
-                                                                                        <option value=tel>tel</option>
-                                                                                        <option value=radio>time</option>
-                                                                                        <option value=checkbox>checkbox</option>
-                                                                                        <option value=dropdown>dropdown</option>
-                                                                                        <option value=radio>radio</option>
-                                                                                    </select>
+                                                                                    <input id="LabelName" class="form-control col-md-7 col-xs-12" type="text" name="LabelNameToDisplay">
+                                                                                    @*<select class="form-control" name="controlType" id="controlType">
+                                                            <option value=0>Select Control Type</option>
+                                                            <option value=text>text</option>
+                                                            <option value=password>password</option>
+                                                            <option value=date>date</option>
+                                                            <option value=tel>tel</option>
+                                                            <option value=radio>time</option>
+                                                            <option value=checkbox>checkbox</option>
+                                                            <option value=dropdown>dropdown</option>
+                                                            <option value=radio>radio</option>
+                                                        </select>*@
                                                                                 </div>
                                                                                 <div class="col-md-1">
-                                                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand"  value="required" style="width:30px;">
+                                                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="chkOptOrMand" name="chkOptOrMand" value="required" style="width:30px;">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-2">
@@ -273,26 +275,33 @@
                                                                     <br>
                                                                 </div>
                                                             </div>
+                                                            @*</div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>*@
+
+
+
+                                                            @*<div class="ln_solid"></div>*@
+                                                            <div class="form-group" id="optionBlock" style="display:none">
+                                                                <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Add Option Value</label>
+                                                                <div class="col-md-9 col-sm-9 col-xs-9" id="txtDiv">
+                                                                    <div class="col-md-2 col-sm-2 col-lg-2">
+                                                                        <input type="text" name="optionval" id="optionval" class="form-control col-md-2" />
+                                                                    </div>
+                                                                    <div class="col-md-2 col-lg-2 col-xs-2 pull-right">
+                                                                        <input type="button" class="btn btn-success" name="plus" id="plus" value="+"> <input type="button" class="btn btn-danger" name="minus" id="minus" value="-">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                                         </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-
-
-                                            @*<div class="ln_solid"></div>*@
-                                            <div class="form-group" id="optionBlock" style="display:none">
-                                                <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Add Option Value</label>
-                                                <div class="col-md-9 col-sm-9 col-xs-9" id="txtDiv">
-                                                    <div class="col-md-2 col-sm-2 col-lg-2">
-                                                        <input type="text" name="optionval" id="optionval" class="form-control col-md-2" />
-                                                    </div>
-                                                    <div class="col-md-2 col-lg-2 col-xs-2 pull-right">
-                                                        <input type="button" class="btn btn-success" name="plus" id="plus" value="+"> <input type="button" class="btn btn-danger" name="minus" id="minus" value="-">
                                                     </div>
                                                 </div>
                                             </div>
@@ -392,11 +401,11 @@
 
     $(function () {
 
-        $("#controlType").change(function () {
-            var selectedText = $(this).find("option:selected").text();
+        $("#fieldlabel").change(function () {
+            //var selectedText = $(this).find("option:selected").text();
             var selectedValue = $(this).val();
-            alert("Selected Text: " + selectedText + " Value: " + selectedValue);
-            if (selectedValue == "checkbox" || selectedValue == "dropdown" || selectedValue == "radio")
+            //alert("Selected Text: " + selectedText + " Value: " + selectedValue);
+            if (selectedValue == "Custom3" || selectedValue == "Custom4" )
             {
                 $("#optionBlock").show();
             }
@@ -455,7 +464,7 @@
     
     $("#btnSave").on("click", function () {
         //var checkedValue = document.querySelector('.form-control:checked').value;
-        if(document.getElementById("checkbox1").checked) {
+        if(document.getElementById("chkOptOrMand").checked) {
             var checkedValue=true;
         }
         else
@@ -467,7 +476,7 @@
         $.each($("input[name='optionval']"), function () {
             arrData.push($(this).val());
         });
-        var data= {arrayValue:arrData,FormId:$("#FormId").val(),controlType:$("#controlType").val(),fieldlabel:$("#fieldlabel").val(),chkOptOrMand:checkedValue}
+        var data= {arrayValue:arrData,FormId:$("#FormId").val(),LabelNameToDisplay:$("#LabelName").val(),fieldlabel:$("#fieldlabel").val(),chkOptOrMand:checkedValue}
         $.post("/Admin/SaveFormControls/",data, function (e) {
             location.reload();
         });

@@ -76,7 +76,7 @@
                                             <div class="form-group">
                                                 <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName">
+                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()"><label class="message" id="message"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -114,11 +114,11 @@
                                             <div class="form-group">
                                                 <label for="term-condition" class="control-label col-md-3 col-sm-3 col-xs-12">Terms & Conditions:</label>
                                                 <div class="col-md-1">
-                                                    <input id="term-condition" class="form-control col-md-1" type="text" name="Term_conditions">
+                                                    <input id="term-version" class="form-control col-md-1" type="text" name="Version">
                                                 </div>
-                                                <div class="col-md-3">
+                                                @*<div class="col-md-3">
                                                     <input id="term-condition" class="form-control col-md-3" type="text" name="Term_conditions">
-                                                </div>
+                                                </div>*@
                                                 <div class="col-md-3">
                                                     <input id="term-condition" type="file" name="Term_conditions">
                                                 </div>
@@ -170,34 +170,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="control-group" id="fields">
-                                                    <label for="field-label" class="control-label col-md-3 col-sm-3 col-xs-12">Field Name/Type</label>
-                                                    <div class="controls">
-                                                        <div role="form" autocomplete="off">
-                                                            <div class="row">
-                                                                <div class="voca">
-                                                                    <div class="col-md-3">
-                                                                        <input class="form-control" placeholder="Add Field" name="fieldLabel" type="text">
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <select class="form-control" name="dataType">
-                                                                            <option value=0>Select Data Type</option>
-                                                                            <option value=varchar(100)>String</option>
-                                                                            <option value=int>int</option>
-                                                                            <option value=date>date</option>
-                                                                            <option value="bit">Bool</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                    <button type="button" class="btn btn-success btn-add">
-                                                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add more
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <br>
-                                                    </div>
-                                                </div>
+                      
 
 
                                                 <div class="ln_solid"></div>
@@ -353,6 +326,34 @@
         }
 
     });
+
+
+    function doesSiteNameExist() {
+        var siteName = document.getElementById('site-name').value;
+        var uri = '@Html.Raw(Url.Action("doesSiteNameExist", "Admin"))';
+        $.ajax({
+            url: uri,
+            type: 'POST',
+            traditional: true,
+            dataType: "HTML",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ 'SiteName': siteName }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    document.getElementById('message').style.display = "block";
+                    document.getElementById('message').innerHTML = "Site Name already taken";
+                }
+                else {
+                    document.getElementById('message').style.display = "none";
+                }
+            },
+            error: function (objAjaxRequest, strError) {
+                var respText = objAjaxRequest.responseText;
+                console.log(respText);
+            }
+        });
+    }
 
     
     //$("#plus").on("click", function () {

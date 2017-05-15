@@ -228,6 +228,7 @@
     <Compile Include="Context\CPDBContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\FormApiController.cs" />
     <Compile Include="Controllers\GetFormDataController.cs" />
     <Compile Include="Controllers\CommonApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -238,6 +239,10 @@
     <Compile Include="Migrations\201705150821012_Initial_Migrations.cs" />
     <Compile Include="Migrations\201705150821012_Initial_Migrations.Designer.cs">
       <DependentUpon>201705150821012_Initial_Migrations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs" />
+    <Compile Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.Designer.cs">
+      <DependentUpon>201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -283,6 +288,7 @@
     <Content Include="build\images\loading.gif" />
     <Content Include="build\js\custom.js" />
     <Content Include="build\js\custom.min.js" />
+    <Content Include="build\js\index.js" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\login.css" />
@@ -4560,6 +4566,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201705150821012_Initial_Migrations.resx">
       <DependentUpon>201705150821012_Initial_Migrations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.resx">
+      <DependentUpon>201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

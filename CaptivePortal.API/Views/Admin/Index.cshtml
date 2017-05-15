@@ -37,6 +37,7 @@
     <link href="~/build/css/custom.min.css" rel="stylesheet">
     <link href="~/Style/DropDown.css" rel="stylesheet" />
     <link href="~/build/css/custom.css" rel="stylesheet" />
+    <script src="~/build/js/index.js"></script>
 </head>
 
 
@@ -166,7 +167,10 @@
                                 <div class="btn-group">
                                     <div class="dropdown">
 
-                                        @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()" })
+                                        @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()", @Selected = true })
+
+
+
 
 
 
@@ -484,15 +488,7 @@
     </script>
 
     <script>
-        
-        //store siteId and siteName in localstorage.
-        function saveToLocalStorage() {
-            var skillsSelect = document.getElementById("SiteDdl");
-            var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
-            window.localStorage.setItem("SiteId", document.getElementById("SiteDdl").value);
-            window.localStorage.setItem('SiteName', selectedText);
-            //alert(localStorage.getItem("SiteId"));
-        }
+       
 
         function getComp(id) {
             $.getJSON("/Admin/GetCompany?orgId=" + id, function (data) {

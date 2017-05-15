@@ -33,6 +33,13 @@ namespace CaptivePortal.API.Models
         public string Browser { get; set; }
         public string UserAgentName { get; set; }
 
+        public string Custom1 { get; set; }
+        public string Custom2 { get; set; }
+        public string Custom3 { get; set; }
+        public string Custom4 { get; set; }
+        public string Custom5 { get; set; }
+        public string Custom6 { get; set; }
+
         [ForeignKey("SiteId")]
         public Site Site { get; set; }
 
