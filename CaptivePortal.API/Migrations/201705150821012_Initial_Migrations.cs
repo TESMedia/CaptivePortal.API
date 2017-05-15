@@ -3,7 +3,7 @@ namespace CaptivePortal.API.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Initial_Migration : DbMigration
+    public partial class Initial_Migrations : DbMigration
     {
         public override void Up()
         {
@@ -174,12 +174,16 @@ namespace CaptivePortal.API.Migrations
                         UpdatedBy = c.String(),
                         Gender = c.String(),
                         Age = c.String(),
-                        AutoLogin = c.Boolean(nullable: false),
+                        AutoLogin = c.Boolean(),
                         Term_conditions = c.String(),
-                        promotional_email = c.Boolean(nullable: false),
-                        IntStatus = c.Int(nullable: false),
+                        promotional_email = c.Boolean(),
+                        IntStatus = c.Int(),
                         MacAddress = c.String(),
                         SiteId = c.Int(),
+                        OperatingSystem = c.String(),
+                        IsMobile = c.Boolean(nullable: false),
+                        Browser = c.String(),
+                        UserAgentName = c.String(),
                     })
                 .PrimaryKey(t => t.UserId)
                 .ForeignKey("dbo.Sites", t => t.SiteId)

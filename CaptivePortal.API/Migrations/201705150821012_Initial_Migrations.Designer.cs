@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ChangeInTables : IMigrationMetadata
+    public sealed partial class Initial_Migrations : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeInTables));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial_Migrations));
         
         string IMigrationMetadata.Id
         {
-            get { return "201705101410271_Change InTables"; }
+            get { return "201705150821012_Initial_Migrations"; }
         }
         
         string IMigrationMetadata.Source
