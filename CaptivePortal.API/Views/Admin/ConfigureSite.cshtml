@@ -262,7 +262,7 @@
                                                         </select>*@
                                                                                 </div>
                                                                                 <div class="col-md-1">
-                                                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="chkOptOrMand" name="chkOptOrMand" value="required" style="width:30px;">
+                                                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="chkOptOrMand" name="IsMandetory" value="required" style="width:30px;">
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-2">
@@ -476,7 +476,7 @@
         $.each($("input[name='optionval']"), function () {
             arrData.push($(this).val());
         });
-        var data= {arrayValue:arrData,FormId:$("#FormId").val(),LabelNameToDisplay:$("#LabelName").val(),fieldlabel:$("#fieldlabel").val(),chkOptOrMand:checkedValue}
+        var data= {arrayValue:arrData,FormId:$("#FormId").val(),LabelNameToDisplay:$("#LabelName").val(),fieldlabel:$("#fieldlabel").val(),chkOptOrMand:checkedValue,IsMandetory:checkedValue}
         $.post("/Admin/SaveFormControls/",data, function (e) {
             location.reload();
         });

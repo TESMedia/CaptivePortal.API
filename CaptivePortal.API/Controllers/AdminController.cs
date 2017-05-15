@@ -386,7 +386,7 @@ namespace CaptivePortal.API.Controllers
 
         
         [HttpPost]
-        public JsonResult SaveFormControls(FormControlViewModel model)
+        public JsonResult SaveFormControls(FormControlViewModel model,string IsMandetory)
         {
             try
             {
@@ -469,6 +469,7 @@ namespace CaptivePortal.API.Controllers
                 objFormControl.ControlType = model.controlType;
                 objFormControl.LabelName = model.fieldlabel;
                 objFormControl.LabelNameToDisplay = model.LabelNameToDisplay;
+                objFormControl.IsMandetory = Convert.ToBoolean(IsMandetory);
                 objFormControl.FormId = model.FormId;
                 objFormControl.HtmlString = sb.ToString();
                 db.FormControl.Add(objFormControl);

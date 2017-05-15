@@ -35,23 +35,35 @@ namespace CaptivePortal.API.Controllers
 
         [HttpPost]
         [Route("RegisterFormData")]
-        public object RegisterHtmlDynamicCode(FormData formdata)
+        public string RegisterHtmlDynamicCode(FormData formdata)
         {
+            var json = "";
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
             var jsonFormData = formResult[0];
-            string formatedHtml = String.Empty;
-            foreach (var item in db.FormControl.Where(m => m.FormId == jsonFormData.FormId))
-            {
-                item.HtmlString = item.HtmlString.Replace("\"", "'");
-                formatedHtml += item.HtmlString;
-            }
-            formatedHtml = formatedHtml.Replace("\"", "'");
+            var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
+            var jsonFormControlData = formControlResult[0];
+            json= JsonConvert.SerializeObject(jsonFormControlData);
+            json = json.Replace("\"","'");
+            return json;
+            //string columnName = jsonFormControlData.LabelName;
+            //string LabelNameToDisplay = jsonFormControlData.LabelNameToDisplay;
+            //string IsMandetory = jsonFormControlData.IsMandetory.ToString();
+            //string IsPasswordRequired = jsonFormData.IsPasswordRequire.ToString();
+            //return new { columnName, IsMandetory, IsPasswordRequired , LabelNameToDisplay };
+
+            //string formatedHtml = String.Empty;
+            //foreach (var item in db.FormControl.Where(m => m.FormId == jsonFormData.FormId))
+            //{
+            //    item.HtmlString = item.HtmlString.Replace("\"", "'");
+            //    formatedHtml += item.HtmlString;
+            //}
+            //formatedHtml = formatedHtml.Replace("\"", "'");
             // formatedHtml = Server.HtmlDecode(formatedHtml);
             // return formatedHtml;
-            string IsPasswordRequired = jsonFormData.IsPasswordRequire.ToString();
+            //string IsPasswordRequired = jsonFormData.IsPasswordRequire.ToString();
             //var listString = new List<string>() { "isPaswordRequired", jsonFormData.IsPasswordRequire.ToString()};
 
-            return new { formatedHtml, IsPasswordRequired };
+            //return new { formatedHtml, IsPasswordRequired };
         }
     }
 }
