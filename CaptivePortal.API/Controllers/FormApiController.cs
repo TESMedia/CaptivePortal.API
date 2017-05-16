@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 
 namespace CaptivePortal.API.Controllers
@@ -35,16 +36,35 @@ namespace CaptivePortal.API.Controllers
 
         [HttpPost]
         [Route("RegisterFormData")]
-        public string RegisterHtmlDynamicCode(FormData formdata)
+        public HttpResponseMessage RegisterHtmlDynamicCode(FormData formdata)
         {
-            var json = "";
+            //string json = "";
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
             var jsonFormData = formResult[0];
             var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
+
             //var jsonFormControlData = formControlResult[0];
-            json= JsonConvert.SerializeObject(formControlResult);
-            json = json.Replace("\"","'");
-            return json;
+
+            ReturnRegisterFormListData objReturnRegisterFormListData = new ReturnRegisterFormListData();
+            objReturnRegisterFormListData.ReteurnRegisterFormList = new List<ReturnRegisterFormData>();
+            var jsonRegisterFormData = (from item in formControlResult
+                                        select new ReturnRegisterFormData()
+                                        {
+                                            SiteId = formdata.SiteId,
+                                            ColumnName = item.LabelName,
+                                            LabelNameToDisplay = item.LabelNameToDisplay,
+                                            IsMandetory = item.IsMandetory,
+                                            IsPasswordRequired = db.Form.FirstOrDefault(m => m.FormId == jsonFormData.FormId).IsPasswordRequire
+                                        }).ToList();
+            objReturnRegisterFormListData.ReteurnRegisterFormList.AddRange(jsonRegisterFormData);
+            string json = JsonConvert.SerializeObject(objReturnRegisterFormListData);
+            //json = json.Replace("\"", "");
+            //return json;
+
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
             //string columnName = jsonFormControlData.LabelName;
             //string LabelNameToDisplay = jsonFormControlData.LabelNameToDisplay;
             //string IsMandetory = jsonFormControlData.IsMandetory.ToString();

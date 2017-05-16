@@ -26,4 +26,24 @@ namespace CaptivePortal.API.Models
         public string LoginPageTitle { get; set; }
         //public string HtmlCodeForRegister { get; set; }
     }
+
+    public class ReturnRegisterFormData
+    {
+        public int SiteId { get; set; }
+        public string ColumnName { get; set; }
+        public string LabelNameToDisplay { get; set; }
+        public bool IsMandetory { get; set; }
+        public bool IsPasswordRequired { get; set; }
+    }
+
+    public class ReturnRegisterFormListData
+    {
+
+        public ReturnRegisterFormListData()
+        {
+            ReteurnRegisterFormList = new List<ReturnRegisterFormData>();
+        }
+        public List<ReturnRegisterFormData> ReteurnRegisterFormList { get; set; }
+    }
+
 }
