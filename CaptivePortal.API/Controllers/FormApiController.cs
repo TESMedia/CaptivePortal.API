@@ -41,8 +41,8 @@ namespace CaptivePortal.API.Controllers
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
             var jsonFormData = formResult[0];
             var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
-            var jsonFormControlData = formControlResult[0];
-            json= JsonConvert.SerializeObject(jsonFormControlData);
+            //var jsonFormControlData = formControlResult[0];
+            json= JsonConvert.SerializeObject(formControlResult);
             json = json.Replace("\"","'");
             return json;
             //string columnName = jsonFormControlData.LabelName;

@@ -25,6 +25,8 @@ namespace CaptivePortal.API.Models
         public string LoginPageTitle { get; set; }
         public string RegistrationPageTitle { get; set; }
         public bool AutoLogin { get; set; }
+        public string ControllerIpAddress { get; set; }
+        public string MySqlIpAddress { get; set; }
 
         public string[] dataType { get; }
         public string[] controlType { get; }

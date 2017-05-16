@@ -162,7 +162,9 @@ namespace CaptivePortal.API.Controllers
                 {
                     SiteName = inputData.SiteName,
                     CompanyId = compId==null?null:(int ?)Convert.ToInt32(compId),
-                    AutoLogin = inputData.AutoLogin
+                    AutoLogin = inputData.AutoLogin,
+                    ControllerIpAddress=inputData.ControllerIpAddress,
+                    MySqlIpAddress=inputData.MySqlIpAddress
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
@@ -303,6 +305,8 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.LoginPageTitle = objForm.LoginPageTitle;
                 objViewModel.AutoLogin = objForm.Site.AutoLogin;
                 objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
+                objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
+                objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {

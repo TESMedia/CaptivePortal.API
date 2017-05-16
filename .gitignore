@@ -242,3 +242,4 @@ ModelManifest.xml
 .fake/
 /CaptivePortal.API/Properties/PublishProfiles
 /CaptivePortal.API/Logs/log.txt
+/CaptivePortal.API/Images/1
