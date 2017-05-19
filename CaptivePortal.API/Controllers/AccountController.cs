@@ -186,47 +186,26 @@ namespace CaptivePortal.API.Controllers
 
                         //Save all the Users data in MySql DataBase
                         objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
-                        //objAutoLoginReturn.StatusReturn = new StatusReturn();
-                        //objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        //objAutoLoginReturn.UserName = objUser.UserName;
-                        //objAutoLoginReturn.Password = objUser.Password;
+
+
                         dbContextTransaction.Commit();
-                        var values = new Dictionary<string, string>();
-                        values.Add("userid", objUser.Email);
-                        values.Add("password",objUser.Password);
-                        var content = new FormUrlEncodedContent(values);
-                        log.Info("content of login send data"+content);
 
-                        using (var client = new HttpClient())
-                        {
-                            try
-                            {
-                                var httpResponseMessage =client.PostAsync("http://192.168.1.4:8082/vpn/loginUser", content).Result;
-                                
-                                if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
-                                {
-                                    log.Info("after success of HTTP Call"+httpResponseMessage.StatusCode);
-                                    objAutoLoginReturn.StatusReturn = new StatusReturn();
-                                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-
-                                }
-                            }
-                            catch (Exception ex) {
-
-                                Log.Error(ex.Message);
-                            }
-                        }
-                        log.Info("Successfully Creted the User");
-
+                            objAutoLoginReturn.UserName = objUser.Email;
+                            objAutoLoginReturn.Password = objUser.Password;
+                            objAutoLoginReturn.StatusReturn = new StatusReturn();
+                            objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        
+                        
 
                     }
                 }
                 catch (Exception ex)
                 {
+                    log.Error(ex.Message);
                     dbContextTransaction.Rollback();
                     objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
                     objAutoLoginReturn.StatusReturn.msg = "some problem occured";
-                    log.Error(ex.Message);
+                    
                 }
                 JavaScriptSerializer objSerialization = new JavaScriptSerializer();
                 return new HttpResponseMessage()
@@ -351,7 +330,7 @@ namespace CaptivePortal.API.Controllers
             {
                 log.Error(ex.Message);
                 objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-                
+
             }
 
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
