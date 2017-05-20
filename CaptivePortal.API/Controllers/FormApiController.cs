@@ -68,7 +68,7 @@ namespace CaptivePortal.API.Controllers
             Request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration());
             Request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             var formJsonResult = JsonConvert.DeserializeObject(json);
-            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire }, JsonMediaTypeFormatter.DefaultMediaType);
+            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire , TandD}, JsonMediaTypeFormatter.DefaultMediaType);
             
         }
 
