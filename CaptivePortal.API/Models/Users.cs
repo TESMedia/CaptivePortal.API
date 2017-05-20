@@ -22,16 +22,20 @@ namespace CaptivePortal.API.Models
         public string UpdatedBy { get; set; }
         public string Gender { get; set; }
         public string Age { get; set; }
-        public bool ? AutoLogin { get; set; }
-        public string Term_conditions {get;set;}
-        public bool ? promotional_email { get; set; }
-        public int ? IntStatus { get; set; }
+        public bool? AutoLogin { get; set; }
+        public string Term_conditions { get; set; }
+        public bool? promotional_email { get; set; }
+        public bool? ThirdPartyOptIn { get; set; }
+        public bool? UserOfDataOptIn { get; set; }
+        public int? IntStatus { get; set; }
         public string MacAddress { get; set; }
-        public int ? SiteId { get; set; }
+        public int? SiteId { get; set; }
         public string OperatingSystem { get; set; }
         public bool IsMobile { get; set; }
         public string Browser { get; set; }
         public string UserAgentName { get; set; }
+        public string Status { get; set; }
+
 
         public string Custom1 { get; set; }
         public string Custom2 { get; set; }
@@ -47,10 +51,10 @@ namespace CaptivePortal.API.Models
 
     public enum DeviceStatus
     {
-      Athenticate=0,
-      Authorize=1,
-      Active=2,
-      InActive=3,
-      Lock=4
+        Athenticate = 0,
+        Authorize = 1,
+        Active = 2,
+        InActive = 3,
+        Lock = 4
     }
 }

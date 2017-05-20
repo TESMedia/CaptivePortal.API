@@ -29,11 +29,11 @@ namespace CaptivePortal.API.Models
 
     public class ReturnRegisterFormData
     {
-        public int SiteId { get; set; }
+        // public int SiteId { get; set; }
         public string ColumnName { get; set; }
         public string LabelNameToDisplay { get; set; }
         public bool IsMandetory { get; set; }
-        public bool IsPasswordRequired { get; set; }
+        //public bool IsPasswordRequired { get; set; }
     }
 
     public class ReturnRegisterFormListData

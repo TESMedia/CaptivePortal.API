@@ -76,7 +76,7 @@
                                             <div class="form-group">
                                                 <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()"><label class="message" id="message"/>
+                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()"><label class="message" id="message" />
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -115,7 +115,7 @@
                                             <div class="form-group">
                                                 <label for="radius-IpAddress" class="control-label col-md-3 col-sm-3 col-xs-12">Radius IP address:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="radius-IpAddress" class="form-control col-md-7 col-xs-12" type="text" name="MySqlIpAddress" >
+                                                    <input id="radius-IpAddress" class="form-control col-md-7 col-xs-12" type="text" name="MySqlIpAddress">
                                                 </div>
                                             </div>
 
@@ -129,29 +129,30 @@
                                             <div class="form-group">
                                                 <label for="term-condition" class="control-label col-md-3 col-sm-3 col-xs-12">Terms & Conditions:</label>
                                                 <div class="col-md-1">
-                                                    <input id="term-version" class="form-control col-md-1" type="text" name="Version">
+                                                    <input id="term-version" class="form-control col-md-1" type="text" name="Term_conditions">
                                                 </div>
-                                                @*<div class="col-md-3">
-                                                    <input id="term-condition" class="form-control col-md-3" type="text" name="Term_conditions">
-                                                </div>*@
                                                 <div class="col-md-3">
-                                                    <input id="term-condition" type="file" name="Term_conditions">
+                                                    <input id="filename" readonly class="form-control col-md-3" type="text" name="TermsAndCondDoc">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="browse" type="file" name="Term_conditions" style="display:none" onChange="Handlechange();">
+                                                    <input type="button" class="btn btn-success" value="Browse" id="TermsAndCondDoc" name="Term_conditions" onclick="HandleBrowseClick();" />
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
                                                 <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
-                                              
 
-                                                <div class="form-group">
-                                                    <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                                    <div class="col-md-6">
-                                                        <input type="file" name="BannerIcon" id="banner-icon" accept="image/*">
-                                                    </div>
+
+                                            <div class="form-group">
+                                                <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                <div class="col-md-6">
+                                                    <input type="file" name="BannerIcon" id="banner-icon" accept="image/*">
                                                 </div>
+                                            </div>
 
-                                             
+
                                                 <div class="form-group">
                                                     <label for="background-colour" class="control-label col-md-3 col-sm-3 col-xs-12">Background colour:</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -171,7 +172,7 @@
                                                     </div>
                                                 </div>
 
-                                              
+
                                                 <div class="form-group">
                                                     <label for="login-title" class="control-label col-md-3 col-sm-3 col-xs-12">Login Page Title:</label>
                                                     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -185,7 +186,7 @@
                                                     </div>
                                                 </div>
 
-                      
+
 
 
                                                 <div class="ln_solid"></div>
@@ -257,6 +258,19 @@
 </html>
 
 <script type="text/javascript">
+
+
+    function HandleBrowseClick() {
+        var fileinput = document.getElementById("browse");
+        fileinput.click();
+    }
+
+    function Handlechange() {
+        var fileinput = document.getElementById("browse");
+        var textinput = document.getElementById("filename");
+        textinput.value = fileinput.value;
+    }
+
     function showCompanyTextBox() {
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
@@ -370,7 +384,7 @@
         });
     }
 
-    
+
     //$("#plus").on("click", function () {
     //    $("#txtDiv").append('<div class="col-md-2 col-sm-2 col-lg-2"> <input class="form-control text-box single-line" id="optionval" name="optionval" type="text"><span class="field-validation-valid text-danger" data-valmsg-for="optionval" data-valmsg-replace="true"></span></div>');
     //});

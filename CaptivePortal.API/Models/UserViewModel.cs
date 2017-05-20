@@ -19,12 +19,20 @@ namespace CaptivePortal.API.Models
         public string Gender { get; set; }
         public bool AutoLogin { get; set; }
         public string AgeRange { get; set; }
-        public string PromotionEmailOptIn { get; set; }
-        public string ThirdPartyOptIn  { get; set; }
+        public bool PromotionEmailOptIn { get; set; }
+        public bool ThirdPartyOptIn { get; set; }
+        public bool UserOfDataOptIn { get; set; }
         public string Term_conditions { get; set; }
         public string Password { get; set; }
+        public Status Status { get; set; }
+
     }
 
+    public enum Status
+    {
+        Active,
+        Locked,
+    }
 
     public class UserLabelModalViewModel
     {

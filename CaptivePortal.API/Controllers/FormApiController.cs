@@ -3,11 +3,15 @@ using CaptivePortal.API.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
+using System.Web.Http.Hosting;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -38,52 +42,57 @@ namespace CaptivePortal.API.Controllers
         [Route("RegisterFormData")]
         public HttpResponseMessage RegisterHtmlDynamicCode(FormData formdata)
         {
-            //string json = "";
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
             var jsonFormData = formResult[0];
             var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
 
-            //var jsonFormControlData = formControlResult[0];
+            string TandD= db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
+
 
             ReturnRegisterFormListData objReturnRegisterFormListData = new ReturnRegisterFormListData();
             objReturnRegisterFormListData.ReteurnRegisterFormList = new List<ReturnRegisterFormData>();
             var jsonRegisterFormData = (from item in formControlResult
                                         select new ReturnRegisterFormData()
                                         {
-                                            SiteId = formdata.SiteId,
+                                            //SiteId = formdata.SiteId,
                                             ColumnName = item.LabelName,
                                             LabelNameToDisplay = item.LabelNameToDisplay,
                                             IsMandetory = item.IsMandetory,
-                                            IsPasswordRequired = db.Form.FirstOrDefault(m => m.FormId == jsonFormData.FormId).IsPasswordRequire
+                                            //TandCfile=fileString
+                                            //IsPasswordRequired = db.Form.FirstOrDefault(m => m.FormId == jsonFormData.FormId).IsPasswordRequire
                                         }).ToList();
             objReturnRegisterFormListData.ReteurnRegisterFormList.AddRange(jsonRegisterFormData);
             string json = JsonConvert.SerializeObject(objReturnRegisterFormListData);
-            //json = json.Replace("\"", "");
-            //return json;
-
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(json, Encoding.UTF8, "application/json")
-            };
-            //string columnName = jsonFormControlData.LabelName;
-            //string LabelNameToDisplay = jsonFormControlData.LabelNameToDisplay;
-            //string IsMandetory = jsonFormControlData.IsMandetory.ToString();
-            //string IsPasswordRequired = jsonFormData.IsPasswordRequire.ToString();
-            //return new { columnName, IsMandetory, IsPasswordRequired , LabelNameToDisplay };
-
-            //string formatedHtml = String.Empty;
-            //foreach (var item in db.FormControl.Where(m => m.FormId == jsonFormData.FormId))
-            //{
-            //    item.HtmlString = item.HtmlString.Replace("\"", "'");
-            //    formatedHtml += item.HtmlString;
-            //}
-            //formatedHtml = formatedHtml.Replace("\"", "'");
-            // formatedHtml = Server.HtmlDecode(formatedHtml);
-            // return formatedHtml;
-            //string IsPasswordRequired = jsonFormData.IsPasswordRequire.ToString();
-            //var listString = new List<string>() { "isPaswordRequired", jsonFormData.IsPasswordRequire.ToString()};
-
-            //return new { formatedHtml, IsPasswordRequired };
+            bool IsPasswordRequire = jsonFormData.IsPasswordRequire;
+            var Request = new HttpRequestMessage();
+            Request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration());
+            Request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            var formJsonResult = JsonConvert.DeserializeObject(json);
+            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire }, JsonMediaTypeFormatter.DefaultMediaType);
+            
         }
+
+
+        [HttpPost]
+        [Route("file")]
+        public HttpResponseMessage Post()
+        {
+            var path = @"D:\PlanetsBrainProfile.docx";
+            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType =
+                new MediaTypeHeaderValue("application/octet-stream");
+            return result;
+        }
+        //[HttpPost]
+        //[Route("convert")]
+        //public static byte[] ConvertStringToByteArray(ReturnRegisterFormData uu)
+        //{
+
+        //    string stringToConvert = uu.TandCfile;
+        //    return (new UnicodeEncoding()).GetBytes(stringToConvert);
+        //}
+
     }
 }

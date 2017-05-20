@@ -27,6 +27,8 @@ namespace CaptivePortal.API.Models
         public bool AutoLogin { get; set; }
         public string ControllerIpAddress { get; set; }
         public string MySqlIpAddress { get; set; }
+        public string Term_conditions { get; set; }
+        public string FileName { get; set; }
 
         public string[] dataType { get; }
         public string[] controlType { get; }
@@ -44,6 +46,6 @@ namespace CaptivePortal.API.Models
             Organisations = new List<Organisation>();
         }
         public List<Site> Sites { get; set; }
-        public List<Organisation> Organisations {get;set;}
+        public List<Organisation> Organisations { get; set; }
     }
 }

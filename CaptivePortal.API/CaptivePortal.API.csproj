@@ -50,6 +50,10 @@
       <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.11.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.11\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -59,6 +63,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -247,6 +255,10 @@
     <Compile Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.cs" />
     <Compile Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.Designer.cs">
       <DependentUpon>201705151329291_added_IsMandetory_field_in_FormControl_table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705201438114_changes_in_Site_and_User_table.cs" />
+    <Compile Include="Migrations\201705201438114_changes_in_Site_and_User_table.Designer.cs">
+      <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4576,6 +4588,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.resx">
       <DependentUpon>201705151329291_added_IsMandetory_field_in_FormControl_table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705201438114_changes_in_Site_and_User_table.resx">
+      <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

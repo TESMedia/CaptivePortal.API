@@ -68,9 +68,7 @@
                             <div class="x_panel">
                                 <div class="x_content">
                                     <br />
-                                    <form>
-
-                                    </form>
+                                    <form></form>
                                     <div class="col-md-12 text-center">
                                         <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
                                     </div>
@@ -95,7 +93,7 @@
                                     </div>
                                     <hr />
                                     <div class="row container-fluid">
-                                        
+
                                         <div style="top:35px;">
                                             <table class="table table-hover table-striped table-responsive" id="cpTable">
                                                 <thead>
@@ -267,12 +265,12 @@
 </body>
 </html>
 <script type="text/javascript">
-    
+
     var siteId = localStorage.getItem("SiteId");
     var siteName = localStorage.getItem("SiteName");
     document.getElementsByTagName('form')[0].innerHTML = siteName;
-    
-    
+
+
     $("#div1 a").click(function () {
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
@@ -287,7 +285,7 @@
         dvPassport.style.display = chkPassport.checked ? "block" : "none";
     }
 
-    
+
     //Viewdata for partial view of User details, password,devices, custom
     function UserWithProfile(id,siteId) {
         debugger;
@@ -298,7 +296,7 @@
             traditional: true,
             dataType: "HTML",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ 'UserId': id }),
+            data: JSON.stringify({ 'UserId': id, 'SiteId': siteId }),
             success: function (result) {
                 debugger;
                 $("#UserView").html(result);
@@ -312,6 +310,35 @@
     }
 
 
+    var $rows = $('#cpTable tr');
+    $('#txtUserName').keyup(function () {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+
+    var $rows = $('#cpTable tr');
+    $('#txtForeName').keyup(function () {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+
+    var $rows = $('#cpTable tr');
+    $('#txtSurName').keyup(function () {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
 
     var tableToExcel = (function () {
         var uri = 'data:application/vnd.ms-excel;base64,'

@@ -1,20 +1,26 @@
-﻿<br />
+﻿@model CaptivePortal.API.Models.UserViewModel
 <br />
-<div class="form-horizontal" style="margin-right: 40%;">
-    <div class="form-group">
-        <div class="row">
-            <div class="col-md-4">
-                <input id="macAddress" class="form-control col-md-2" type="text" name="MacAddress">
-            </div>
-            <div class="col-md-4">
-                <input type="submit" id="addMacAddress" class="btn btn-success" value="Add Mac Address" />
-            </div>
-            <div class="col-md-4">
-                <input type="submit" id="deleteMacAddress" class="btn btn-danger pull-right" value="Delete Mac Address" />
+<br />
+@using (Html.BeginForm("AddMacAddress", "Admin", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    <div class="form-horizontal" style="margin-right: 40%;">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <input id="macAddress" class="form-control col-md-2" type="text" name="MacAddress">
+                    @Html.EditorFor(model => model.UserId, new { htmlAttributes = new { @class = "form-control", @Id = "userIdHidden", @name = "UserId", @style = "display:none" } })
+                </div>
+                <div class="col-md-4">
+                    <input type="submit" id="addMacAddress" class="btn btn-success" value="Add Mac Address" />
+                </div>
+
+                <div class="col-md-4">
+                    <input type="button" id="deleteMacAddress" class="btn btn-danger pull-right" value="Delete Mac Address" />
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 <br />
 <br />
 <div>
@@ -28,7 +34,7 @@
                             UserId
                         </th>
                         <th>
-                            
+
                         </th>
                         <th>
                             Mac Address
@@ -48,30 +54,27 @@
                         </th>
                     </tr>
                 </thead>
-              
-                    <tbody class="pointer" id="DeviceDetails">
-                        
-                            <tr>
-                                <td style="display:none;" id="UserId">
-                                   
-                                </td>
-                                
-                                <td>
-                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbMacAddress" name="MacAddress" style="width:30px;">
-                                </td>
 
-                                <td>
-                                </td>
+                <tbody class="pointer" id="DeviceDetails">
 
-                                <td>
-                                </td>
+                    <tr>
+                        <td style="display:none;" id="UserId"></td>
 
-                                <td>
-                                </td>
-                            </tr>
-                       
-                    </tbody>
-              
+                        <td>
+                            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbMacAddress" name="MacAddress" style="width:30px;">
+                        </td>
+
+                        <td>
+                            @Model.MacAddress
+                        </td>
+
+                        <td></td>
+
+                        <td></td>
+                    </tr>
+
+                </tbody>
+
             </table>
 
         </div>

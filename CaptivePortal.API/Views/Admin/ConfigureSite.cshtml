@@ -146,26 +146,27 @@
                                             <div class="form-group">
                                                 <label for="term-condition" class="control-label col-md-3 col-sm-3 col-xs-12">Terms & Conditions:</label>
                                                 <div class="col-md-1">
-                                                    <input id="term-condition" class="form-control col-md-1" type="text" name="Term_conditions">
+                                                    @Html.EditorFor(model => model.Term_conditions, new { htmlAttributes = new { @class = "form-control", @name = "Term_conditions" } })
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <input id="term-condition" class="form-control col-md-3" type="text" name="Term_conditions">
+                                                    @Html.EditorFor(model => model.FileName, new { htmlAttributes = new { @class = "form-control", @name = "TermsAndCondDoc", @readonly = "readonly", @id = "filename" } })
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <input id="term-condition" type="file" name="Term_conditions">
+                                                    <input id="browse" type="file" name="Term_conditions" style="display:none" onChange="Handlechange();">
+                                                    <input type="button" class="btn btn-success" value="Browse" id="TermsAndCondDoc" name="Term_conditions" onclick="HandleBrowseClick();" />
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="middle-name">Login and Registration Page configuration:</label>
                                             </div>
                                             @*<div class="form-group">
-                    <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                    <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="file" name="BannerIcon"  accept="image/*" id="imgLogo" >
-                        <button onclick="UploadFile()"> UploadFile</button>
-                        <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
-                    </div>
-                </div>*@
+                                                    <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        <input type="file" name="BannerIcon"  accept="image/*" id="imgLogo" >
+                                                        <button onclick="UploadFile()"> UploadFile</button>
+                                                        <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
+                                                    </div>
+                                                </div>*@
                                             <div class="form-group">
                                                 <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
                                                 <div class="col-md-6">
@@ -214,8 +215,8 @@
                                                             <div class="row">
                                                                 <div class="voca">
                                                                     @*<div class="col-md-1">
-                                            @Html.HiddenFor(model=>item.FormControlId)
-                                        </div>*@
+                                                                            @Html.HiddenFor(model=>item.FormControlId)
+                                                                        </div>*@
                                                                     <div class="col-md-3">
                                                                         @*<input class="form-control" placeholder="Add Field" name="fieldLabel" type="text">*@
                                                                         @Html.EditorFor(model => item.LabelName, new { htmlAttributes = new { @class = "form-control", @name = "fieldLabel" } })
@@ -223,14 +224,14 @@
                                                                     <div class="col-md-2">
                                                                         <input class="form-control" name="LabelNameToDisplay" type="text" id="labelNameToDisplay" value="@item.LabelNameToDisplay">
                                                                         @*@Html.DropDownListFor(Model => item.ControlType, new SelectList(ControlTypeList as IEnumerable<SelectListItem>, "Value", "Text", item.ControlType)
-                                            , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })*@
+                                                                            , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType" })*@
                                                                     </div>
                                                                     @*<div class="col-md-1">
-                                            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">
-                                        </div>*@
+                                                                            <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">
+                                                                        </div>*@
                                                                     @*<button type="button" class="btn btn-danger" id="btnDelete">
-                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
-                                        </button>*@
+                                                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Delete Field
+                                                                        </button>*@
                                                                     <a href="@Url.Action("DeleteFormControl","Admin",new { Id=item.FormControlId })" class="btn btn-danger">Delete Field</a>
                                                                 </div>
                                                             </div>
@@ -264,16 +265,16 @@
                                                                                 <div class="col-md-2">
                                                                                     <input id="LabelName" class="form-control col-md-7 col-xs-12" type="text" name="LabelNameToDisplay">
                                                                                     @*<select class="form-control" name="controlType" id="controlType">
-                                                            <option value=0>Select Control Type</option>
-                                                            <option value=text>text</option>
-                                                            <option value=password>password</option>
-                                                            <option value=date>date</option>
-                                                            <option value=tel>tel</option>
-                                                            <option value=radio>time</option>
-                                                            <option value=checkbox>checkbox</option>
-                                                            <option value=dropdown>dropdown</option>
-                                                            <option value=radio>radio</option>
-                                                        </select>*@
+                                                                                            <option value=0>Select Control Type</option>
+                                                                                            <option value=text>text</option>
+                                                                                            <option value=password>password</option>
+                                                                                            <option value=date>date</option>
+                                                                                            <option value=tel>tel</option>
+                                                                                            <option value=radio>time</option>
+                                                                                            <option value=checkbox>checkbox</option>
+                                                                                            <option value=dropdown>dropdown</option>
+                                                                                            <option value=radio>radio</option>
+                                                                                        </select>*@
                                                                                 </div>
                                                                                 <div class="col-md-1">
                                                                                     <input class="form-control col-md-7 col-xs-12" type="checkbox" id="chkOptOrMand" name="IsMandetory" value="required" style="width:30px;">
@@ -290,13 +291,13 @@
                                                                 </div>
                                                             </div>
                                                             @*</div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
+                                                                            <div class="modal-footer">
+                                                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                            </div>
+                                                                        </div>
 
-                                    </div>
-                                </div>*@
+                                                                    </div>
+                                                                </div>*@
 
 
 
@@ -382,6 +383,16 @@
 </html>
 <script type="text/javascript">
 
+    function HandleBrowseClick() {
+        var fileinput = document.getElementById("browse");
+        fileinput.click();
+    }
+
+    function Handlechange() {
+        var fileinput = document.getElementById("browse");
+        var textinput = document.getElementById("filename");
+        textinput.value = fileinput.value;
+    }
 
     $('#checkbox-value').text($('#cbPwd').val());
     $("#cbPwd").on('change', function () {
@@ -475,7 +486,7 @@
     //    }
     //});
 
-    
+
     $("#btnSave").on("click", function () {
         //var checkedValue = document.querySelector('.form-control:checked').value;
         if(document.getElementById("chkOptOrMand").checked) {

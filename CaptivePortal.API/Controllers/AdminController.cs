@@ -13,6 +13,9 @@ using System.Web.Hosting;
 using System.Web.Mvc;
 using System.Text.RegularExpressions;
 using System.Data.Entity;
+using System.Data;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -130,8 +133,11 @@ namespace CaptivePortal.API.Controllers
             {
 
                 string imagepath = null;
+                string filePath = null;
                 int orgId = inputData.organisationDdl;
                 string compId = inputData.CompanyDdl;
+                string fileName = null;
+                string TandD = null;
 
                 //organisation
                 if (inputData.OrganisationName != null)
@@ -157,17 +163,72 @@ namespace CaptivePortal.API.Controllers
                     compId = objCompany.CompanyId.ToString();
                 }
 
+                
+
+
+                //Term and condition
+                if (Request.Files["Term_conditions"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["Term_conditions"];
+                    string savedPath = HostingEnvironment.MapPath("/Upload/");
+                    imagepath = "/Upload/"+ httpPostedFile.FileName;
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    fileName = httpPostedFile.FileName;
+                    string name = httpPostedFile.ContentType;
+                    //inputData.BannerIcon = "/Upload/" + httpPostedFile.FileName;
+                    if (httpPostedFile.ContentType == "application/pdf")
+                    {
+                        StringBuilder text = new StringBuilder();
+                        using (PdfReader reader = new PdfReader(completePath))
+                        {
+                            for (int i = 1; i <= reader.NumberOfPages; i++)
+                            {
+                                text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                            }
+                        }
+                        TandD = text.ToString();
+                    }
+                    else
+                    {
+
+                        Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+                        object miss = System.Reflection.Missing.Value;
+                        object path = completePath;
+                        object readOnly = true;
+                        Microsoft.Office.Interop.Word.Document docs = word.Documents.Open(ref path, ref miss, ref readOnly, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss);
+                        string totaltext = "";
+                        for (int i = 0; i < docs.Paragraphs.Count; i++)
+                        {
+                            totaltext += " \r\n " + docs.Paragraphs[i + 1].Range.Text.ToString();
+                        }
+
+                        TandD = totaltext;
+                    }
+                    
+                }
+
                 //site
                 Site objSite = new Site
                 {
                     SiteName = inputData.SiteName,
-                    CompanyId = compId==null?null:(int ?)Convert.ToInt32(compId),
+                    CompanyId = compId == null ? null : (int?)Convert.ToInt32(compId),
                     AutoLogin = inputData.AutoLogin,
-                    ControllerIpAddress=inputData.ControllerIpAddress,
-                    MySqlIpAddress=inputData.MySqlIpAddress
+                    ControllerIpAddress = inputData.ControllerIpAddress,
+                    MySqlIpAddress = inputData.MySqlIpAddress,
+                    Term_conditions = inputData.Term_conditions,
+                    TermsAndCondDoc = TandD,
+                    FileName = fileName
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
+
+
 
                 //image path
                 if (Request.Files["BannerIcon"].ContentLength > 0)
@@ -175,7 +236,7 @@ namespace CaptivePortal.API.Controllers
                     var httpPostedFile = Request.Files["BannerIcon"];
                     string savedPath = HostingEnvironment.MapPath("/Images/" + objSite.SiteId);
                     imagepath = "/Images/" + objSite.SiteId + "/" + httpPostedFile.FileName;
-                    string completePath = Path.Combine(savedPath, httpPostedFile.FileName);
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
 
                     if (!System.IO.Directory.Exists(savedPath))
                     {
@@ -185,21 +246,7 @@ namespace CaptivePortal.API.Controllers
                     inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
                 }
 
-                //Term and condition
-                if (Request.Files["Term_conditions"].ContentLength > 0)
-                {
-                    var httpPostedFile = Request.Files["Term_conditions"];
-                    string savedPath = HostingEnvironment.MapPath("/Upload/" + objSite.SiteId);
-                    imagepath = "/Upload/" + objSite.SiteId + "/" + httpPostedFile.FileName;
-                    string completePath = Path.Combine(savedPath, httpPostedFile.FileName);
 
-                    if (!System.IO.Directory.Exists(savedPath))
-                    {
-                        Directory.CreateDirectory(savedPath);
-                    }
-                    httpPostedFile.SaveAs(completePath);
-                    inputData.BannerIcon = "/Upload/" + httpPostedFile.FileName;
-                }
 
                 //Form
                 Form objForm = new Form
@@ -226,27 +273,27 @@ namespace CaptivePortal.API.Controllers
                 //    for (i = 0; i < dataType.Length; i++)
                 //    {
                 //        var datatype = dataType[i];
-                        //var controltype = controlType[i];
-                        //var fieldlabel = fieldLabel[i];
-                        //string sqlString = "alter table [Users] add" + " " + fieldlabel + " " + datatype + " " + "NULL";
-                        //db.Database.ExecuteSqlCommand(sqlString);
-                        //StringBuilder sb = new StringBuilder(string.Empty);
+                //var controltype = controlType[i];
+                //var fieldlabel = fieldLabel[i];
+                //string sqlString = "alter table [Users] add" + " " + fieldlabel + " " + datatype + " " + "NULL";
+                //db.Database.ExecuteSqlCommand(sqlString);
+                //StringBuilder sb = new StringBuilder(string.Empty);
 
-                        //FormControl objFormControl = new FormControl();
-                        //objFormControl.ControlType = controltype;
-                        //objFormControl.LabelName = fieldlabel;
-                        //objFormControl.FormId = objForm.FormId;
-                        //db.FormControl.Add(objFormControl);
-                        //db.SaveChanges();
-                        ////div start
-                        //sb.Append("<div>");
-                        //sb.Append("<input type=" + '"' + controltype + '"' + " " + "id=" + '"' + fieldlabel + '"' + " " + "name=" + '"' + fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + fieldlabel + '"' + "/>");
-                        ////div end
-                        //sb.Append("</div>");
+                //FormControl objFormControl = new FormControl();
+                //objFormControl.ControlType = controltype;
+                //objFormControl.LabelName = fieldlabel;
+                //objFormControl.FormId = objForm.FormId;
+                //db.FormControl.Add(objFormControl);
+                //db.SaveChanges();
+                ////div start
+                //sb.Append("<div>");
+                //sb.Append("<input type=" + '"' + controltype + '"' + " " + "id=" + '"' + fieldlabel + '"' + " " + "name=" + '"' + fieldlabel + '"' + " " + "placeholder=" + '"' + "Enter" + " " + fieldlabel + '"' + "/>");
+                ////div end
+                //sb.Append("</div>");
 
-                        //dynamicHtmlCode += sb.ToString();
-                    //}
-               // }
+                //dynamicHtmlCode += sb.ToString();
+                //}
+                // }
                 //objForm.HtmlCodeForLogin = dynamicHtmlCode;
                 //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 //db.SaveChanges();
@@ -303,10 +350,12 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.LoginWindowColor = objForm.LoginWindowColor;
                 objViewModel.IsPasswordRequire = objForm.IsPasswordRequire;
                 objViewModel.LoginPageTitle = objForm.LoginPageTitle;
-                objViewModel.AutoLogin = objForm.Site.AutoLogin;
+                objViewModel.AutoLogin = Convert.ToBoolean(objForm.Site.AutoLogin);
                 objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
                 objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
                 objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
+                objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
+                objViewModel.FileName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).FileName;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {
@@ -356,12 +405,16 @@ namespace CaptivePortal.API.Controllers
             if (inputData.CompanyName == null)
             {
                 string imagepath = null;
+                string filePath = null;
+                string fileName = null;
+                string TandD = null;
+                string compId = inputData.CompanyDdl;
                 if (Request.Files["BannerIcon"].ContentLength > 0)
                 {
                     var httpPostedFile = Request.Files["BannerIcon"];
                     string savedPath = HostingEnvironment.MapPath("/Images/" + inputData.SiteId);
                     imagepath = "/Images/" + inputData.SiteId + "/" + httpPostedFile.FileName;
-                    string completePath = Path.Combine(savedPath, httpPostedFile.FileName);
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
 
                     if (!System.IO.Directory.Exists(savedPath))
                     {
@@ -370,6 +423,69 @@ namespace CaptivePortal.API.Controllers
                     httpPostedFile.SaveAs(completePath);
                     inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
                 }
+
+                //Term and condition
+                if (Request.Files["Term_conditions"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["Term_conditions"];
+                    string savedPath = HostingEnvironment.MapPath("/Upload/");
+                    filePath = "/Upload/" + httpPostedFile.FileName;
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    fileName = httpPostedFile.FileName;
+
+                    if (httpPostedFile.ContentType == "application/pdf")
+                    {
+                        StringBuilder text = new StringBuilder();
+                        using (PdfReader reader = new PdfReader(completePath))
+                        {
+                            for (int i = 1; i <= reader.NumberOfPages; i++)
+                            {
+                                text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                            }
+                        }
+                        TandD = text.ToString();
+                    }
+                    else
+                    {
+
+                        Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+                        object miss = System.Reflection.Missing.Value;
+                        object path = completePath;
+                        object readOnly = true;
+                        Microsoft.Office.Interop.Word.Document docs = word.Documents.Open(ref path, ref miss, ref readOnly, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss, ref miss);
+                        string totaltext = "";
+                        for (int i = 0; i < docs.Paragraphs.Count; i++)
+                        {
+                            totaltext += " \r\n " + docs.Paragraphs[i + 1].Range.Text.ToString();
+                        }
+
+                        TandD = totaltext;
+                    }
+                }
+
+                //site
+                Site objSite = new Site
+                {
+                    SiteName = inputData.SiteName,
+                    SiteId = inputData.SiteId,
+                    CompanyId = compId == null ? null : (int?)Convert.ToInt32(compId),
+                    AutoLogin = inputData.AutoLogin,
+                    ControllerIpAddress = inputData.ControllerIpAddress,
+                    MySqlIpAddress = inputData.MySqlIpAddress,
+                    Term_conditions = inputData.Term_conditions,
+                    TermsAndCondDoc = TandD,
+                    FileName = fileName
+                };
+
+                db.Entry(objSite).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
+
                 //form
                 Form objForm = new Form
                 {
@@ -388,9 +504,9 @@ namespace CaptivePortal.API.Controllers
             return RedirectToAction("Index", "Admin");
         }
 
-        
+
         [HttpPost]
-        public JsonResult SaveFormControls(FormControlViewModel model,string IsMandetory)
+        public JsonResult SaveFormControls(FormControlViewModel model, string IsMandetory)
         {
             try
             {
@@ -579,13 +695,17 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId,int? userId, int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName)
         {
             UserlistViewModel list = new UserlistViewModel();
             list.UserViewlist = new List<UserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
             int PageSize = 5;
             double TotalPages = 0;
+            if (siteId == null)
+            {
+                siteId = 1;
+            }
             var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
             if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
@@ -629,13 +749,15 @@ namespace CaptivePortal.API.Controllers
             var userViewModelList = (from item in userList
                                      select new UserViewModel()
                                      {
-                                         SiteId=siteId.Value,
+                                         SiteId = siteId.Value,
                                          UserId = item.UserId,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
-                                         Password = item.Password
+                                         Password = item.Password,
+                                         MacAddress = item.MacAddress
+
                                      }).ToList();
             list.UserViewlist.AddRange(userViewModelList);
 
@@ -662,9 +784,11 @@ namespace CaptivePortal.API.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult UserWithProfile(int UserId)
+        public ActionResult UserWithProfile(int UserId, int SiteId)
         {
             var userDetail = db.Users.FirstOrDefault(m => m.UserId == UserId);
+            var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
+
             UserViewModel objUserViewModel = new UserViewModel();
             if (userDetail != null)
             {
@@ -673,6 +797,11 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.Gender = userDetail.Gender;
                 objUserViewModel.AgeRange = userDetail.Age;
                 objUserViewModel.AutoLogin = Convert.ToBoolean(userDetail.AutoLogin);
+                objUserViewModel.Term_conditions = termConditionVersion;
+                objUserViewModel.PromotionEmailOptIn = Convert.ToBoolean(userDetail.promotional_email);
+                objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
+                objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
+                //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
             }
             return PartialView("_UserDetails", objUserViewModel);
         }
@@ -681,17 +810,19 @@ namespace CaptivePortal.API.Controllers
         public ActionResult UpdateUser(FormCollection fc)
         {
             var UserNameBefore = fc["UserName"];
-            int userId = 0;
+            int userId = Convert.ToInt16(fc["UserId"]);
+
 
             //Updating the Users table
             if (db.Users.Any(m => m.UserName == UserNameBefore))
             {
-                userId = db.Users.Where(m => m.UserName == UserNameBefore).FirstOrDefault().UserId;
+                //userId = db.Users.Where(m => m.UserName == UserNameBefore).FirstOrDefault().UserId;
                 var objUser = db.Users.Find(userId);
                 {
                     objUser.UserName = fc["UserName"];
-                    objUser.Gender = fc["Gender"];
-                    objUser.Age = fc["AgeRange"];
+                    objUser.Gender = fc["Gender"].ToString();
+                    objUser.Age = fc["Age"];
+                    objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
                     objUser.Email = fc["UserName"];
@@ -699,7 +830,7 @@ namespace CaptivePortal.API.Controllers
                     db.SaveChanges();
                 }
             }
-                return RedirectToAction("UserDetails","Admin");
+            return RedirectToAction("UserDetails", "Admin");
         }
 
         [HttpPost]
@@ -721,7 +852,79 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-        //#region
+        [HttpPost]
+        public ActionResult UpdatePassword(FormCollection fc)
+        {
+            int userId = Convert.ToInt16(fc["UserId"]);
+            if (fc["NewPassword"] == fc["ConfirmPassword"])
+            {
+                var objUser = db.Users.Find(userId);
+                {
+                    objUser.Password = fc["NewPassword"];
+                    db.Entry(objUser).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("UserDetails", "Admin");
+        }
+
+        public ActionResult AddMacAddress(FormCollection fc)
+        {
+            int userId = Convert.ToInt16(fc["UserId"]);
+            var objUser = db.Users.Find(userId);
+            {
+                objUser.MacAddress = fc["MacAddress"];
+                db.Entry(objUser).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("UserDetails", "Admin");
+
+        }
+
+        #region
+
+        private DataTable GetData(SqlCommand cmd)
+        {
+            DataTable dt = new DataTable();
+            String strConnString = System.Configuration.ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
+            SqlConnection con = new SqlConnection(strConnString);
+            SqlDataAdapter sda = new SqlDataAdapter();
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = con;
+            try
+            {
+                con.Open();
+                sda.SelectCommand = cmd;
+                sda.Fill(dt);
+                return dt;
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                con.Close();
+                sda.Dispose();
+                con.Dispose();
+            }
+        }
+
+
+        private void download(DataTable dt)
+        {
+            Byte[] bytes = (Byte[])dt.Rows[0]["TermsAndCondDoc"];
+            Response.Buffer = true;
+            Response.Charset = "";
+            Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            //Response.ContentType = dt.Rows[0]["ContentType"].ToString();
+            Response.AddHeader("content-disposition", "attachment;filename="
+            + dt.Rows[0]["TermsAndCondDoc"].ToString());
+            Response.BinaryWrite(bytes);
+            Response.Flush();
+            Response.End();
+        }
         //private void InsertIntoOrganisation(FormViewModel inputData)
         //{
         //    try
@@ -824,6 +1027,7 @@ namespace CaptivePortal.API.Controllers
         //    }
         //}
 
-        //#endregion
+        #endregion
+
     }
 }
