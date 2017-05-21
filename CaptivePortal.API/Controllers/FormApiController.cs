@@ -12,6 +12,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http;
 using System.Web.Http.Hosting;
+using System.Web.Script.Serialization;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -21,7 +22,7 @@ namespace CaptivePortal.API.Controllers
         private CPDBContext db = new CPDBContext();
         [HttpPost]
         [Route("LoginFormData")]
-        public string LoginFormData(FormData formdata)
+        public HttpResponseMessage LoginFormData(FormData formdata)
         {
             var json = "";
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
@@ -33,9 +34,12 @@ namespace CaptivePortal.API.Controllers
             objLoginFormData.IsPasswordRequire = jsonFormData.IsPasswordRequire;
             objLoginFormData.LoginWindowColor = jsonFormData.LoginWindowColor;
             objLoginFormData.LoginPageTitle = jsonFormData.LoginPageTitle;
-            json = JsonConvert.SerializeObject(objLoginFormData);
-            json = json.Replace("\"", "'");
-            return json;
+            //json = JsonConvert.SerializeObject(objLoginFormData);
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(objLoginFormData), Encoding.UTF8, "application/json")
+            };
         }
 
         [HttpPost]
