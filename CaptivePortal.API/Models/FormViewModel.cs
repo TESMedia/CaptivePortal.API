@@ -29,6 +29,7 @@ namespace CaptivePortal.API.Models
         public string MySqlIpAddress { get; set; }
         public string Term_conditions { get; set; }
         public string FileName { get; set; }
+        public string TermsAndCondDoc { get; set; }
 
         public string[] dataType { get; }
         public string[] controlType { get; }

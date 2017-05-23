@@ -24,7 +24,6 @@ namespace CaptivePortal.API.Controllers
         [Route("LoginFormData")]
         public HttpResponseMessage LoginFormData(FormData formdata)
         {
-            var json = "";
             var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
             var jsonFormData = formResult[0];
             ReturnLoginFormData objLoginFormData = new ReturnLoginFormData();
@@ -50,7 +49,7 @@ namespace CaptivePortal.API.Controllers
             var jsonFormData = formResult[0];
             var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
 
-            string TandD= db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
+            string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
 
 
             ReturnRegisterFormListData objReturnRegisterFormListData = new ReturnRegisterFormListData();
@@ -72,31 +71,20 @@ namespace CaptivePortal.API.Controllers
             Request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration());
             Request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             var formJsonResult = JsonConvert.DeserializeObject(json);
-            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire , TandD}, JsonMediaTypeFormatter.DefaultMediaType);
-            
-        }
+            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire, TandD }, JsonMediaTypeFormatter.DefaultMediaType);
 
+        }
 
         [HttpPost]
-        [Route("file")]
-        public HttpResponseMessage Post()
+        [Route("TermAndConditionContent")]
+        public HttpResponseMessage GetTermAndConditionContent(FormData formdata)
         {
-            var path = @"D:\PlanetsBrainProfile.docx";
-            HttpResponseMessage result = new HttpResponseMessage(HttpStatusCode.OK);
-            var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            result.Content = new StreamContent(stream);
-            result.Content.Headers.ContentType =
-                new MediaTypeHeaderValue("application/octet-stream");
-            return result;
+            var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
+            var jsonFormData = formResult[0];
+            var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
+
+            string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
+            return Request.CreateResponse(HttpStatusCode.OK, new { TandD }, JsonMediaTypeFormatter.DefaultMediaType);
         }
-        //[HttpPost]
-        //[Route("convert")]
-        //public static byte[] ConvertStringToByteArray(ReturnRegisterFormData uu)
-        //{
-
-        //    string stringToConvert = uu.TandCfile;
-        //    return (new UnicodeEncoding()).GetBytes(stringToConvert);
-        //}
-
     }
 }

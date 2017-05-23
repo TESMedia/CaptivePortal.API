@@ -120,14 +120,14 @@
                                             <div class="form-group">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @Html.EditorFor(model => model.SiteName, new { htmlAttributes = new { @class = "form-control", @name = "sitename" } })
+                                                    @Html.EditorFor(model => model.SiteName, new { htmlAttributes = new { @class = "form-control", @name = "sitename",@required="required" } })
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
-                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" ,@required="required"})
 
                                                 </div>
                                                 <div style="margin-top:-15px;">
@@ -177,7 +177,7 @@
                                                     @Html.EditorFor(model => model.Term_conditions, new { htmlAttributes = new { @class = "form-control", @name = "Term_conditions" } })
                                                 </div>
                                                 <div class="col-md-3">
-                                                    @Html.EditorFor(model => model.FileName, new { htmlAttributes = new { @class = "form-control", @name = "TermsAndCondDoc", @readonly = "readonly", @id = "filename" } })
+                                                    @Html.EditorFor(model => model.TermsAndCondDoc, new { htmlAttributes = new { @class = "form-control", @name = "TermsAndCondDoc", @readonly = "readonly", @id = "filename" } })
                                                 </div>
                                                 <div class="col-md-3">
                                                     <input id="browse" type="file" name="Term_conditions" style="display:none" onChange="Handlechange();">
@@ -197,8 +197,15 @@
                                                 </div>*@
                                             <div class="form-group">
                                                 <label for="banner-icon" class="control-label col-md-3 col-sm-3 col-xs-12">Banner Icon:</label>
-                                                <div class="col-md-6">
+                                                @*<div class="col-md-6">
                                                     <input type="file" name="BannerIcon" id="banner-icon" accept="image/*">
+                                                </div>*@
+                                                <div class="col-md-3">
+                                                    @Html.EditorFor(model => model.BannerIcon, new { htmlAttributes = new { @class = "form-control", @name = "BannerIcon", @readonly = "readonly", @id = "bannerIconPath" } })
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="BannerIcon" type="file" name="BannerIcon" style="display:none" onChange="HandlePicchange();">
+                                                    <input type="button" class="btn btn-success" value="Browse" id="BannerIcon" name="BannerIcon" onclick="HandlePicBrowseClick();" />
                                                 </div>
                                                 <div class="col-md-3">
                                                     <img src="" alt="Image" style="height:50px;width:50px;" id="imgLogo" />
@@ -425,6 +432,18 @@
         textinput.value = fileinput.value;
     }
 
+    function HandlePicBrowseClick() {
+        var fileinput = document.getElementById("BannerIcon");
+        fileinput.click();
+    }
+
+    function HandlePicchange() {
+        var fileinput = document.getElementById("BannerIcon");
+        var textinput = document.getElementById("bannerIconPath");
+        textinput.value = fileinput.value;
+    }
+
+
     $('#checkbox-value').text($('#cbPwd').val());
     $("#cbPwd").on('change', function () {
         if ($(this).is(':checked')) {
@@ -449,6 +468,7 @@
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
             $('#company-name').show();
+            $('#company-name').attr('required');
         } else {
             $('#CompanyDdl').show();
             $('#company-name').hide();

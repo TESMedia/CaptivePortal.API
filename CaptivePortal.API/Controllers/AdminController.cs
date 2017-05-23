@@ -356,6 +356,7 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
                 objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
                 objViewModel.FileName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).FileName;
+                objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {
@@ -425,6 +426,10 @@ namespace CaptivePortal.API.Controllers
                     string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
                     bannerPath = baseUrl + imagepath;
                 }
+                else
+                {
+                    bannerPath = inputData.BannerIcon;
+                }
 
                 //Term and condition
                 if (Request.Files["Term_conditions"].ContentLength > 0)
@@ -469,6 +474,10 @@ namespace CaptivePortal.API.Controllers
 
                         TandD = totaltext;
                     }
+                }
+                else
+                {
+                    TandD = inputData.TermsAndCondDoc;
                 }
 
                 //site

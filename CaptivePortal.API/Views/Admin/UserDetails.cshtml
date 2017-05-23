@@ -113,12 +113,14 @@
                                                         <th>
                                                             Surname
                                                         </th>
-                                                        <th>
-                                                            LastLogin
-                                                        </th>
+
                                                         <th>
                                                             CreatedDate
                                                         </th>
+                                                        <th>
+                                                            LastLogin
+                                                        </th>
+
                                                         <th>
                                                             Mac Address
                                                         </th>
@@ -149,9 +151,15 @@
                                                                 <td>
                                                                     @Html.DisplayFor(modelItem => item.LastName)
                                                                 </td>
-                                                                <td>
+                                                                
                                                                 <td>
                                                                     @Html.DisplayFor(modelItem => item.CreationDate)
+                                                                </td>
+                                                                <td>
+                                                                    
+                                                                </td>
+                                                                <td>
+                                                                    
                                                                 </td>
 
                                                             </tr>
@@ -276,7 +284,7 @@
     });
 
     $("#btnSearch").on("click", function () {
-        $(location).attr('href', '/Admin/UserDetails?siteId=' +siteId+ '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
+        $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
 
     //on checkmark show the selected user details, on uncheck mark show nothing.
@@ -287,7 +295,7 @@
 
 
     //Viewdata for partial view of User details, password,devices, custom
-    function UserWithProfile(id,siteId) {
+    function UserWithProfile(id, siteId) {
         debugger;
         var uri = '@Html.Raw(Url.Action("UserWithProfile", "Admin"))';
         $.ajax({

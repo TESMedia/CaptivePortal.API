@@ -4560,7 +4560,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Logs\" />
-    <Folder Include="NewFolder1\" />
     <Folder Include="Vendors\google-code-prettify\bin\" />
   </ItemGroup>
   <ItemGroup>
