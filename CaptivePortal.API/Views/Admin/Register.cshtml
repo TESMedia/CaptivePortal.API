@@ -57,6 +57,7 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
+                    <form></form>
                     @*@using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
                         {*@
                     <div class="form-horizontal">
@@ -64,32 +65,32 @@
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="FirstName">Username:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter user name">
+                                <input type="text" class="form-control" id="userName" placeholder="">
                             </div>
                             <label class="control-label col-sm-2" for="FirstName">Address Line 1:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter user name">
+                                <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="FirstName">Forename:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter first name">
+                                <input type="text" class="form-control" id="firstName" placeholder="" name="FirstName">
                             </div>
                             <label class="control-label col-sm-2" for="FirstName">Address Line 2:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter first name">
+                                <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="FirstName">Surname:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter last name">
+                                <input type="text" class="form-control" id="lastName" placeholder="">
                             </div>
                             <label class="control-label col-sm-2" for="FirstName">County:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="text" placeholder="Enter last name">
+                                <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
 
@@ -97,28 +98,32 @@
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="pwd">Password:</label>
                             <div class="col-md-3">
-                                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="UserPassword">
+                                <input type="password" class="form-control" id="pwd" placeholder="" name="UserPassword">
                             </div>
                             <label class="control-label col-sm-2" for="pwd">Postcode:</label>
                             <div class="col-md-3">
-                                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="UserPassword">
+                                <input type="text" class="form-control" id="pwd" placeholder="" name="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="mobileNumber">Mobile Number:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="mobileNumber" placeholder="Enter mobile number" name="MobileNumber">
+                                <input type="text" class="form-control" id="mobileNumber" placeholder="" name="MobileNumber">
                             </div>
                             <label class="control-label col-sm-2" for="mobileNumber">Country:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="mobileNumber" placeholder="Enter mobile number" name="MobileNumber">
+                                <input type="text" class="form-control" id="mobileNumber" placeholder="" name="MobileNumber">
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="email">Email:</label>
                             <div class="col-md-3">
-                                <input type="email" class="form-control" id="email" placeholder="Enter email" name="UserName">
+                                <input type="email" class="form-control" id="email" placeholder="" name="UserName">
+                            </div>
+                            <label class="control-label col-sm-2" for="Custom1">Custom field 1 : </label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
 
@@ -130,6 +135,10 @@
                                     <option value=1>Male</option>
                                     <option value=2>Female</option>
                                 </select>
+                            </div>
+                            <label class="control-label col-sm-2" for="Custom1">Custom field 2 : </label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
 
@@ -146,6 +155,10 @@
                                     <option value=4>59-69</option>
                                 </select>
                             </div>
+                            <label class="control-label col-sm-2" for="Custom1">Custom field 3 : </label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -153,13 +166,32 @@
                             <div class="col-md-3">
                                 <input type="date" class="form-control" id="birthDate" name="BirthDate">
                             </div>
+                            <label class="control-label col-sm-2" for="Custom1">Custom field 4 : </label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="text" placeholder="">
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="auto-login" class="control-label col-sm-2">Auto-login users:</label>
                             <div class="col-md-3">
                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
                             </div>
+                            <label for="custom-5" class="control-label col-sm-2">Customer Field 5 :  </label>
+                            <div class="col-md-3 ">
+                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="Custom5" name="Custom5" style="width:30px;">
+                            </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="Custom6"></label>
+                            <div class="col-md-3">
+                            </div>
+                            <label for="custom-6" class="control-label col-sm-2">Customer Field 6 :   </label>
+                            <div class="col-md-3 ">
+                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="Custom6" name="Custom6" style="width:30px;">
+                            </div>
+                        </div>
+
                         <br />
                         <br />
 
@@ -179,8 +211,8 @@
                                     <label class="control-label col-sm-2" for="field1">Mac Address:</label>
                                     <div class="controls">
                                         <form role="form" autocomplete="off">
-                                            <div class="entry input-group col-xs-3">
-                                                <input class="form-control" name="fields[]" type="text" placeholder="Type something" />
+                                            <div class="entry input-group col-xs-3" >
+                                                <input class="form-control" name="fields[]" type="text" placeholder="Type something" id="macAdd" />
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-success btn-add" type="button">
                                                         <span class="glyphicon glyphicon-plus"></span>
@@ -286,15 +318,22 @@
 
     });
 
-
+    var siteId = localStorage.getItem("SiteId");
+    var siteName = localStorage.getItem("SiteName");
+    document.getElementsByTagName('form')[0].innerHTML = siteName;
 
     function CreateUser() {
         var data = {
             Email: $('#email').val(),
+            UserName: $('#userName').val(),
             UserPassword: $('#pwd').val(),
-            AutoLogin: $('#checkbox1').val()
+            FirstName: $('#firstName').val(),
+            LastName:$('#lastName').val(),
+            AutoLogin: $('#checkbox1').val(),
+            SiteId: siteId,
+            MacAddress: $('#macAdd').val()
         }
-        $.post("http://localhost:55205/api/Account/register", data, function (e) {
+        $.post("http://localhost:55205/api/Account/CreateUser", data, function (e) {
         });
     }
 

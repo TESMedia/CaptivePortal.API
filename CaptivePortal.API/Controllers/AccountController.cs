@@ -174,12 +174,25 @@ namespace CaptivePortal.API.Controllers
                     log.Info("enter in Register Method");
                     var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
 
+                    if ((string.IsNullOrEmpty(objUser.MacAddress)))
+                    {
+                        objUser.MacAddress = "default";
+                    }
+
                     if (!(IsAnyMacAddressExist(objUser)))
                     {
+                        if (objUser.MacAddress == "default")
+                        {
+                            objUser.MacAddress = null;
+                        }
+
                         //Save all the users Data in SqlServer Global DataBase
                         objUser.CreationDate = DateTime.Now;
                         objUser.UpdateDate = DateTime.Now;
                         objUser.UserName = objUser.Email;
+                        objUser.MacAddress = objUser.MacAddress;
+                        objUser.FirstName = objUser.FirstName;
+                        objUser.LastName = objUser.LastName;
                         db.Users.Add(objUser);
                         db.SaveChanges();
                         log.Info("User Data saved in user Table");
@@ -194,8 +207,6 @@ namespace CaptivePortal.API.Controllers
                             objAutoLoginReturn.Password = objUser.Password;
                             objAutoLoginReturn.StatusReturn = new StatusReturn();
                             objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        
-                        
 
                     }
                 }

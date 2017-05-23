@@ -12,7 +12,35 @@
                           new SelectListItem() { Text = "time", Value="time"},
                           new SelectListItem() { Text="tel",Value="tel"}
                             };
-    //List<string>  ShipNames = new List<string> () { "A", "A B", "A B C" };
+
+    var lableNames = new[]{
+
+                          new SelectListItem() { Text = "Username ", Value = "Username " },
+                          new SelectListItem() { Text = "FirstName", Value = "FirstName"},
+                          new SelectListItem() { Text = "LastName", Value = "LastName"},
+                          new SelectListItem() { Text = "Age", Value = "Age"},
+                          new SelectListItem() { Text = "Mobilenumber", Value="Mobilenumber"},
+                          new SelectListItem() { Text="Email",Value="Email"},
+                          new SelectListItem() { Text = "UserOfDataOptIn", Value="UserOfDataOptIn"},
+                          new SelectListItem() { Text="promotional_email",Value="promotional_email"},
+
+                          new SelectListItem() { Text = "ThirdPartyOptIn ", Value = "ThirdPartyOptIn " },
+                          new SelectListItem() { Text = "Address1", Value = "Address1"},
+                          new SelectListItem() { Text="Address2",Value="Address2"},
+                          new SelectListItem() { Text = "PostTown", Value="PostTown"},
+                          new SelectListItem() { Text = "Postcode", Value="Postcode"},
+                          new SelectListItem() { Text = "County", Value = "County"},
+                          new SelectListItem() { Text = "Country", Value = "Country"},
+                          new SelectListItem() { Text="Birthdate",Value="Birthdate"},
+
+                          new SelectListItem() { Text = "Custom1 ", Value = "Custom1 " },
+                          new SelectListItem() { Text = "Custom2", Value = "Custom2"},
+                          new SelectListItem() { Text = "Custom3", Value = "Custom3"},
+                          new SelectListItem() { Text = "Custom4", Value = "Custom4"},
+                          new SelectListItem() { Text = "Custom5", Value="Custom5"},
+                          new SelectListItem() { Text="Custom6",Value="Custom6"}
+                          
+                            };
 
 }
 <!DOCTYPE html>
@@ -139,7 +167,7 @@
                                             <div class="form-group">
                                                 <label for="auto-login" class="control-label col-md-3 col-sm-3 col-xs-12">Auto-login users:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" checked="@Model.AutoLogin" style="width:30px;">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="al" name="AutoLogin"  value="True" checked="@Model.AutoLogin" style="width:30px;">
                                                 </div>
                                             </div>
 
@@ -191,7 +219,7 @@
                                             <div class="form-group">
                                                 <label for="require-password" class="control-label col-md-3 col-sm-3 col-xs-12">Require Password:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbPwd" name="IsPasswordRequire" style="width:30px;" checked="@Model.IsPasswordRequire">
+                                                    <input class="form-control col-md-7 col-xs-12" type="checkbox" id="cbPwd" name="IsPasswordRequire" style="width:30px;" value="true" checked="@Model.IsPasswordRequire">
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -260,7 +288,10 @@
                                                                         <div class="row">
                                                                             <div class="voca">
                                                                                 <div class="col-md-3">
-                                                                                    @Html.DropDownListFor(x => x.fieldlabel, new SelectList(Model.fieldlabel), "Select Filed Name", new { @style = "width:180px", @class = "form-control", @name = "controlType", @id = "fieldlabel" })
+                                                                                   @* @Html.DropDownListFor(x => x.fieldlabel, new SelectList(Model.fieldlabel), "Select Filed Name", new { @style = "width:180px", @class = "form-control", @name = "controlType", @id = "fieldlabel" })*@
+
+                                                                                    @Html.DropDownListFor(x => x.fieldlabel, new SelectList(lableNames as IEnumerable<SelectListItem>, "Value", "Text")
+                                                                            , "Select Control Type", new { @style = "width:180px", @class = "form-control", @name = "controlType", @id = "fieldlabel"})
                                                                                 </div>
                                                                                 <div class="col-md-2">
                                                                                     <input id="LabelName" class="form-control col-md-7 col-xs-12" type="text" name="LabelNameToDisplay">
@@ -396,6 +427,16 @@
 
     $('#checkbox-value').text($('#cbPwd').val());
     $("#cbPwd").on('change', function () {
+        if ($(this).is(':checked')) {
+            $(this).attr('value', 'true');
+        } else {
+            $(this).attr('value', 'false');
+        }
+
+    });
+
+    $('#checkbox-value').text($('#al').val());
+    $("#al").on('change', function () {
         if ($(this).is(':checked')) {
             $(this).attr('value', 'true');
         } else {
