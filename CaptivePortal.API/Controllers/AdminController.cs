@@ -133,7 +133,7 @@ namespace CaptivePortal.API.Controllers
             {
 
                 string imagepath = null;
-                string filePath = null;
+                string bannerPath = null;
                 int orgId = inputData.organisationDdl;
                 string compId = inputData.CompanyDdl;
                 string fileName = null;
@@ -181,7 +181,6 @@ namespace CaptivePortal.API.Controllers
                     httpPostedFile.SaveAs(completePath);
                     fileName = httpPostedFile.FileName;
                     string name = httpPostedFile.ContentType;
-                    //inputData.BannerIcon = "/Upload/" + httpPostedFile.FileName;
                     if (httpPostedFile.ContentType == "application/pdf")
                     {
                         StringBuilder text = new StringBuilder();
@@ -243,7 +242,8 @@ namespace CaptivePortal.API.Controllers
                         Directory.CreateDirectory(savedPath);
                     }
                     httpPostedFile.SaveAs(completePath);
-                    inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
+                    string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                    bannerPath = baseUrl + imagepath;
                 }
 
 
@@ -252,7 +252,7 @@ namespace CaptivePortal.API.Controllers
                 Form objForm = new Form
                 {
                     SiteId = objSite.SiteId,
-                    BannerIcon = imagepath,
+                    BannerIcon = bannerPath,
                     BackGroundColor = inputData.BackGroundColor,
                     LoginWindowColor = inputData.LoginWindowColor,
                     IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
@@ -356,6 +356,7 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
                 objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
                 objViewModel.FileName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).FileName;
+                objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
                 {
@@ -405,6 +406,7 @@ namespace CaptivePortal.API.Controllers
             if (inputData.CompanyName == null)
             {
                 string imagepath = null;
+                string bannerPath = null;
                 string filePath = null;
                 string fileName = null;
                 string TandD = null;
@@ -421,7 +423,12 @@ namespace CaptivePortal.API.Controllers
                         Directory.CreateDirectory(savedPath);
                     }
                     httpPostedFile.SaveAs(completePath);
-                    inputData.BannerIcon = "/Images/" + httpPostedFile.FileName;
+                    string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                    bannerPath = baseUrl + imagepath;
+                }
+                else
+                {
+                    bannerPath = inputData.BannerIcon;
                 }
 
                 //Term and condition
@@ -468,6 +475,10 @@ namespace CaptivePortal.API.Controllers
                         TandD = totaltext;
                     }
                 }
+                else
+                {
+                    TandD = inputData.TermsAndCondDoc;
+                }
 
                 //site
                 Site objSite = new Site
@@ -491,7 +502,7 @@ namespace CaptivePortal.API.Controllers
                 {
                     FormId = inputData.FormId,
                     SiteId = inputData.SiteId,
-                    BannerIcon = imagepath,
+                    BannerIcon = bannerPath,
                     IsPasswordRequire = Convert.ToBoolean(inputData.IsPasswordRequire),
                     BackGroundColor = inputData.BackGroundColor,
                     LoginWindowColor = inputData.LoginWindowColor,
@@ -825,6 +836,8 @@ namespace CaptivePortal.API.Controllers
                     objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
+                    objUser.Status = fc["Status"].ToString();
+
                     objUser.Email = fc["UserName"];
                     db.Entry(objUser).State = EntityState.Modified;
                     db.SaveChanges();
@@ -834,12 +847,11 @@ namespace CaptivePortal.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteUser(int UserId)
+        public void DeleteUser(int UserId)
         {
             Users user = db.Users.Find(UserId);
             db.Users.Remove(user);
             db.SaveChanges();
-            return RedirectToAction("UserDetails", "Admin");
         }
 
         public ActionResult UpdatePassword(int UserId)

@@ -76,14 +76,14 @@
                                             <div class="form-group">
                                                 <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()"><label class="message" id="message" />
+                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()" required><label class="message" id="message" style="color:red"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
-                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl",@required="required"})
                                                 </div>
                                                 <div style="margin-top:-15px;">
                                                     Create New Company
@@ -275,6 +275,7 @@
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
             $('#company-name').show();
+            $('#company-name').attr('required');
         } else {
             $('#CompanyDdl').show();
             $('#company-name').hide();
@@ -368,7 +369,6 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({ 'SiteName': siteName }),
             success: function (result) {
-                debugger;
                 if (result == "true") {
                     document.getElementById('message').style.display = "block";
                     document.getElementById('message').innerHTML = "Site Name already taken";
