@@ -238,8 +238,8 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\FormApiController.cs" />
     <Compile Include="Controllers\GetFormDataController.cs" />
-    <Compile Include="Controllers\CommonApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\RealTimeDataApiController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -260,18 +260,28 @@
     <Compile Include="Migrations\201705201438114_changes_in_Site_and_User_table.Designer.cs">
       <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705241553413_Changes_the_Design_database.cs" />
+    <Compile Include="Migrations\201705241553413_Changes_the_Design_database.Designer.cs">
+      <DependentUpon>201705241553413_Changes_the_Design_database.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Age.cs" />
+    <Compile Include="Models\Browser.cs" />
     <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Devices.cs" />
     <Compile Include="Models\Form.cs" />
     <Compile Include="Models\FormControl.cs" />
     <Compile Include="Models\FormControlViewModel.cs" />
     <Compile Include="Models\FormViewModel.cs" />
+    <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\GeneratingHtmlViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
+    <Compile Include="Models\MacAddress.cs" />
     <Compile Include="Models\Nas.cs" />
+    <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Organisation.cs" />
     <Compile Include="Models\Radacct.cs" />
     <Compile Include="Models\RadGroupCheck.cs" />
@@ -284,6 +294,7 @@
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\Users.cs" />
     <Compile Include="Models\UsersAddress.cs" />
+    <Compile Include="Models\UsersDeviceData.cs" />
     <Compile Include="Models\UserSite.cs" />
     <Compile Include="Models\UserViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -304,7 +315,6 @@
     <Content Include="build\images\loading.gif" />
     <Content Include="build\js\custom.js" />
     <Content Include="build\js\custom.min.js" />
-    <Content Include="build\js\index.js" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\login.css" />
@@ -4591,6 +4601,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705201438114_changes_in_Site_and_User_table.resx">
       <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705241553413_Changes_the_Design_database.resx">
+      <DependentUpon>201705241553413_Changes_the_Design_database.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

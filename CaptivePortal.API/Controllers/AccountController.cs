@@ -16,17 +16,12 @@ using System.Reflection;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Web.Http.Cors;
+using System.Collections;
 
 namespace CaptivePortal.API.Controllers
 {
-    [EnableCors(origins: "*", headers: "*", methods: "*")]
-    [RoutePrefix("api/Account")]
+    [RoutePrefix("api")]
     public class AccountController : ApiController
     {
         private static ILog Log { get; set; }
@@ -35,191 +30,224 @@ namespace CaptivePortal.API.Controllers
         private ReturnModel ObjReturnModel = new ReturnModel();
         CPDBContext db = new CPDBContext();
         StatusReturn objReturn = new StatusReturn();
+        private string retStr="";
+        private string retType="";
+        private int retVal=0;
 
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="objUser"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[Route("Register")]
-        //public HttpResponseMessage Register(Users objUser)
-        //{
-        //    using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
-        //    {
-        //        try
-        //        {
-        //            log.Info("enter in Register Method");
-        //            var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
-
-        //            if (!(db.Users.Any(m => m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId)))
-        //            {
-        //                //Save all the users Data in SqlServer Global DataBase
-        //                db.Users.Add(objUser);
-        //                db.SaveChanges();
-        //                log.Info("User Data saved in user Table");
-
-        //                //Save all the Users data in MySql DataBase
-        //                objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
-
-        //                //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
-        //                if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
-        //                {
-        //                    //If the user Not exist then we need to try
-        //                    var User = db.Users.FirstOrDefault(m => m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId);
-
-        //                    string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
-
-        //                    using (WebClient client = new WebClient())
-        //                    {
-        //                        System.Collections.Specialized.NameValueCollection postData =
-        //                            new System.Collections.Specialized.NameValueCollection()
-        //                           {
-        //                              { "userid", User.UserName },
-        //                              { "password", User.Password },
-        //                           };
-        //                        string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
-        //                    }
-        //                }
-
-        //            }
-
-        //            return new HttpResponseMessage() {
-        //                Content = new StringContent("")
-        //            };
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            log.Error(ex.Message);
-        //            dbContextTransaction.Rollback();
-        //            throw ex;
-        //        }
-        //    }
-
-        //}
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="objUser"></param>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[Route("Login")]
-        //public HttpResponseMessage Login(Users objUser)
-        //{
-        //    try
-        //    {
-        //        var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
-        //        //check the particular UserName for a particular Site Is Exist or Not
-        //        if (db.Users.Any(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId))
-        //        {
-
-        //            var User = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId);
-        //            //if Exist then check the MacAddress is there or not
-        //            if (string.IsNullOrEmpty(User.MacAddress))
-        //            {
-        //                User.MacAddress = objUser.MacAddress;
-        //                db.Entry(User).State = System.Data.Entity.EntityState.Modified;
-
-        //                //Need to check the MacAddress exist with Autologin of User true or AutoLogin of Site true
-        //                if (db.Users.Any(m => (m.MacAddress == objUser.MacAddress && m.SiteId == objUser.SiteId) && (m.AutoLogin == true || objSite.AutoLogin == true)))
-        //                {
-        //                    string URI = string.Concat(User.Site.ControllerIpAddress, "/vpn/loginUser");
-
-        //                    using (WebClient client = new WebClient())
-        //                    {
-        //                        System.Collections.Specialized.NameValueCollection postData =
-        //                            new System.Collections.Specialized.NameValueCollection()
-        //                           {
-        //                              { "userid", User.UserName },
-        //                              { "password", User.Password },
-        //                           };
-        //                        string pagesource = Encoding.UTF8.GetString(client.UploadValues(URI, postData));
-        //                    }
-        //                }
-        //            }
-
-        //        }
-        //        //Then Users with this UserName for a particular Site not exist so need to Register first
-        //        else
-        //        {
-
-        //        }
-
-        //        return new HttpResponseMessage()
-        //        {
-        //            Content = new StringContent("success")
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("CreateUser")]
-        public HttpResponseMessage CreateUser(Users objUser)
+        [Route("a8Captiveportal/V1/CreateUser")]
+        public HttpResponseMessage CreateUserExpose(CreateUserViewModel objUser)
         {
+            Site objSite = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
-                AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
                 try
                 {
-                    log.Info("enter in Register Method");
-                    var objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
-
-                    if (!(IsAnyMacAddressExist(objUser)))
+                    //First check the Manadatory validation and show the Error Messages
+                    if (string.IsNullOrEmpty(objUser.UserName))
                     {
-                        //Save all the users Data in SqlServer Global DataBase
-                        objUser.CreationDate = DateTime.Now;
-                        objUser.UpdateDate = DateTime.Now;
-                        objUser.UserName = objUser.Email;
-                        db.Users.Add(objUser);
-                        db.SaveChanges();
-                        log.Info("User Data saved in user Table");
+                        retStr = "Need UserName for Registration";
+                    }
+                    else if (string.IsNullOrEmpty(objUser.Password))
+                    {
+                        retStr = "Need Password for Registration";
+                    }
+                    else if (objUser.SiteId == 0 )
+                    {
+                        retStr = "Need SiteId for Registration";
+                    }
+                    else if(!(db.Site.Any(m=>m.SiteId==objUser.SiteId)))
+                    {
+                        retStr = "This particular SiteId Not Exist Please try again with others";
+                    }
+                    else if(string.IsNullOrEmpty(objUser.UserId))
+                    {
+                        retStr = "Need UserId for Registration";
+                    }
 
-                        //Save all the Users data in MySql DataBase
-                        objRegisterDB.CreateNewUser(objUser.Email, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
+                    //if No validation Error then Insert the data into the table
+                    if (string.IsNullOrEmpty(retStr))
+                    {
+                        objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
+                        //if Same User with Site Exist then don't allow
+                        if (!(db.Users.Any(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId)))
+                        {
+                            
+                            Users objUsers = new Users();
+                            objUsers.CreationDate = DateTime.Now;
+                            objUsers.UpdateDate = DateTime.Now;
+                            objUsers.UserName = objUser.UserName;
+                            objUsers.FirstName = objUser.FirstName;
+                            objUsers.LastName = objUser.LastName;
+                            objUsers.Password = objUser.Password;
+                            objUsers.SiteId = objUser.SiteId;
+                            //objUsers.UniqueUserId = objUser.UserId;
+                            objUsers.BirthDate = objUser.BirthDate;
+                            objUsers.AgeId = objUser.AgeId;
+                            objUsers.GenderId = objUser.GenderId;
+                            objUsers.MobileNumer = objUser.MobileNumber;
 
+                                                       
+                            db.Users.Add(objUsers);
 
-                        dbContextTransaction.Commit();
+                            MacAddress objMacAddress = new MacAddress();
+                            objMacAddress.UserId = objUsers.UserId;
+                            //objMacAddress.MacAddressValue=objUser.ma
+                            db.MacAddress.Add(objMacAddress);
 
-                            objAutoLoginReturn.UserName = objUser.Email;
-                            objAutoLoginReturn.Password = objUser.Password;
-                            objAutoLoginReturn.StatusReturn = new StatusReturn();
-                            objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        
-                        
+                            db.SaveChanges();
 
+                            log.Info("User Data saved in user Table");
+
+                            //Save all the Users data in MySql DataBase
+                            objRegisterDB.CreateNewUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
+
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                            retStr = "Successfully Creted the User";
+                            dbContextTransaction.Commit();
+
+                        }
+                        else
+                        {
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retStr = "MacAddress or UserName already exist for same site named" + " " + objSite.SiteName;
+                            retType = ReturnCode.Warning.ToString();
+                        }
+                    }
+                    else
+                    {
+                        retType = ReturnCode.Warning.ToString();
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
                     }
                 }
                 catch (Exception ex)
                 {
                     log.Error(ex.Message);
                     dbContextTransaction.Rollback();
-                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-                    objAutoLoginReturn.StatusReturn.msg = "some problem occured";
-                    
+                    retVal = Convert.ToInt32(ReturnCode.Failure);
+                    retType = ReturnCode.Warning.ToString();
+                    retStr = "some problem occured";
+                    log.Error(ex.Message);
                 }
+
+                objReturn.returncode = retVal;
+                objReturn.msg = retStr;
+                objReturn.type = retType;
+
                 JavaScriptSerializer objSerialization = new JavaScriptSerializer();
                 return new HttpResponseMessage()
                 {
-                    Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
+                    Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
                 };
-
-
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("a8Captiveportal/V1/CreateUserWifi")]
+        public HttpResponseMessage CreateUserWifi(UserMacAddressDetails objUserMac)
+        { 
+           
+            Site objSite = null;
+            using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
+            {
+                try
+                {
+                    if(string.IsNullOrEmpty(objUserMac.objUser.UserName))
+                    {
+                        retStr = "Need UserName for Registration";  
+                    }
+                    else if(string.IsNullOrEmpty(objUserMac.objUser.Password))
+                    {
+                        retStr = "Need Password for Registration";
+                    }
+                    else if(objUserMac.objUser.SiteId==0)
+                    {
+                        retStr = "Please send the SiteId for Registrartion";
+                    }
 
+                    if (string.IsNullOrEmpty(retStr))
+                    {
 
+                        objSite = db.Site.FirstOrDefault(m => m.SiteId == objUserMac.objUser.SiteId);
 
+                        //If macAdress is null then alllow to create without checking th null one
+                        if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
+                        {
+                            objUserMac.objMacAddress.MacAddressValue = "default";
+                        }
 
+                        if (!(db.Users.Any(m => m.UserName == objUserMac.objUser.UserName && m.SiteId == objUserMac.objUser.SiteId)) && !(db.MacAddress.Any(m => m.MacAddressValue == objUserMac.objMacAddress.MacAddressValue)))
+                        {
+                            log.Info("Enter in Register Method");
+
+                            if (objUserMac.objMacAddress.MacAddressValue == "default")
+                            {
+                                objUserMac.objMacAddress.MacAddressValue = null;
+                            }
+
+                            //Save the Users data into Users table
+                            objUserMac.objUser.CreationDate = DateTime.Now;
+                            objUserMac.objUser.UpdateDate = DateTime.Now;
+                            var users=db.Users.Add(objUserMac.objUser);
+
+                            objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
+                            db.MacAddress.Add(objUserMac.objMacAddress);
+                            db.SaveChanges();
+
+                            log.Info("User Data saved in user Table");
+
+                            //Save all the Users data in MySql DataBase
+                            objRegisterDB.CreateNewUser(objUserMac.objUser.Email, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
+
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                            retStr = "Successfully Creted the User";
+                            dbContextTransaction.Commit();
+
+                        }
+                        else
+                        {
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retStr = "MacAddress or UserName already exist for same site named" + " " + objSite.SiteName;
+                            retType = ReturnCode.Warning.ToString();
+                        }
+                    }
+                    else
+                    {
+                        retType = ReturnCode.Warning.ToString();
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
+                    dbContextTransaction.Rollback();
+                    retVal = Convert.ToInt32(ReturnCode.Failure);
+                    retType = ReturnCode.Warning.ToString();
+                    retStr = "some problem occured";
+                    log.Error(ex.Message);
+                }
+
+                objReturn.returncode = retVal;
+                objReturn.msg = retStr;
+                objReturn.type = retType;
+
+                JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
+                };
+            }
+        }
 
 
         /// <summary>
@@ -227,73 +255,44 @@ namespace CaptivePortal.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        [Route("GetMacAddress")]
+        [Route("a8Captiveportal/V1/GetMacAddresses")]
         public HttpResponseMessage GetMacAddress(Users model)
         {
+            ReturnMacAesddress objReturnMac = new ReturnMacAesddress();
+
             try
             {
-                IEnumerable lstMacAddress;
-                if (IsAnyMacAddressExist(model))
+                if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
                 {
-                    lstMacAddress = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).Select(m => new { mac = m.MacAddress });
+                    int UserId = db.Users.FirstOrDefault(m => m.UserId == model.UserId && m.SiteId == model.SiteId).UserId;
+                    foreach (var item in db.MacAddress.Where(m => m.UserId ==UserId))
+                    {
+                        MacAddesses objMacAddress = new MacAddesses();
+                        objMacAddress.MacAddress = item.MacAddressValue;
+                        objReturnMac.lstMacAddresses.Add(objMacAddress);
+                    }
+                    retVal = Convert.ToInt32(ReturnCode.Success);
+                    retStr = "Successfully return the MacAddresses";
+                    retType = ReturnCode.Success.ToString();
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                retVal = Convert.ToInt32(ReturnCode.Failure);
+                retStr = "Error Occured";
+                retType = ReturnCode.Failure.ToString();
             }
+
+            objReturnMac.StatusReturn.returncode = retVal;
+            objReturnMac.StatusReturn.msg = retStr;
+            objReturnMac.StatusReturn.type = retType;
+
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
             {
-                Content = new StringContent(objSerialization.Serialize(objReturn))
+                Content = new StringContent(objSerialization.Serialize(objReturnMac), Encoding.UTF8, "application/json")
             };
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public bool IsAnyMacAddressExist(Users model)
-        {
-            bool rtnMessage;
-            try
-            {
-                log.Info(model.MacAddress);
-                log.Info(model.SiteId);
-                //Check the MacAdress exist for the particular Site or not
-                if (db.Users.Any(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId))
-                {
-                    log.Info("Check the MacAdress exist for the particular Site or not");
-                    rtnMessage = true;
-                    //check the MacAddress is exist or not for particular User then allow to update 
-                    //if (db.Users.Any(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId && m.UserId == model.UserId))
-                    //{
-                    //    var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.UserId == model.UserId && m.SiteId == model.SiteId);
-                    //    //If MacAddres Not exist for the User then Save the MacAddress
-                    //    if (string.IsNullOrEmpty(objUser.MacAddress))
-                    //    {
-                    //        log.Info("If MacAddres Not exist for the User");
-                    //        objUser.MacAddress = model.MacAddress;
-                    //        db.Entry(objUser).State = System.Data.Entity.EntityState.Modified;
-                    //        db.SaveChanges();
-                    //    }
-                    //}
-                }
-                else
-                {
-                    rtnMessage = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                rtnMessage = false;
-            }
-            log.Info(rtnMessage);
-            return rtnMessage;
-        }
-
-
 
 
         /// <summary>
@@ -302,116 +301,203 @@ namespace CaptivePortal.API.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("LoginWIthNewMacAddress")]
-        public HttpResponseMessage LoginWIthNewMacAddress(Users model)
+        [Route("a8Captiveportal/V1/LoginWIthNewMacAddress")]
+        public HttpResponseMessage LoginWIthNewMacAddress(LoginWIthNewMacAddressModel model)
         {
-            AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
+            StatusReturn objAutoLoginReturn = new StatusReturn();
             try
             {
                 log.Info(model.UserName);
                 log.Info(model.Password);
-                var _userDetails = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault();
-                if (_userDetails.Password == model.Password)
+
+                if (db.Users.Any(m => m.UserName == model.UserName))
                 {
-                    CreateUser(model);
-                    objAutoLoginReturn.StatusReturn = new StatusReturn();
-                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                    objAutoLoginReturn.UserName = model.UserName;
-                    objAutoLoginReturn.Password = model.Password;
-
-                }
-                else
-                {
-                    objAutoLoginReturn.StatusReturn = new StatusReturn();
-                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-
-            }
-
-            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
-            };
-        }
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("GetStatusOfUserForSite")]
-        public HttpResponseMessage GetStatusOfUserForSite(Users model)
-        {
-            AutoLoginStatusReturn objAutoLoginReturn = new AutoLoginStatusReturn();
-            try
-            {
-
-                var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
-                log.Info(objSite);
-                //Need to check the MacAddress exist for the particular Site with Autologin true
-                if (IsAnyMacAddressExist(model))
-                {
-                    log.Info("inside IsAnyMacAddressExist");
-                    var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId);
-
-                    //Check the AutoLogin of Site or User 
-                    if (objUser.AutoLogin == true || objSite.AutoLogin == true)
+                    //If User exist then Save the User in MacAddresses table
+                    if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
                     {
-                        log.Info("Check the AutoLogin of Site or User");
+                        int UserId = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault().UserId;
+                        if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAdress && m.UserId == UserId)))
+                        {
+                            MacAddress objMac = new MacAddress();
+                            objMac.MacAddressValue = model.MacAdress;
+                            objMac.UserId = UserId;
+                            objMac.BrowserName = model.BrowserName;
+                            objMac.UserAgentName = model.UserAgentName;
+                            objMac.OperatingSystem = model.OperatingSystem;
+                            objMac.IsMobile = model.IsMobile;
+                            db.MacAddress.Add(objMac);
+                            db.SaveChanges();
 
-                        objAutoLoginReturn.StatusReturn = new StatusReturn();
-                        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        objAutoLoginReturn.UserName = objUser.UserName;
-                        objAutoLoginReturn.Password = objUser.Password;
+                            retStr = "Successfully add the Maccadress";
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
 
+                        }
+                    }
+                    //If Not exist then return User Not exist so try to register first then Login
+                    else
+                    {
+                        retStr = "Please Check the Credential you have Entered";
+                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retType = ReturnCode.Success.ToString();
                     }
                 }
                 else
                 {
-                    objAutoLoginReturn.StatusReturn = new StatusReturn();
-                    objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                    retStr = "UserName Not exist Please Register First";
+                    retVal = Convert.ToInt32(ReturnCode.Success);
+                    retType = ReturnCode.Success.ToString();
                 }
-
             }
             catch (Exception ex)
             {
                 log.Error(ex.Message);
-                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+                objReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+
             }
+
+            objReturn.returncode = retVal;
+            objReturn.msg = retStr;
+            objReturn.type = retType;
+
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
             {
-                Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
+                Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
             };
         }
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="model"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[Route("GetStatusOfUserForSite")]
+        //public HttpResponseMessage GetStatusOfUserForSite(Users model)
+        //{
+        //    try
+        //    { 
+        //        var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+        //        log.Info(objSite);
+
+        //        //Need to check the MacAddress exist for the particular Site with Autologin true
+        //        if (IsAnyMacAddressExist(model))
+        //        {
+        //            log.Info("inside IsAnyMacAddressExist");
+        //            var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId);
+
+        //            //Check the AutoLogin of Site or User 
+        //            if (objUser.AutoLogin == true || objSite.AutoLogin == true)
+        //            {
+        //                log.Info("Check the AutoLogin of Site or User");
+
+        //                objAutoLoginReturn.StatusReturn = new StatusReturn();
+        //                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+        //                objAutoLoginReturn.UserName = objUser.UserName;
+        //                objAutoLoginReturn.Password = objUser.Password;
+
+        //            }
+        //        }
+        //        else
+        //        {
+        //            objAutoLoginReturn.StatusReturn = new StatusReturn();
+        //            objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.Error(ex.Message);
+        //        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+        //    }
+        //    JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+        //    return new HttpResponseMessage()
+        //    {
+        //        Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
+        //    };
+        //}
     }
+
 
     public class StatusReturn
     {
         public int returncode { get; set; }
         public string msg { get; set; }
+        public string type { get; set; }
     }
 
-    public class AutoLoginStatusReturn
+    public class MacAddesses
+    {
+        public string MacAddress { get; set; }
+    }
+
+    public class ReturnMacAesddress
+    {
+        public ReturnMacAesddress()
+        {
+            lstMacAddresses = new List<MacAddesses>();
+            StatusReturn = new StatusReturn();
+        }
+        public List<MacAddesses> lstMacAddresses { get; set; }
+        public StatusReturn StatusReturn { get; set; }
+    }
+
+    public class CreateUserViewModel
+    {
+        public int SiteId { get; set; }
+
+        public string UserId { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Password { get; set; }
+        public string Email { get; set; }
+        
+        public string FirstName { get; set; }
+
+        public string LastName { get; set; }
+
+        public bool AutoLogin { get; set; }
+
+        public int MobileNumber { get; set;}
+
+        public int ? GenderId { get; set; }
+
+        public int ? AgeId { get; set; }
+
+        public DateTime BirthDate { get; set; }
+
+    }
+    public class LoginWIthNewMacAddressModel
     {
         public string UserName { get; set; }
+
+        public string MacAdress { get; set; }
+
         public string Password { get; set; }
-        public int UserId { get; set; }
-        public StatusReturn StatusReturn { get; set; }
+
+        public string BrowserName { get; set; }
+        public string UserAgentName { get; set; }
+
+        public string OperatingSystem { get; set; }
+
+        public bool IsMobile { get; set; }
+
+    }
+
+    public class UserMacAddressDetails
+    { 
+        public  Users objUser { get; set; }
+        public MacAddress objMacAddress { get; set; }
     }
 
     public enum ReturnCode
     {
         Success = 1,
-        Failure = -1
+        Failure = -1,
+        Warning = 2,
     }
 }
+
 

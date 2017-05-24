@@ -756,7 +756,7 @@ namespace CaptivePortal.API.Controllers
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
                                          Password = item.Password,
-                                         MacAddress = item.MacAddress
+                                         //MacAddress = item.MacAddress
 
                                      }).ToList();
             list.UserViewlist.AddRange(userViewModelList);
@@ -794,8 +794,8 @@ namespace CaptivePortal.API.Controllers
             {
                 objUserViewModel.Password = userDetail.Password;
                 objUserViewModel.UserName = userDetail.UserName;
-                objUserViewModel.Gender = userDetail.Gender;
-                objUserViewModel.AgeRange = userDetail.Age;
+                //objUserViewModel.Gender = userDetail.Gender;
+                //objUserViewModel.AgeRange = userDetail.Age;
                 objUserViewModel.AutoLogin = Convert.ToBoolean(userDetail.AutoLogin);
                 objUserViewModel.Term_conditions = termConditionVersion;
                 objUserViewModel.PromotionEmailOptIn = Convert.ToBoolean(userDetail.promotional_email);
@@ -820,8 +820,8 @@ namespace CaptivePortal.API.Controllers
                 var objUser = db.Users.Find(userId);
                 {
                     objUser.UserName = fc["UserName"];
-                    objUser.Gender = fc["Gender"].ToString();
-                    objUser.Age = fc["Age"];
+                    //objUser.Gender = fc["Gender"].ToString();
+                    //objUser.Age = fc["Age"];
                     objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
@@ -873,7 +873,7 @@ namespace CaptivePortal.API.Controllers
             int userId = Convert.ToInt16(fc["UserId"]);
             var objUser = db.Users.Find(userId);
             {
-                objUser.MacAddress = fc["MacAddress"];
+                //objUser.MacAddress = fc["MacAddress"];
                 db.Entry(objUser).State = EntityState.Modified;
                 db.SaveChanges();
             }

@@ -11,50 +11,77 @@ namespace CaptivePortal.API.Models
     {
         [Key]
         public int UserId { get; set; }
+
+        [MaxLength(50)]
         public string FirstName { get; set; }
+
+        [MaxLength(50)]
         public string LastName { get; set; }
+
+        [MaxLength(50)]
         public string Email { get; set; }
+
+        [MaxLength(50)]
+
         public string UserName { get; set; }
+
+        [MaxLength(50)]
         public string Password { get; set; }
+
         public DateTime CreationDate { get; set; }
-        public string CreationBy { get; set; }
+
         public DateTime UpdateDate { get; set; }
-        public string UpdatedBy { get; set; }
-        public string Gender { get; set; }
-        public string Age { get; set; }
-        public bool? AutoLogin { get; set; }
-        public string Term_conditions { get; set; }
-        public bool? promotional_email { get; set; }
-        public bool? ThirdPartyOptIn { get; set; }
-        public bool? UserOfDataOptIn { get; set; }
-        public int? IntStatus { get; set; }
-        public string MacAddress { get; set; }
-        public int? SiteId { get; set; }
-        public string OperatingSystem { get; set; }
-        public bool IsMobile { get; set; }
-        public string Browser { get; set; }
-        public string UserAgentName { get; set; }
+
+        [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime BirthDate { get; set; }
+
+        public int ? MobileNumer { get; set; }
+
+        public int ? GenderId { get; set; }
+
+        public int ? AgeId { get; set; }
+
+        public int ? SiteId { get; set; }
+
+        public bool ? AutoLogin { get; set; }
+
+        public bool ? promotional_email { get; set; }
+
+        public bool ? ThirdPartyOptIn { get; set; }
+
+        public bool ? UserOfDataOptIn { get; set; }
+
+        [MaxLength(50)]
         public string Status { get; set; }
 
-
+        [MaxLength(50)]
         public string Custom1 { get; set; }
+
+        [MaxLength(50)]
         public string Custom2 { get; set; }
+
+        [MaxLength(50)]
         public string Custom3 { get; set; }
+
+        [MaxLength(50)]
         public string Custom4 { get; set; }
+
+        [MaxLength(50)]
         public string Custom5 { get; set; }
+
+        [MaxLength(50)]
         public string Custom6 { get; set; }
 
-        [ForeignKey("SiteId")]
-        public Site Site { get; set; }
+        public string UniqueUserId { get; set; }
 
-    }
+        [ForeignKey("AgeId")]
+        public virtual Age Ages { get; set; }
 
-    public enum DeviceStatus
-    {
-        Athenticate = 0,
-        Authorize = 1,
-        Active = 2,
-        InActive = 3,
-        Lock = 4
+        [ForeignKey("GenderId")]
+        public virtual Gender Genders { get; set; }
+
+        public virtual Site Sites { get; set; }
+
+
     }
 }

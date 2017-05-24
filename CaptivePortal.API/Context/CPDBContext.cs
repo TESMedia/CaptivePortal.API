@@ -25,6 +25,11 @@ namespace CaptivePortal.API.Context
         public DbSet<Role> Role { get; set; }
         public DbSet <Form> Form { get; set; }
         public DbSet <FormControl> FormControl { get; set; }
+        public DbSet<Age> Age { get; set; }
+        public DbSet<Gender> Gender { get; set; }
+
+        //public DbSet<UsersDeviceData> UsersDeviceDatas { get; set; }
+        public DbSet<MacAddress> MacAddress { get; set; }
 
         //public DbSet<UserSite> UserSite { get; set; }
 
