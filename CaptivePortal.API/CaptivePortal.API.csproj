@@ -4572,13 +4572,11 @@
     <Content Include="Views\Shared\_Devices.cshtml" />
     <Content Include="Views\Shared\_Custom.cshtml" />
     <Content Include="Views\Shared\_UserDetails.cshtml" />
-    <Content Include="Upload\Bristol FanSpace Screens.pdf" />
-    <Content Include="Upload\PlanetsBrainProfile.docx" />
-    <Content Include="Upload\testWord.docx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Logs\" />
+    <Folder Include="Upload\" />
     <Folder Include="Vendors\google-code-prettify\bin\" />
   </ItemGroup>
   <ItemGroup>

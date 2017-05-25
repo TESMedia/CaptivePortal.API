@@ -18,11 +18,13 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections;
+using System.Web.Http.Cors;
 using System.Web.SessionState;
 
 namespace CaptivePortal.API.Controllers
 {
-    [RoutePrefix("api")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
+    [RoutePrefix("api/account")]
     public class AccountController : ApiController
     {
         private static ILog Log { get; set; }
