@@ -28,7 +28,7 @@ namespace CaptivePortal.API.Context
 
                         List<Age> listAge = new List<Age>()
                         {
-                             new Age { Value = "0-17" }, new Age { Value = "18-24" }, new Age { Value = "25-43" }, new Age { Value = "35-44" }, new Age { Value = "45-54" }, new Age { Value = "55-64" }, new Age { Value = "65++" }
+                             new Age { Value = "0-17" }, new Age { Value = "18-24" }, new Age { Value = "25-34" }, new Age { Value = "35-44" }, new Age { Value = "45-54" }, new Age { Value = "55-64" }, new Age { Value = "65++" }
                         };
 
                         db.Age.AddRange(listAge);

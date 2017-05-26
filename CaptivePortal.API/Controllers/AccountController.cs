@@ -208,7 +208,7 @@ namespace CaptivePortal.API.Controllers
                             log.Info("User Data saved in user Table");
 
                             //Save all the Users data in MySql DataBase
-                            objRegisterDB.CreateNewUser(objUserMac.objUser.Email, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
+                            objRegisterDB.CreateNewUser(objUserMac.objUser.UserName, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
 
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retType = ReturnCode.Success.ToString();

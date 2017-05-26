@@ -49,6 +49,9 @@ namespace CP.Lib
                 log.Info("Users records are written to database.");
               
             }
+
+            
+
             catch (Exception e)
             {
                 retCode = -1;

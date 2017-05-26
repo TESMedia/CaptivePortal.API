@@ -221,8 +221,8 @@ namespace CaptivePortal.API.Controllers
                     ControllerIpAddress = inputData.ControllerIpAddress,
                     MySqlIpAddress = inputData.MySqlIpAddress,
                     Term_conditions = inputData.Term_conditions,
-                    TermsAndCondDoc = TandD,
-                    FileName = fileName
+                    TermsAndCondDoc = TandD
+                  
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
@@ -355,7 +355,7 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
                 objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
                 objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
-                objViewModel.FileName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).FileName;
+               
                 objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
@@ -490,8 +490,8 @@ namespace CaptivePortal.API.Controllers
                     ControllerIpAddress = inputData.ControllerIpAddress,
                     MySqlIpAddress = inputData.MySqlIpAddress,
                     Term_conditions = inputData.Term_conditions,
-                    TermsAndCondDoc = TandD,
-                    FileName = fileName
+                    TermsAndCondDoc = TandD
+                   
                 };
 
                 db.Entry(objSite).State = System.Data.Entity.EntityState.Modified;
