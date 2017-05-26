@@ -268,10 +268,19 @@
     <Compile Include="Migrations\201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.Designer.cs">
       <DependentUpon>201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.cs" />
+    <Compile Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.Designer.cs">
+      <DependentUpon>201705250714020_Add_ApiAccessUserSession_tbl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705251519354_New_changes.cs" />
+    <Compile Include="Migrations\201705251519354_New_changes.Designer.cs">
+      <DependentUpon>201705251519354_New_changes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Age.cs" />
+    <Compile Include="Models\ApiAccessUserSession.cs" />
     <Compile Include="Models\Browser.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Devices.cs" />
@@ -4612,6 +4621,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.resx">
       <DependentUpon>201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.resx">
+      <DependentUpon>201705250714020_Add_ApiAccessUserSession_tbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705251519354_New_changes.resx">
+      <DependentUpon>201705251519354_New_changes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
