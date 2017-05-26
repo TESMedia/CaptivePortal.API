@@ -47,6 +47,7 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/Login")]
         public HttpResponseMessage Login(Users objUser)
         {
+            log.Info("Enter in a8Captiveportal/V1/Login");
             string sessionId = null;
             try
             {
@@ -58,6 +59,7 @@ namespace CaptivePortal.API.Controllers
                     //Insert the UserSession data with SessionId
                     if (db.UserSession.Any(m=>m.UserId== UserId))
                     {
+                        log.Info("Insert the UserSession data with SessionId");
                         ApiAccessUserSession UserSession = db.UserSession.FirstOrDefault(m => m.UserId==UserId);
                         UserSession.SessionId = sessionId;
                         db.Entry(UserSession).State = System.Data.Entity.EntityState.Modified;
@@ -102,6 +104,7 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/CreateUser")]
         public HttpResponseMessage CreateUserExpose(CreateUserViewModel objUser)
         {
+            log.Info("Enter in a8Captiveportal/V1/CreateUser");
             Site objSite = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
@@ -132,12 +135,17 @@ namespace CaptivePortal.API.Controllers
                     {
                         retStr = "Need SessionId for Registration";
                     }
+                    else if (db.Users.Any(m => m.UniqueUserId == objUser.UserId))
+                    {
+                        retStr = "User with same UniqueId already exist in the database";
+                    }
 
 
 
                     //if No validation Error then Insert the data into the table
                     if (string.IsNullOrEmpty(retStr))
                     {
+                        log.Info("if No validation Error then Insert the data into the table");
                         objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
                         //if Same User with Site Exist then don't allow
                         if (!(db.Users.Any(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId)))
@@ -145,6 +153,7 @@ namespace CaptivePortal.API.Controllers
 
                             if (IsAuthorize(objUser.SessionId))
                             {
+                                log.Info("Checked User is authorized.");
                                 Users objUsers = new Users();
                                 objUsers.CreationDate = DateTime.Now;
                                 objUsers.UpdateDate = DateTime.Now;
@@ -168,7 +177,7 @@ namespace CaptivePortal.API.Controllers
                                 db.MacAddress.Add(objMacAddress);
 
                                 db.SaveChanges();
-
+                              
                                 log.Info("User Data saved in user Table");
 
                                 //Save all the Users data in MySql DataBase
@@ -178,6 +187,7 @@ namespace CaptivePortal.API.Controllers
                                 retType = ReturnCode.Success.ToString();
                                 retStr = "Successfully Creted the User";
                                 dbContextTransaction.Commit();
+                                log.Info("User data commited successfully");
                             }
                             else
                             {
@@ -228,8 +238,8 @@ namespace CaptivePortal.API.Controllers
         [HttpPost]
         [Route("a8Captiveportal/V1/CreateUserWifi")]
         public HttpResponseMessage CreateUserWifi(UserMacAddressDetails objUserMac)
-        { 
-           
+        {
+            log.Info("Inside in a8Captiveportal/V1/CreateUserWifi"); 
             Site objSite = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
@@ -253,15 +263,16 @@ namespace CaptivePortal.API.Controllers
 
                         objSite = db.Site.FirstOrDefault(m => m.SiteId == objUserMac.objUser.SiteId);
 
-                        //If macAdress is null then alllow to create without checking th null one
+                        //If macAdress is null then allow to create without checking the null one
                         if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
                         {
+                            log.Info("Allowing macaddress if it is null with Default value ");
                             objUserMac.objMacAddress.MacAddressValue = "default";
                         }
 
                         if (!(db.Users.Any(m => m.UserName == objUserMac.objUser.UserName && m.SiteId == objUserMac.objUser.SiteId)) && !(db.MacAddress.Any(m => m.MacAddressValue == objUserMac.objMacAddress.MacAddressValue)))
                         {
-                            log.Info("Enter in Register Method");
+                            
 
                             if (objUserMac.objMacAddress.MacAddressValue == "default")
                             {
@@ -286,6 +297,7 @@ namespace CaptivePortal.API.Controllers
                             retType = ReturnCode.Success.ToString();
                             retStr = "Successfully Creted the User";
                             dbContextTransaction.Commit();
+                            log.Info("user data saved and commited successfully");
 
                         }
                         else
@@ -332,7 +344,7 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/GetMacAddresses")]
         public HttpResponseMessage GetMacAddress(CreateUserViewModel model)
         {
-
+            log.Info("inside a8Captiveportal/V1/GetMacAddresses");
 
             //First check the Manadatory 
             //validation and show the Error Messages
@@ -368,6 +380,7 @@ namespace CaptivePortal.API.Controllers
                             }
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retStr = "Successfully return the MacAddresses";
+                            log.Info("Successfully return the MacAddresses");
                             retType = ReturnCode.Success.ToString();
                         }
                     }
@@ -413,6 +426,7 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/LoginWIthNewMacAddress")]
         public HttpResponseMessage LoginWIthNewMacAddress(LoginWIthNewMacAddressModel model)
         {
+            log.Info(" inside a8Captiveportal/V1/LoginWIthNewMacAddress");
             StatusReturn objAutoLoginReturn = new StatusReturn();
             try
             {
@@ -424,6 +438,7 @@ namespace CaptivePortal.API.Controllers
                     //If User exist then Save the User in MacAddresses table
                     if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
                     {
+                        log.Info("If User exist then Save the User in MacAddresses table");
                         int UserId = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault().UserId;
                         if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAdress && m.UserId == UserId)))
                         {
@@ -438,6 +453,7 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
 
                             retStr = "Successfully add the Maccadress";
+                            log.Info("Successfully add the Macaddress");
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retType = ReturnCode.Success.ToString();
 
@@ -483,6 +499,7 @@ namespace CaptivePortal.API.Controllers
         /// <returns></returns>
         public bool IsAuthorize(string SessionId)
         {
+            log.Info("inside IsAuthorize method");
             bool retval;
             try
             {
@@ -497,6 +514,7 @@ namespace CaptivePortal.API.Controllers
             }
             catch(Exception ex)
             {
+                log.Error(ex.Message);
                 retval = false;
             }
             return retval;
