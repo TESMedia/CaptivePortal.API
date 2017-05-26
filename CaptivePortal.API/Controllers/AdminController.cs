@@ -221,8 +221,10 @@ namespace CaptivePortal.API.Controllers
                     ControllerIpAddress = inputData.ControllerIpAddress,
                     MySqlIpAddress = inputData.MySqlIpAddress,
                     Term_conditions = inputData.Term_conditions,
-                    TermsAndCondDoc = TandD
-                  
+                    TermsAndCondDoc = TandD,
+                    DashboardUrl = inputData.DashboardUrl,
+                    RtlsUrl = inputData.RtlsUrl
+
                 };
                 db.Site.Add(objSite);
                 db.SaveChanges();
@@ -355,7 +357,9 @@ namespace CaptivePortal.API.Controllers
                 objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
                 objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
                 objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
-               
+                objViewModel.DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).DashboardUrl;
+                objViewModel.RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).RtlsUrl;
+
                 objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
                 objViewModel.fieldlabel = columnsList;
                 if (db.Site.Any(m => m.SiteId == SiteId))
@@ -726,7 +730,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only foreName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -736,7 +740,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only surName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(foreName))
                     {
-                        userList = db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -746,7 +750,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only username  for searching or filter
                     if (string.IsNullOrEmpty(foreName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -805,8 +809,8 @@ namespace CaptivePortal.API.Controllers
             {
                 objUserViewModel.Password = userDetail.Password;
                 objUserViewModel.UserName = userDetail.UserName;
-                //objUserViewModel.Gender = userDetail.Gender;
-                //objUserViewModel.AgeRange = userDetail.Age;
+                objUserViewModel.Gender = db.Gender.FirstOrDefault(m => m.GenderId == userDetail.GenderId).Value;
+                objUserViewModel.AgeRange = db.Age.FirstOrDefault(m => m.AgeId == userDetail.AgeId).Value;
                 objUserViewModel.AutoLogin = Convert.ToBoolean(userDetail.AutoLogin);
                 objUserViewModel.Term_conditions = termConditionVersion;
                 objUserViewModel.PromotionEmailOptIn = Convert.ToBoolean(userDetail.promotional_email);
@@ -831,8 +835,8 @@ namespace CaptivePortal.API.Controllers
                 var objUser = db.Users.Find(userId);
                 {
                     objUser.UserName = fc["UserName"];
-                    //objUser.Gender = fc["Gender"].ToString();
-                    //objUser.Age = fc["Age"];
+                    objUser.GenderId = Convert.ToInt32(fc["GenderId"]);
+                    objUser.AgeId = Convert.ToInt32(fc["AgeId"]);
                     objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);

@@ -83,7 +83,7 @@
                                                 <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
-                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl",@required="required"})
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl"})
                                                 </div>
                                                 <div style="margin-top:-15px;">
                                                     Create New Company
@@ -116,6 +116,19 @@
                                                 <label for="radius-IpAddress" class="control-label col-md-3 col-sm-3 col-xs-12">Radius IP address:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="radius-IpAddress" class="form-control col-md-7 col-xs-12" type="text" name="MySqlIpAddress">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="DashboardUrl" class="control-label col-md-3 col-sm-3 col-xs-12">Dashboard URL:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="DashboardUrl" class="form-control col-md-7 col-xs-12" type="text" name="DashboardUrl">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="RtlsUrl" class="control-label col-md-3 col-sm-3 col-xs-12">RTLS URL:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="RtlsUrl" class="form-control col-md-7 col-xs-12" type="text" name="RtlsUrl">
                                                 </div>
                                             </div>
 

@@ -28,10 +28,11 @@
             <label for="gender" class="control-label col-md-3">Gender:</label>
             <div class="col-md-3">
                 @* @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @class = "form-control", @name = "Gender" } })*@
-                <select id="Gender" name="Gender" class="form-control">
+                <select id="Gender" name="GenderId" class="form-control">
                     <option selected="selected" value="@Model.Gender">@Model.Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                    <option value="3">Not Answered</option>
                 </select>
 
             </div>
@@ -44,15 +45,15 @@
             <label for="ageRange" class="control-label col-md-3">Age Range:</label>
             <div class="col-md-3">
                 @*@Html.EditorFor(model => model.AgeRange, new { htmlAttributes = new { @class = "form-control", @name = "Age" } })*@
-                <select id="Age" name="Age" class="form-control">
+                <select id="Age" name="AgeId" class="form-control">
                     <option selected="selected" value="@Model.AgeRange">@Model.AgeRange</option>
-                    <option value="13-17">13-17 years old</option>
-                    <option value="18-24">18-24 years old</option>
-                    <option value="25-34">25-34 years old</option>
-                    <option value="35-44">35-44 years old</option>
-                    <option value="45-54">45-54 years old</option>
-                    <option value="55-64">55-64 years old</option>
-                    <option value="65+">65+ years old</option>
+                    <option value="1">0-17</option>
+                    <option value="2">18-24</option>
+                    <option value="3">25-34</option>
+                    <option value="4">35-44</option>
+                    <option value="5">45-54</option>
+                    <option value="6">55-64</option>
+                    <option value="7">65+</option>
                 </select>
             </div>
 
