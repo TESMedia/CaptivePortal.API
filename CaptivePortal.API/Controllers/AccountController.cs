@@ -24,7 +24,7 @@ using System.Web.SessionState;
 namespace CaptivePortal.API.Controllers
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
-    [RoutePrefix("api/account")]
+    [RoutePrefix("api")]
     public class AccountController : ApiController
     {
         private static ILog Log { get; set; }
