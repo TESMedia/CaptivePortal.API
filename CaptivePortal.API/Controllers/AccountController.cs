@@ -51,32 +51,48 @@ namespace CaptivePortal.API.Controllers
             string sessionId = null;
             try
             {
-                if (db.Users.Any(m => m.UserName == objUser.UserName && m.Password == objUser.Password))
+                if (objUser.UserName.ToLower() == "testpurple@mail.com")
                 {
-                    int UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).UserId;
-                    SessionIDManager manager = new SessionIDManager();
-                    sessionId = manager.CreateSessionID(HttpContext.Current);
-                    //Insert the UserSession data with SessionId
-                    if (db.UserSession.Any(m => m.UserId == UserId))
+                    if (db.Users.Any(m => m.UserName.ToLower() == objUser.UserName.ToLower() && m.Password == objUser.Password))
                     {
-                        log.Info("Insert the UserSession data with SessionId");
-                        ApiAccessUserSession UserSession = db.UserSession.FirstOrDefault(m => m.UserId == UserId);
-                        UserSession.SessionId = sessionId;
-                        db.Entry(UserSession).State = System.Data.Entity.EntityState.Modified;
-                        db.SaveChanges();
+                        int UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).UserId;
+                        SessionIDManager manager = new SessionIDManager();
+                        sessionId = manager.CreateSessionID(HttpContext.Current);
+                        //Insert the UserSession data with SessionId
+                        if (db.UserSession.Any(m => m.UserId == UserId))
+                        {
+                            log.Info("Insert the UserSession data with SessionId");
+                            ApiAccessUserSession UserSession = db.UserSession.FirstOrDefault(m => m.UserId == UserId);
+                            UserSession.SessionId = sessionId;
+                            db.Entry(UserSession).State = System.Data.Entity.EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            ApiAccessUserSession objUserSession = new ApiAccessUserSession();
+                            objUserSession.SessionId = sessionId;
+                            objUserSession.UserId = UserId;
+                            db.UserSession.Add(objUserSession);
+                            db.SaveChanges();
+                        }
+                        retStr = sessionId;
+                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retType = "Session";
                     }
                     else
                     {
-                        ApiAccessUserSession objUserSession = new ApiAccessUserSession();
-                        objUserSession.SessionId = sessionId;
-                        objUserSession.UserId = UserId;
-                        db.UserSession.Add(objUserSession);
-                        db.SaveChanges();
+                        retStr = "Password is Incorrect";
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retType = ReturnCode.Warning.ToString();
                     }
-                    retStr = sessionId;
-                    retVal = Convert.ToInt32(ReturnCode.Success);
-                    retType = "Session";
                 }
+                else
+                {
+                    retStr = "Particular User not allow to access";
+                    retVal = Convert.ToInt32(ReturnCode.Warning);
+                    retType = ReturnCode.Warning.ToString();
+                }
+
             }
             catch (Exception ex)
             {
@@ -171,10 +187,10 @@ namespace CaptivePortal.API.Controllers
 
                                 db.Users.Add(objUsers);
 
-                                MacAddress objMacAddress = new MacAddress();
-                                objMacAddress.UserId = objUsers.UserId;
-                                //objMacAddress.MacAddressValue=objUser.ma
-                                db.MacAddress.Add(objMacAddress);
+                                //MacAddress objMacAddress = new MacAddress();
+                                //objMacAddress.UserId = objUsers.UserId;
+                                ////objMacAddress.MacAddressValue=objUser.ma
+                                //db.MacAddress.Add(objMacAddress);
 
                                 db.SaveChanges();
 
@@ -674,7 +690,7 @@ namespace CaptivePortal.API.Controllers
         public List<MacAddesses> lstMacAddresses { get; set; }
         public StatusReturn StatusReturn { get; set; }
     }
-
+   
     public class CreateUserViewModel
     {
         public int SiteId { get; set; }
