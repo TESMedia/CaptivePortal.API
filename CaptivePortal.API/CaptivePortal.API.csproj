@@ -244,41 +244,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201705150821012_Initial_Migrations.cs" />
-    <Compile Include="Migrations\201705150821012_Initial_Migrations.Designer.cs">
-      <DependentUpon>201705150821012_Initial_Migrations.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs" />
-    <Compile Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.Designer.cs">
-      <DependentUpon>201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.cs" />
-    <Compile Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.Designer.cs">
-      <DependentUpon>201705151329291_added_IsMandetory_field_in_FormControl_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705201438114_changes_in_Site_and_User_table.cs" />
-    <Compile Include="Migrations\201705201438114_changes_in_Site_and_User_table.Designer.cs">
-      <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705241553413_Changes_the_Design_database.cs" />
-    <Compile Include="Migrations\201705241553413_Changes_the_Design_database.Designer.cs">
-      <DependentUpon>201705241553413_Changes_the_Design_database.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.cs" />
-    <Compile Include="Migrations\201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.Designer.cs">
-      <DependentUpon>201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.cs" />
-    <Compile Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.Designer.cs">
-      <DependentUpon>201705250714020_Add_ApiAccessUserSession_tbl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705251519354_New_changes.cs" />
-    <Compile Include="Migrations\201705251519354_New_changes.Designer.cs">
-      <DependentUpon>201705251519354_New_changes.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201705260633593_Added-pending-migrationfiles.cs" />
-    <Compile Include="Migrations\201705260633593_Added-pending-migrationfiles.Designer.cs">
-      <DependentUpon>201705260633593_Added-pending-migrationfiles.cs</DependentUpon>
+    <Compile Include="Migrations\201705291109437_initial_migration.cs" />
+    <Compile Include="Migrations\201705291109437_initial_migration.Designer.cs">
+      <DependentUpon>201705291109437_initial_migration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4580,6 +4548,7 @@
     <Content Include="Views\Shared\_Devices.cshtml" />
     <Content Include="Views\Shared\_Custom.cshtml" />
     <Content Include="Views\Shared\_UserDetails.cshtml" />
+    <Content Include="Views\Admin\Home.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4608,32 +4577,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201705150821012_Initial_Migrations.resx">
-      <DependentUpon>201705150821012_Initial_Migrations.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.resx">
-      <DependentUpon>201705151145332_added_custom_field_in_user_table_And_LabelNameToDisplay_in_FormControl_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705151329291_added_IsMandetory_field_in_FormControl_table.resx">
-      <DependentUpon>201705151329291_added_IsMandetory_field_in_FormControl_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705201438114_changes_in_Site_and_User_table.resx">
-      <DependentUpon>201705201438114_changes_in_Site_and_User_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705241553413_Changes_the_Design_database.resx">
-      <DependentUpon>201705241553413_Changes_the_Design_database.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.resx">
-      <DependentUpon>201705250708425_Added-Rtls&amp;DasBoardUrl-inSiteTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705250714020_Add_ApiAccessUserSession_tbl.resx">
-      <DependentUpon>201705250714020_Add_ApiAccessUserSession_tbl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705251519354_New_changes.resx">
-      <DependentUpon>201705251519354_New_changes.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201705260633593_Added-pending-migrationfiles.resx">
-      <DependentUpon>201705260633593_Added-pending-migrationfiles.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201705291109437_initial_migration.resx">
+      <DependentUpon>201705291109437_initial_migration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -15,16 +15,19 @@ namespace CaptivePortal.API.Context
 
                 using (var db = new CPDBContext())
                 {
-                    var admin = db.Users.Where(i => i.UserName == "captive@loc8.com").ToList();
+                    var admin = db.Users.Where(i => i.UserName == "admin@airloc8.com").ToList();
                     if (admin.Count != 1)
                     {
                         var user = new Users
                         {
-                            UserName = "captive@loc8.com",
+                            UserName = "admin@airloc8.com",
                             Password = "Tes@123",
                             CreationDate = DateTime.Now,
-                            UpdateDate=DateTime.Now
-                        };
+                            UpdateDate = DateTime.Now
+                          
+                           
+
+                    };
 
                         List<Age> listAge = new List<Age>()
                         {
@@ -32,7 +35,7 @@ namespace CaptivePortal.API.Context
                         };
 
                         db.Age.AddRange(listAge);
-
+                        
                         List<Gender> listGender = new List<Gender>()
                         {
                             new Gender { Value="Male"},new Gender {Value="Female" },new Gender { Value="Not Answered"} 
@@ -44,7 +47,7 @@ namespace CaptivePortal.API.Context
                         db.SaveChanges();
 
                         UserRole objUserRole = new UserRole();
-                        var adminInfo = db.Users.Where(i => i.UserName == "captive@loc8.com").FirstOrDefault();
+                        var adminInfo = db.Users.Where(i => i.UserName == "admin@airloc8.com").FirstOrDefault();
                         objUserRole.UserId = user.UserId;
                         var role = db.Role.Where(i => i.RoleName == "GAdmin").FirstOrDefault();
                         objUserRole.RoleId = role.RoleId;

@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Addedpendingmigrationfiles : IMigrationMetadata
+    public sealed partial class initial_migration : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Addedpendingmigrationfiles));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial_migration));
         
         string IMigrationMetadata.Id
         {
-            get { return "201705260633593_Added-pending-migrationfiles"; }
+            get { return "201705291109437_initial_migration"; }
         }
         
         string IMigrationMetadata.Source
