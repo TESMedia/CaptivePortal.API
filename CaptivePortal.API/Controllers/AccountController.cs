@@ -81,14 +81,14 @@ namespace CaptivePortal.API.Controllers
                     }
                     else
                     {
-                        retStr = "Password is Incorrect";
+                        retStr = "Incorrect Password";
                         retVal = Convert.ToInt32(ReturnCode.Warning);
                         retType = ReturnCode.Warning.ToString();
                     }
                 }
                 else
                 {
-                    retStr = "Particular User not allow to access";
+                    retStr = "UserName is Not Exist";
                     retVal = Convert.ToInt32(ReturnCode.Warning);
                     retType = ReturnCode.Warning.ToString();
                 }
@@ -747,7 +747,7 @@ namespace CaptivePortal.API.Controllers
     {
         Success = 1,
         Failure = -1,
-        Warning = 2,
+        Warning = -2,
     }
 }
 
