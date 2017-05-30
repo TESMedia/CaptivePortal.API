@@ -350,7 +350,119 @@ namespace CaptivePortal.API.Controllers
                 };
             }
         }
+        /// <summary>
+        /// it will add or delete one or more mac adddress of a user.
+        /// </summary>
+        /// <param name="objUserMac"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("a8Captiveportal/V1/UpdateMacAddress")]
+        public HttpResponseMessage UpdateMacAddress(AddMacModel objUserMac)
+        {
+            try
+            {
+                MacAddress objMac = new MacAddress();
+                int userId = 0;
 
+                if (objUserMac.OperationType == 0)
+                {
+                    retStr = "please send operation type i.e 1(add) or 2(delete).";
+                }
+                if (objUserMac.OperationType == OperationType.Add)
+                {
+                    //check mandatory request.
+                    if (objUserMac.SiteId == 0)
+                    {
+                        retStr = "Need SiteId to update mac address";
+                    }
+                    else if (!(db.Site.Any(m => m.SiteId == objUserMac.SiteId)))
+                    {
+                        retStr = "This particular SiteId Not Exist Please try again with others";
+                    }
+                    else if (string.IsNullOrEmpty(objUserMac.UserId))
+                    {
+                        retStr = "Need UserId to update mac address";
+                    }
+                    else if (!(db.Users.Any(m => m.UniqueUserId == objUserMac.UserId)))
+                    {
+                        retStr = "This particular UniqueUserId Not Exist Please try again with others";
+                    }
+                    else if (string.IsNullOrEmpty(objUserMac.SessionId))
+                    {
+                        retStr = "Need SessionId to update mac address.";
+                    }
+
+                    if (string.IsNullOrEmpty(retStr))
+                    {
+                        if (IsAuthorize(objUserMac.SessionId))
+                        {
+                            userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).UserId;
+                            foreach (var macaddress in objUserMac.MacAddressList)
+                            {
+                                if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                                {
+                                    retStr = "User with same mac address already exist in the database";
+                                    retVal = Convert.ToInt32(ReturnCode.Warning);
+                                    retType = ReturnCode.Warning.ToString();
+                                }
+                                else
+                                {
+                                    objMac.MacAddressValue = macaddress.MacAddress;
+                                    objMac.UserId = userId;
+                                    db.MacAddress.Add(objMac);
+                                    db.SaveChanges();
+                                    retStr = "mac address updated successfully.";
+                                    retType = ReturnCode.Success.ToString();
+                                    retVal = Convert.ToInt32(ReturnCode.Success);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retType = ReturnCode.Warning.ToString();
+                    }
+                }
+                if (objUserMac.OperationType == OperationType.Delete)
+                {
+                    foreach (var macaddress in objUserMac.MacAddressList)
+                    {
+                        if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                        {
+                            db.MacAddress.RemoveRange(db.MacAddress.Where(c => c.MacAddressValue == macaddress.MacAddress));
+                            db.SaveChanges();
+                            retStr = "mac address deleted successfully.";
+                            retType = ReturnCode.Success.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                        }
+                        else
+                        {
+                            retStr = "User with  mac address doesnot exist in the database";
+                            retType = ReturnCode.Warning.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                retVal = Convert.ToInt32(ReturnCode.Failure);
+                retType = ReturnCode.Warning.ToString();
+                retStr = "some problem occured";
+                log.Error(ex.Message);
+            }
+            objReturn.returncode = retVal;
+            objReturn.msg = retStr;
+            objReturn.type = retType;
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
+            };
+        }
 
         /// <summary>
         /// 
@@ -469,10 +581,10 @@ namespace CaptivePortal.API.Controllers
                         {
                             db.Users.Remove(user);
                             db.SaveChanges();
-                        retStr = "User is deleted with its associated mac address";
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-                        retType = ReturnCode.Success.ToString();
-                    }
+                            retStr = "User is deleted with its associated mac address";
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                        }
                         else
                         {
                             retStr = "User is not found";
@@ -690,7 +802,7 @@ namespace CaptivePortal.API.Controllers
         public List<MacAddesses> lstMacAddresses { get; set; }
         public StatusReturn StatusReturn { get; set; }
     }
-   
+
     public class CreateUserViewModel
     {
         public int SiteId { get; set; }
@@ -748,6 +860,19 @@ namespace CaptivePortal.API.Controllers
         Success = 1,
         Failure = -1,
         Warning = -2,
+    }
+    public class AddMacModel
+    {
+        public string UserId { get; set; }
+        public int SiteId { get; set; }
+        public string SessionId { get; set; }
+        public OperationType OperationType { get; set; }
+        public List<MacAddesses> MacAddressList { get; set; }
+    }
+    public enum OperationType
+    {
+        Add = 1,
+        Delete = 2
     }
 }
 
