@@ -355,7 +355,7 @@ namespace CaptivePortal.API.Controllers
         /// </summary>
         /// <param name="objUserMac"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpPost]
         [Route("a8Captiveportal/V1/UpdateMacAddress")]
         public HttpResponseMessage UpdateMacAddress(AddMacModel objUserMac)
         {
@@ -416,6 +416,13 @@ namespace CaptivePortal.API.Controllers
                                     retVal = Convert.ToInt32(ReturnCode.Success);
                                 }
                             }
+                        }
+                        else
+                        {
+
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retType = ReturnCode.Warning.ToString();
+                            retStr = "Not Authorize with Sessions" + " " + objUserMac.SessionId;
                         }
                     }
                     else
