@@ -226,11 +226,10 @@ namespace CaptivePortal.API.Controllers
                             retType = ReturnCode.Warning.ToString();
                         }
                     }
-                    //else
-                    //{
-                    //    retType = ReturnCode.Warning.ToString();
-                    //    retVal = Convert.ToInt32(ReturnCode.Warning);
-                    //}
+                    else
+                    {
+                        retType = ReturnCode.Warning.ToString();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -544,6 +543,10 @@ namespace CaptivePortal.API.Controllers
                         retType = ReturnCode.Warning.ToString();
                         retStr = "Invalid SessionId" + " " + model.SessionId;
                     }
+                }
+                else
+                {
+                    retType = ReturnCode.Warning.ToString();
                 }
             }
             catch (Exception ex)
