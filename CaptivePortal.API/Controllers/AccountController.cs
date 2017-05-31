@@ -34,6 +34,7 @@ namespace CaptivePortal.API.Controllers
         private ReturnModel ObjReturnModel = new ReturnModel();
         CPDBContext db = new CPDBContext();
         StatusReturn objReturn = new StatusReturn();
+        AutoLoginStatus returnStatus = new AutoLoginStatus();
         private string retStr = "";
         private string retType = "";
         private int retVal = 0;
@@ -539,7 +540,7 @@ namespace CaptivePortal.API.Controllers
                     else
                     {
 
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retVal = Convert.ToInt32(ErrorCodeWarning.NonAuthorize);
                         retType = ReturnCode.Warning.ToString();
                         retStr = "Invalid SessionId" + " " + model.SessionId;
                     }
@@ -556,9 +557,9 @@ namespace CaptivePortal.API.Controllers
                 retType = ReturnCode.Failure.ToString();
             }
 
-            objReturnMac.StatusReturn.returncode = retVal;
-            objReturnMac.StatusReturn.msg = retStr;
-            objReturnMac.StatusReturn.type = retType;
+            objReturnMac.returncode = retVal;
+            objReturnMac.msg = retStr;
+            objReturnMac.type = retType;
 
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
@@ -797,10 +798,10 @@ namespace CaptivePortal.API.Controllers
                     {
                         log.Info("If User exist then Save the User in MacAddresses table");
                         int UserId = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault().UserId;
-                        if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAdress && m.UserId == UserId)))
+                        if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == UserId)))
                         {
                             MacAddress objMac = new MacAddress();
-                            objMac.MacAddressValue = model.MacAdress;
+                            objMac.MacAddressValue = model.MacAddress;
                             objMac.UserId = UserId;
                             objMac.BrowserName = model.BrowserName;
                             objMac.UserAgentName = model.UserAgentName;
@@ -882,51 +883,51 @@ namespace CaptivePortal.API.Controllers
         ///// </summary>
         ///// <param name="model"></param>
         ///// <returns></returns>
-        //[HttpPost]
-        //[Route("GetStatusOfUserForSite")]
-        //public HttpResponseMessage GetStatusOfUserForSite(Users model)
-        //{
-        //    try
-        //    { 
-        //        var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
-        //        log.Info(objSite);
+        [HttpPost]
+        [Route("GetStatusOfUserForSite")]
+        public HttpResponseMessage GetStatusOfUserForSite(LoginWIthNewMacAddressModel model)
+        {
+            try
+            {
+                var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+                log.Info(objSite);
 
-        //        //Need to check the MacAddress exist for the particular Site with Autologin true
-        //        if (IsAnyMacAddressExist(model))
-        //        {
-        //            log.Info("inside IsAnyMacAddressExist");
-        //            var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId);
+                //Need to check the MacAddress exist for the particular Site with Autologin true
+                if (db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.User.SiteId == model.SiteId))
+                {
+                    log.Info("inside Is Any MacAddressExist For Particular Site");
+                    var objMac = db.MacAddress.FirstOrDefault(m => m.MacAddressValue == model.MacAddress && m.User.SiteId == model.SiteId);
+                    //objMac.User.AutoLogin
+                    //Check the AutoLogin of Site or User 
+                    if (objSite.AutoLogin == true)
+                    {
+                        log.Info("Check the AutoLogin of Site or User");
+                        //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        returnStatus.UserName = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).UserName;
+                        returnStatus.Password = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).Password;
+                        returnStatus.StatusReturn.returncode= Convert.ToInt32(ReturnCode.Success);
 
-        //            //Check the AutoLogin of Site or User 
-        //            if (objUser.AutoLogin == true || objSite.AutoLogin == true)
-        //            {
-        //                log.Info("Check the AutoLogin of Site or User");
 
-        //                objAutoLoginReturn.StatusReturn = new StatusReturn();
-        //                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-        //                objAutoLoginReturn.UserName = objUser.UserName;
-        //                objAutoLoginReturn.Password = objUser.Password;
+                    }
+                }
+                else
+                {
+                    returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Warning);
+                }
 
-        //            }
-        //        }
-        //        else
-        //        {
-        //            objAutoLoginReturn.StatusReturn = new StatusReturn();
-        //            objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-        //        }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+            }
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(returnStatus), Encoding.UTF8, "application/json")
+            };
+        }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        log.Error(ex.Message);
-        //        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-        //    }
-        //    JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-        //    return new HttpResponseMessage()
-        //    {
-        //        Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
-        //    };
-        //}
     }
 
 
@@ -935,6 +936,16 @@ namespace CaptivePortal.API.Controllers
         public int returncode { get; set; }
         public string msg { get; set; }
         public string type { get; set; }
+    }
+    public class AutoLoginStatus
+    {
+        public AutoLoginStatus()
+        {
+            StatusReturn = new StatusReturn();
+        }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public StatusReturn StatusReturn { get; set; }
     }
 
     public class MacAddesses
@@ -947,10 +958,12 @@ namespace CaptivePortal.API.Controllers
         public ReturnMacAesddress()
         {
             MacAddressList = new List<MacAddesses>();
-            StatusReturn = new StatusReturn();
         }
+      
         public List<MacAddesses> MacAddressList { get; set; }
-        public StatusReturn StatusReturn { get; set; }
+        public int returncode { get; set; }
+        public string type { get; set; }
+        public string msg { get; set; }
     }
 
     public class CreateUserViewModel
@@ -986,13 +999,13 @@ namespace CaptivePortal.API.Controllers
     {
         public string UserName { get; set; }
 
-        public string MacAdress { get; set; }
+        public string MacAddress { get; set; }
 
         public string Password { get; set; }
 
         public string BrowserName { get; set; }
         public string UserAgentName { get; set; }
-
+        public int SiteId { get; set;}
         public string OperatingSystem { get; set; }
 
         public bool IsMobile { get; set; }
