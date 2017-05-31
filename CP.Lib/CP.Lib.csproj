@@ -69,6 +69,7 @@
     <Compile Include="Radius\RadiusPacket.cs" />
     <Compile Include="Radius\Utils\RadiusUtils.cs" />
     <Compile Include="RegisterDB.cs" />
+    <Compile Include="UpdateDb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
