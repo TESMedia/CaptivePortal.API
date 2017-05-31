@@ -76,20 +76,20 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
                         }
                         retStr = sessionId;
-                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retVal = Convert.ToInt32(ReturnCode.LoginSuccess);
                         retType = "Session";
                     }
                     else
                     {
                         retStr = "Incorrect Password";
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retVal = Convert.ToInt32(ErrorCodeWarning.IncorrectPassword);
                         retType = ReturnCode.Warning.ToString();
                     }
                 }
                 else
                 {
-                    retStr = "UserName is Not Exist";
-                    retVal = Convert.ToInt32(ReturnCode.Warning);
+                    retStr = "Username does not exist";
+                    retVal = Convert.ToInt32(ErrorCodeWarning.usernameisnotexist);
                     retType = ReturnCode.Warning.ToString();
                 }
 
@@ -129,34 +129,39 @@ namespace CaptivePortal.API.Controllers
                     //First check the Manadatory validation and show the Error Messages
                     if (string.IsNullOrEmpty(objUser.UserName))
                     {
-                        retStr = "Need UserName for Registration";
+                        retStr = "Username missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserNameRequired);
                     }
                     else if (string.IsNullOrEmpty(objUser.Password))
                     {
-                        retStr = "Need Password for Registration";
+                        retStr = "Password missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.PasswordRequired);
                     }
                     else if (objUser.SiteId == 0)
                     {
-                        retStr = "Need SiteId for Registration";
+                        retStr = "SiteId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SiteIDRequired);
                     }
                     else if (!(db.Site.Any(m => m.SiteId == objUser.SiteId)))
                     {
-                        retStr = "This particular SiteId Not Exist Please try again with others";
+                        retStr = "SiteId Not Exist";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SiteIdNotExist);
                     }
                     else if (string.IsNullOrEmpty(objUser.UserId))
                     {
-                        retStr = "Need UserId for Registration";
+                        retStr = "UserId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserIdRequired);
                     }
                     else if (string.IsNullOrEmpty(objUser.SessionId))
                     {
-                        retStr = "Need SessionId for Registration";
+                        retStr = "SessionId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SessionIdRequired);
                     }
                     else if (db.Users.Any(m => m.UniqueUserId == objUser.UserId))
                     {
-                        retStr = "User with same UniqueId already exist in the database";
+                        retStr = "UserId already exists";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserUniqueIdAlreadyExist);
                     }
-
-
 
                     //if No validation Error then Insert the data into the table
                     if (string.IsNullOrEmpty(retStr))
@@ -169,7 +174,7 @@ namespace CaptivePortal.API.Controllers
 
                             if (IsAuthorize(objUser.SessionId))
                             {
-                                log.Info("Checked User is authorized.");
+                                log.Info("Checked User is authorized."); log.Info("Checked User is authorized.");
                                 Users objUsers = new Users();
                                 objUsers.CreationDate = DateTime.Now;
                                 objUsers.UpdateDate = DateTime.Now;
@@ -178,7 +183,7 @@ namespace CaptivePortal.API.Controllers
                                 objUsers.LastName = objUser.LastName;
                                 objUsers.Password = objUser.Password;
                                 objUsers.SiteId = objUser.SiteId;
-                                //objUsers.UniqueUserId = objUser.UserId;
+                                objUsers.UniqueUserId = objUser.UserId;
                                 objUsers.BirthDate = objUser.BirthDate;
                                 objUsers.AgeId = objUser.AgeId;
                                 objUsers.GenderId = objUser.GenderId;
@@ -199,32 +204,31 @@ namespace CaptivePortal.API.Controllers
                                 //Save all the Users data in MySql DataBase
                                 objRegisterDB.CreateNewUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
 
-                                retVal = Convert.ToInt32(ReturnCode.Success);
+                                retVal = Convert.ToInt32(ReturnCode.CreateUserSuccess);
                                 retType = ReturnCode.Success.ToString();
-                                retStr = "Successfully Creted the User";
+                                retStr = "User created";
                                 dbContextTransaction.Commit();
-                                log.Info("User data commited successfully");
                             }
                             else
                             {
 
-                                retVal = Convert.ToInt32(ReturnCode.Warning);
+                                retVal = Convert.ToInt32(ErrorCodeWarning.NonAuthorize);
                                 retType = ReturnCode.Warning.ToString();
                                 retStr = "Not Authorize with Sessions" + " " + objUser.SessionId;
                             }
                         }
                         else
                         {
-                            retVal = Convert.ToInt32(ReturnCode.Warning);
-                            retStr = "MacAddress or UserName already exist for same site named" + " " + objSite.SiteName;
+                            retVal = Convert.ToInt32(ErrorCodeWarning.MacAddressorUserNameExist);
+                            retStr = "Username already exists" + " " + objSite.SiteName;
                             retType = ReturnCode.Warning.ToString();
                         }
                     }
-                    else
-                    {
-                        retType = ReturnCode.Warning.ToString();
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
-                    }
+                    //else
+                    //{
+                    //    retType = ReturnCode.Warning.ToString();
+                    //    retVal = Convert.ToInt32(ReturnCode.Warning);
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -232,7 +236,7 @@ namespace CaptivePortal.API.Controllers
                     dbContextTransaction.Rollback();
                     retVal = Convert.ToInt32(ReturnCode.Failure);
                     retType = ReturnCode.Warning.ToString();
-                    retStr = "some problem occured";
+                    retStr = "Error Occured";
                     log.Error(ex.Message);
                 }
 
@@ -360,21 +364,27 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/GetMacAddresses")]
         public HttpResponseMessage GetMacAddress(CreateUserViewModel model)
         {
-            log.Info("inside a8Captiveportal/V1/GetMacAddresses");
-
             //First check the Manadatory 
             //validation and show the Error Messages
-            if (string.IsNullOrEmpty(model.UserId))
+            if (model.SiteId == 0)
             {
-                retStr = "Need UserId to get Mac address";
-            }
-            else if (model.SiteId == 0)
-            {
-                retStr = "Need SiteId to get Mac address";
+                retStr = "SiteId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SiteIDRequired);
             }
             else if (!(db.Site.Any(m => m.SiteId == model.SiteId)))
             {
-                retStr = "This particular SiteId Not Exist Please try again with others";
+                retStr = "SiteId Not Exist";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SiteIdNotExist);
+            }
+            else if (string.IsNullOrEmpty(model.UserId))
+            {
+                retStr = "UserId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.UserIdRequired);
+            }
+            else if (string.IsNullOrEmpty(model.SessionId))
+            {
+                retStr = "SessionId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SessionIdRequired);
             }
 
             ReturnMacAesddress objReturnMac = new ReturnMacAesddress();
@@ -385,19 +395,25 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (IsAuthorize(model.SessionId))
                     {
-                        if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
+                        if (db.Users.Any(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId))
                         {
                             int UserId = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).UserId;
                             foreach (var item in db.MacAddress.Where(m => m.UserId == UserId))
                             {
                                 MacAddesses objMacAddress = new MacAddesses();
                                 objMacAddress.MacAddress = item.MacAddressValue;
-                                objReturnMac.lstMacAddresses.Add(objMacAddress);
+                                objReturnMac.MacAddressList.Add(objMacAddress);
                             }
-                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retVal = Convert.ToInt32(ReturnCode.GetMacAddressSuccess);
                             retStr = "Successfully return the MacAddresses";
                             log.Info("Successfully return the MacAddresses");
                             retType = ReturnCode.Success.ToString();
+                        }
+                        else
+                        {
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retType = ReturnCode.Warning.ToString();
+                            retStr = "UserId or SiteId Not Exist";
                         }
                     }
                     else
@@ -405,13 +421,8 @@ namespace CaptivePortal.API.Controllers
 
                         retVal = Convert.ToInt32(ReturnCode.Warning);
                         retType = ReturnCode.Warning.ToString();
-                        retStr = "Not Authorize with Sessions" + " " + model.SessionId;
+                        retStr = "Invalid SessionId" + " " + model.SessionId;
                     }
-                }
-                else
-                {
-                    retType = ReturnCode.Success.ToString();
-                    retVal = Convert.ToInt32(ReturnCode.Success);
                 }
             }
             catch (Exception ex)
@@ -684,10 +695,10 @@ namespace CaptivePortal.API.Controllers
     {
         public ReturnMacAesddress()
         {
-            lstMacAddresses = new List<MacAddesses>();
+            MacAddressList = new List<MacAddesses>();
             StatusReturn = new StatusReturn();
         }
-        public List<MacAddesses> lstMacAddresses { get; set; }
+        public List<MacAddesses> MacAddressList { get; set; }
         public StatusReturn StatusReturn { get; set; }
     }
    
@@ -746,8 +757,27 @@ namespace CaptivePortal.API.Controllers
     public enum ReturnCode
     {
         Success = 1,
-        Failure = -1,
-        Warning = -2,
+        LoginSuccess = 202,
+        CreateUserSuccess = 204,
+        GetMacAddressSuccess = 206,
+        Failure = 511,
+        Warning = HttpStatusCode.Found
+    }
+
+
+    public enum ErrorCodeWarning
+    {
+        IncorrectPassword = 310,
+        usernameisnotexist = 311,
+        UserNameRequired = 312,
+        PasswordRequired = 313,
+        SiteIDRequired = 314,
+        SiteIdNotExist = 315,
+        UserIdRequired = 316,
+        SessionIdRequired = 317,
+        UserUniqueIdAlreadyExist = 318,
+        MacAddressorUserNameExist = 319,
+        NonAuthorize = 320
     }
 }
 
