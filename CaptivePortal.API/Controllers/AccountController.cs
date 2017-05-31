@@ -641,92 +641,101 @@ namespace CaptivePortal.API.Controllers
             {
                 try
                 {
-                    Users user = new Users();
-
-                    //check mandatory request.
-                    if (objUser.SiteId == 0)
+                    if (IsAuthorize(objUser.SessionId))
                     {
-                        retStr = "SiteId missing";
+                        Users user = new Users();
+
+                        //check mandatory request.
+                        if (objUser.SiteId == 0)
+                        {
+                            retStr = "SiteId missing";
+                        }
+                        else if (!(db.Site.Any(m => m.SiteId == objUser.SiteId)))
+                        {
+                            retStr = "Incorrect SiteId";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.UserId))
+                        {
+                            retStr = "UserId missing";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.UserName))
+                        {
+                            retStr = "Username missing";
+                        }
+                        else if (!(db.Users.Any(m => m.UniqueUserId == objUser.UserId)))
+                        {
+                            retStr = "UserId already exists";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.SessionId))
+                        {
+                            retStr = "SessionId missing";
+                        }
+                        if (string.IsNullOrEmpty(retStr))
+                        {
+                            int userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).UserId;
+                            user = db.Users.Find(userId);
+                            if (!string.IsNullOrEmpty(objUser.UserName))
+                            {
+                                user.UserName = objUser.UserName;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.Password))
+                            {
+                                user.Password = objUser.Password;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.FirstName))
+                            {
+                                user.FirstName = objUser.FirstName;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.LastName))
+                            {
+                                user.LastName = objUser.LastName;
+                            }
+                            if (objUser.AutoLogin || !objUser.AutoLogin)
+                            {
+                                user.AutoLogin = objUser.AutoLogin;
+                            }
+                            if (objUser.MobileNumber != 0)
+                            {
+                                user.MobileNumer = objUser.MobileNumber;
+                            }
+                            user.BirthDate = objUser.BirthDate;
+                            if (!string.IsNullOrEmpty(objUser.Email))
+                            {
+                                user.Email = objUser.Email;
+                            }
+                            if (objUser.GenderId != null)
+                            {
+                                user.GenderId = objUser.GenderId;
+                            }
+                            if (objUser.AgeId != null)
+                            {
+                                user.AgeId = objUser.AgeId;
+                            }
+                            db.Entry(user).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            log.Info("User Data upadated in user Table");
+
+                            retStr = "user details updated ";
+                            retType = ReturnCode.Success.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+
+
+                            objUpdateDb.UpdateUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
+
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                            retStr = "user details updated ";
+                            dbContextTransaction.Commit();
+                            log.Info("User data commited successfully");
+
+                        }
                     }
-                    else if (!(db.Site.Any(m => m.SiteId == objUser.SiteId)))
+                    else
                     {
-                        retStr = "Incorrect SiteId";
-                    }
-                    else if (string.IsNullOrEmpty(objUser.UserId))
-                    {
-                        retStr = "UserId missing";
-                    }
-                    else if (string.IsNullOrEmpty(objUser.UserName))
-                    {
-                        retStr = "Username missing";
-                    }
-                    else if (!(db.Users.Any(m => m.UniqueUserId == objUser.UserId)))
-                    {
-                        retStr = "UserId already exists";
-                    }
-                    else if (string.IsNullOrEmpty(objUser.SessionId))
-                    {
-                        retStr = "SessionId missing";
-                    }
-                    if (string.IsNullOrEmpty(retStr))
-                    {
-                        int userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).UserId;
-                        user = db.Users.Find(userId);
-                        if (!string.IsNullOrEmpty(objUser.UserName))
-                        {
-                            user.UserName = objUser.UserName;
-                        }
-                        if (!string.IsNullOrEmpty(objUser.Password))
-                        {
-                            user.Password = objUser.Password;
-                        }
-                        if (!string.IsNullOrEmpty(objUser.FirstName))
-                        {
-                            user.FirstName = objUser.FirstName;
-                        }
-                        if (!string.IsNullOrEmpty(objUser.LastName))
-                        {
-                            user.LastName = objUser.LastName;
-                        }
-                        if (objUser.AutoLogin || !objUser.AutoLogin)
-                        {
-                            user.AutoLogin = objUser.AutoLogin;
-                        }
-                        if (objUser.MobileNumber != 0)
-                        {
-                            user.MobileNumer = objUser.MobileNumber;
-                        }
-                        user.BirthDate = objUser.BirthDate;
-                        if (!string.IsNullOrEmpty(objUser.Email))
-                        {
-                            user.Email = objUser.Email;
-                        }
-                        if (objUser.GenderId != null)
-                        {
-                            user.GenderId = objUser.GenderId;
-                        }
-                        if (objUser.AgeId != null)
-                        {
-                            user.AgeId = objUser.AgeId;
-                        }
-                        db.Entry(user).State = EntityState.Modified;
-                        db.SaveChanges();
-
-                        log.Info("User Data upadated in user Table");
-
-                        retStr = "user details updated ";
-                        retType = ReturnCode.Success.ToString();
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-
-
-                        objUpdateDb.UpdateUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
-
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-                        retType = ReturnCode.Success.ToString();
-                        retStr = "user details updated ";
-                        dbContextTransaction.Commit();
-                        log.Info("User data commited successfully");
-
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retType = ReturnCode.Warning.ToString();
+                        retStr = "Invalid SessionId";
                     }
                 }
 
