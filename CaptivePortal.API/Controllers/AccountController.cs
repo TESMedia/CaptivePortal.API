@@ -308,6 +308,9 @@ namespace CaptivePortal.API.Controllers
 
                             objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
                             db.MacAddress.Add(objUserMac.objMacAddress);
+
+                            objUserMac.objAddress.UserId = objUserMac.objUser.UserId;
+                            db.UsersAddress.Add(objUserMac.objAddress);
                             db.SaveChanges();
 
                             log.Info("User Data saved in user Table");
@@ -784,23 +787,32 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/LoginWIthNewMacAddress")]
         public HttpResponseMessage LoginWIthNewMacAddress(LoginWIthNewMacAddressModel model)
         {
-            log.Info(" inside a8Captiveportal/V1/LoginWIthNewMacAddress");
             StatusReturn objAutoLoginReturn = new StatusReturn();
             try
             {
+                //if(db.Users.Any(m=>m))
+
                 log.Info(model.UserName);
                 log.Info(model.Password);
+                log.Info(model.SiteId);
 
-                if (db.Users.Any(m => m.UserName == model.UserName))
+                if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
                 {
                     //If User exist then Save the User in MacAddresses table
                     if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
                     {
+                        
                         log.Info("If User exist then Save the User in MacAddresses table");
-                        int UserId = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault().UserId;
+                        //Get the particualr UserId from the particular Site
+                        int UserId = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).FirstOrDefault().UserId;
+                        log.Info(UserId);
+
+                        //Check that the particular MacAddress exist or Not for particualr User with Different Site
                         if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == UserId)))
                         {
+                            log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site");
                             MacAddress objMac = new MacAddress();
+
                             objMac.MacAddressValue = model.MacAddress;
                             objMac.UserId = UserId;
                             objMac.BrowserName = model.BrowserName;
@@ -811,7 +823,6 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
 
                             retStr = "Successfully add the Maccadress";
-                            log.Info("Successfully add the Macaddress");
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retType = ReturnCode.Success.ToString();
 
@@ -821,14 +832,14 @@ namespace CaptivePortal.API.Controllers
                     else
                     {
                         retStr = "Please Check the Credential you have Entered";
-                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
                         retType = ReturnCode.Success.ToString();
                     }
                 }
                 else
                 {
                     retStr = "UserName Not exist Please Register First";
-                    retVal = Convert.ToInt32(ReturnCode.Success);
+                    retVal = Convert.ToInt32(ReturnCode.Warning);
                     retType = ReturnCode.Success.ToString();
                 }
             }
@@ -1016,6 +1027,8 @@ namespace CaptivePortal.API.Controllers
     {
         public Users objUser { get; set; }
         public MacAddress objMacAddress { get; set; }
+
+        public UsersAddress objAddress { get; set; }
     }
 
     public enum ReturnCode
