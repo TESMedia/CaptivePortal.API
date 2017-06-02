@@ -286,20 +286,20 @@ namespace CaptivePortal.API.Controllers
                         objSite = db.Site.FirstOrDefault(m => m.SiteId == objUserMac.objUser.SiteId);
 
                         //If macAdress is null then allow to create without checking the null one
-                        if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
-                        {
-                            log.Info("Allowing macaddress if it is null with Default value ");
-                            objUserMac.objMacAddress.MacAddressValue = "default";
-                        }
+                        //if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
+                        //{
+                        //    log.Info("Allowing macaddress if it is null with Default value ");
+                        //    objUserMac.objMacAddress.MacAddressValue = "default";
+                        //}
 
                         if (!(db.Users.Any(m => m.UserName == objUserMac.objUser.UserName && m.SiteId == objUserMac.objUser.SiteId)) && !(db.MacAddress.Any(m => m.MacAddressValue == objUserMac.objMacAddress.MacAddressValue)))
                         {
 
 
-                            if (objUserMac.objMacAddress.MacAddressValue == "default")
-                            {
-                                objUserMac.objMacAddress.MacAddressValue = null;
-                            }
+                            //if (objUserMac.objMacAddress.MacAddressValue == "default")
+                            //{
+                            //    objUserMac.objMacAddress.MacAddressValue = null;
+                            //}
 
                             //Save the Users data into Users table
                             objUserMac.objUser.CreationDate = DateTime.Now;
@@ -308,7 +308,7 @@ namespace CaptivePortal.API.Controllers
 
                             objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
                             db.MacAddress.Add(objUserMac.objMacAddress);
-
+                            log.Info(objUserMac.objMacAddress);
                             objUserMac.objAddress.UserId = objUserMac.objUser.UserId;
                             db.UsersAddress.Add(objUserMac.objAddress);
                             db.SaveChanges();
