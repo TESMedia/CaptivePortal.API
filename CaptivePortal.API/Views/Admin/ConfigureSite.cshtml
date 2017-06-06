@@ -108,7 +108,7 @@
                                             <div class="form-group" style="display:none;">
                                                 <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Id:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @Html.EditorFor(model => model.SiteId, new { htmlAttributes = new { @class = "form-control", @name = "SiteId" } })
+                                                    @Html.HiddenFor(model => model.SiteId, new { htmlAttributes = new { @class = "form-control", @name = "SiteId" } })
                                                 </div>
                                             </div>
                                             <div class="form-group" style="display:none;">

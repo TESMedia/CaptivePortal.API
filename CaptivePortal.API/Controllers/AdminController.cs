@@ -345,6 +345,7 @@ namespace CaptivePortal.API.Controllers
 
                 Form objForm = db.Form.FirstOrDefault(m => m.SiteId == SiteId);
                 objForm.SiteId = SiteId;
+                objViewModel.SiteId = SiteId;
                 objViewModel.FormId = objForm.FormId;
                 objViewModel.SiteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
                 objViewModel.BannerIcon = objForm.BannerIcon;
@@ -367,6 +368,7 @@ namespace CaptivePortal.API.Controllers
                     objViewModel.CompanyDdl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId.ToString();
                 }
                 objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
+
                 return View(objViewModel);
             }
             catch (Exception ex)
@@ -415,7 +417,7 @@ namespace CaptivePortal.API.Controllers
                 string fileName = null;
                 string TandD = null;
                 string compId = inputData.CompanyDdl;
-                if (Request.Files["BannerIcon"].ContentLength > 0)
+               if (Request.Files["BannerIcon"].ContentLength > 0)
                 {
                     var httpPostedFile = Request.Files["BannerIcon"];
                     string savedPath = HostingEnvironment.MapPath("/Images/" + inputData.SiteId);
@@ -489,15 +491,19 @@ namespace CaptivePortal.API.Controllers
                 {
                     SiteName = inputData.SiteName,
                     SiteId = inputData.SiteId,
+                 
                     CompanyId = compId == null ? null : (int?)Convert.ToInt32(compId),
                     AutoLogin = inputData.AutoLogin,
                     ControllerIpAddress = inputData.ControllerIpAddress,
                     MySqlIpAddress = inputData.MySqlIpAddress,
                     Term_conditions = inputData.Term_conditions,
-                    TermsAndCondDoc = TandD
+                    TermsAndCondDoc = TandD,
+                    DashboardUrl=inputData.DashboardUrl,
+                    RtlsUrl=inputData.RtlsUrl
+                   
                    
                 };
-
+                
                 db.Entry(objSite).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
 
@@ -516,7 +522,7 @@ namespace CaptivePortal.API.Controllers
                 db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Home", "Admin");
         }
 
 
@@ -681,7 +687,33 @@ namespace CaptivePortal.API.Controllers
                             };
             return View();
         }
+        public ActionResult Home()
+        {
+            AdminlistViewModel list = new AdminlistViewModel();
+            list.AdminViewlist = new List<AdminViewModel>();
 
+            var result = db.Site.ToList();
+
+            var siteDetails = (from item in result
+                               select new AdminViewModel()
+                               {
+                                   OrganisationName=item.Company.Organisation.OrganisationName,
+                                   CompanyName=item.Company.CompanyName,
+                                   SiteName=item.SiteName,
+                                   DashboardUrl=item.DashboardUrl,
+                                   RtlsUrl=item.RtlsUrl,
+                                   SiteId=item.SiteId
+                               }
+                             ).ToList();
+            list.AdminViewlist.AddRange(siteDetails);
+            
+            return View(list);
+        }
+
+        public ActionResult UploadFile()
+        {
+            return View();
+        }
         public JsonResult GetCompany(int orgId)
         {
             var result = from item in db.Company.Where(m => m.CompanyId == orgId).ToList()
