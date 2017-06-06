@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Web.Http.Cors;
 using System.Web.SessionState;
+using System.Data.Entity;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -33,9 +34,11 @@ namespace CaptivePortal.API.Controllers
         private ReturnModel ObjReturnModel = new ReturnModel();
         CPDBContext db = new CPDBContext();
         StatusReturn objReturn = new StatusReturn();
+        AutoLoginStatus returnStatus = new AutoLoginStatus();
         private string retStr = "";
         private string retType = "";
         private int retVal = 0;
+        private UpdateDb objUpdateDb = new UpdateDb();
 
 
         /// <summary>
@@ -76,20 +79,20 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
                         }
                         retStr = sessionId;
-                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retVal = Convert.ToInt32(ReturnCode.LoginSuccess);
                         retType = "Session";
                     }
                     else
                     {
-                        retStr = "Password is Incorrect";
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retStr = "Incorrect Password";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.IncorrectPassword);
                         retType = ReturnCode.Warning.ToString();
                     }
                 }
                 else
                 {
-                    retStr = "Particular User not allow to access";
-                    retVal = Convert.ToInt32(ReturnCode.Warning);
+                    retStr = "Username does not exist";
+                    retVal = Convert.ToInt32(ErrorCodeWarning.usernameisnotexist);
                     retType = ReturnCode.Warning.ToString();
                 }
 
@@ -129,34 +132,39 @@ namespace CaptivePortal.API.Controllers
                     //First check the Manadatory validation and show the Error Messages
                     if (string.IsNullOrEmpty(objUser.UserName))
                     {
-                        retStr = "Need UserName for Registration";
+                        retStr = "Username missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserNameRequired);
                     }
                     else if (string.IsNullOrEmpty(objUser.Password))
                     {
-                        retStr = "Need Password for Registration";
+                        retStr = "Password missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.PasswordRequired);
                     }
                     else if (objUser.SiteId == 0)
                     {
-                        retStr = "Need SiteId for Registration";
+                        retStr = "SiteId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SiteIDRequired);
                     }
                     else if (!(db.Site.Any(m => m.SiteId == objUser.SiteId)))
                     {
-                        retStr = "This particular SiteId Not Exist Please try again with others";
+                        retStr = "SiteId Not Exist";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SiteIdNotExist);
                     }
                     else if (string.IsNullOrEmpty(objUser.UserId))
                     {
-                        retStr = "Need UserId for Registration";
+                        retStr = "UserId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserIdRequired);
                     }
                     else if (string.IsNullOrEmpty(objUser.SessionId))
                     {
-                        retStr = "Need SessionId for Registration";
+                        retStr = "SessionId missing";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.SessionIdRequired);
                     }
                     else if (db.Users.Any(m => m.UniqueUserId == objUser.UserId))
                     {
-                        retStr = "User with same UniqueId already exist in the database";
+                        retStr = "UserId already exists";
+                        retVal = Convert.ToInt32(ErrorCodeWarning.UserUniqueIdAlreadyExist);
                     }
-
-
 
                     //if No validation Error then Insert the data into the table
                     if (string.IsNullOrEmpty(retStr))
@@ -169,7 +177,7 @@ namespace CaptivePortal.API.Controllers
 
                             if (IsAuthorize(objUser.SessionId))
                             {
-                                log.Info("Checked User is authorized.");
+                                log.Info("Checked User is authorized."); log.Info("Checked User is authorized.");
                                 Users objUsers = new Users();
                                 objUsers.CreationDate = DateTime.Now;
                                 objUsers.UpdateDate = DateTime.Now;
@@ -178,7 +186,7 @@ namespace CaptivePortal.API.Controllers
                                 objUsers.LastName = objUser.LastName;
                                 objUsers.Password = objUser.Password;
                                 objUsers.SiteId = objUser.SiteId;
-                                //objUsers.UniqueUserId = objUser.UserId;
+                                objUsers.UniqueUserId = objUser.UserId;
                                 objUsers.BirthDate = objUser.BirthDate;
                                 objUsers.AgeId = objUser.AgeId;
                                 objUsers.GenderId = objUser.GenderId;
@@ -199,31 +207,29 @@ namespace CaptivePortal.API.Controllers
                                 //Save all the Users data in MySql DataBase
                                 objRegisterDB.CreateNewUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
 
-                                retVal = Convert.ToInt32(ReturnCode.Success);
+                                retVal = Convert.ToInt32(ReturnCode.CreateUserSuccess);
                                 retType = ReturnCode.Success.ToString();
-                                retStr = "Successfully Creted the User";
+                                retStr = "User created";
                                 dbContextTransaction.Commit();
-                                log.Info("User data commited successfully");
                             }
                             else
                             {
 
-                                retVal = Convert.ToInt32(ReturnCode.Warning);
+                                retVal = Convert.ToInt32(ErrorCodeWarning.NonAuthorize);
                                 retType = ReturnCode.Warning.ToString();
                                 retStr = "Not Authorize with Sessions" + " " + objUser.SessionId;
                             }
                         }
                         else
                         {
-                            retVal = Convert.ToInt32(ReturnCode.Warning);
-                            retStr = "MacAddress or UserName already exist for same site named" + " " + objSite.SiteName;
+                            retVal = Convert.ToInt32(ErrorCodeWarning.MacAddressorUserNameExist);
+                            retStr = "Username already exists" + " " + objSite.SiteName;
                             retType = ReturnCode.Warning.ToString();
                         }
                     }
                     else
                     {
                         retType = ReturnCode.Warning.ToString();
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
                     }
                 }
                 catch (Exception ex)
@@ -232,7 +238,7 @@ namespace CaptivePortal.API.Controllers
                     dbContextTransaction.Rollback();
                     retVal = Convert.ToInt32(ReturnCode.Failure);
                     retType = ReturnCode.Warning.ToString();
-                    retStr = "some problem occured";
+                    retStr = "Error Occured";
                     log.Error(ex.Message);
                 }
 
@@ -280,20 +286,20 @@ namespace CaptivePortal.API.Controllers
                         objSite = db.Site.FirstOrDefault(m => m.SiteId == objUserMac.objUser.SiteId);
 
                         //If macAdress is null then allow to create without checking the null one
-                        if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
-                        {
-                            log.Info("Allowing macaddress if it is null with Default value ");
-                            objUserMac.objMacAddress.MacAddressValue = "default";
-                        }
+                        //if ((string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue)))
+                        //{
+                        //    log.Info("Allowing macaddress if it is null with Default value ");
+                        //    objUserMac.objMacAddress.MacAddressValue = "default";
+                        //}
 
                         if (!(db.Users.Any(m => m.UserName == objUserMac.objUser.UserName && m.SiteId == objUserMac.objUser.SiteId)) && !(db.MacAddress.Any(m => m.MacAddressValue == objUserMac.objMacAddress.MacAddressValue)))
                         {
 
 
-                            if (objUserMac.objMacAddress.MacAddressValue == "default")
-                            {
-                                objUserMac.objMacAddress.MacAddressValue = null;
-                            }
+                            //if (objUserMac.objMacAddress.MacAddressValue == "default")
+                            //{
+                            //    objUserMac.objMacAddress.MacAddressValue = null;
+                            //}
 
                             //Save the Users data into Users table
                             objUserMac.objUser.CreationDate = DateTime.Now;
@@ -302,6 +308,9 @@ namespace CaptivePortal.API.Controllers
 
                             objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
                             db.MacAddress.Add(objUserMac.objMacAddress);
+                            log.Info(objUserMac.objMacAddress);
+                            objUserMac.objAddress.UserId = objUserMac.objUser.UserId;
+                            db.UsersAddress.Add(objUserMac.objAddress);
                             db.SaveChanges();
 
                             log.Info("User Data saved in user Table");
@@ -350,7 +359,126 @@ namespace CaptivePortal.API.Controllers
                 };
             }
         }
+        /// <summary>
+        /// it will add or delete one or more mac adddress of a user.
+        /// </summary>
+        /// <param name="objUserMac"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("a8Captiveportal/V1/UpdateMacAddress")]
+        public HttpResponseMessage UpdateMacAddress(AddMacModel objUserMac)
+        {
+            try
+            {
+                MacAddress objMac = new MacAddress();
+                int userId = 0;
 
+                if (objUserMac.OperationType == 0)
+                {
+                    retStr = "please send operation type i.e 1(add) or 2(delete).";
+                }
+                if (objUserMac.OperationType == OperationType.Add)
+                {
+                    //check mandatory request.
+                    if (objUserMac.SiteId == 0)
+                    {
+                        retStr = "Need SiteId to update mac address";
+                    }
+                    else if (!(db.Site.Any(m => m.SiteId == objUserMac.SiteId)))
+                    {
+                        retStr = "This particular SiteId Not Exist Please try again with others";
+                    }
+                    else if (string.IsNullOrEmpty(objUserMac.UserId))
+                    {
+                        retStr = "Need UserId to update mac address";
+                    }
+                    else if (!(db.Users.Any(m => m.UniqueUserId == objUserMac.UserId)))
+                    {
+                        retStr = "This particular UniqueUserId Not Exist Please try again with others";
+                    }
+                    else if (string.IsNullOrEmpty(objUserMac.SessionId))
+                    {
+                        retStr = "Need SessionId to update mac address.";
+                    }
+
+                    if (string.IsNullOrEmpty(retStr))
+                    {
+                        if (IsAuthorize(objUserMac.SessionId))
+                        {
+                            userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).UserId;
+                            foreach (var macaddress in objUserMac.MacAddressList)
+                            {
+                                if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                                {
+                                    retStr = "User with same mac address already exist in the database";
+                                    retVal = Convert.ToInt32(ReturnCode.Warning);
+                                    retType = ReturnCode.Warning.ToString();
+                                }
+                                else
+                                {
+                                    objMac.MacAddressValue = macaddress.MacAddress;
+                                    objMac.UserId = userId;
+                                    db.MacAddress.Add(objMac);
+                                    db.SaveChanges();
+                                    retStr = "mac address updated successfully.";
+                                    retType = ReturnCode.Success.ToString();
+                                    retVal = Convert.ToInt32(ReturnCode.Success);
+                                }
+                            }
+                        }
+                        else
+                        {
+
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retType = ReturnCode.Warning.ToString();
+                            retStr = "Not Authorize with Sessions" + " " + objUserMac.SessionId;
+                        }
+                    }
+                    else
+                    {
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retType = ReturnCode.Warning.ToString();
+                    }
+                }
+                if (objUserMac.OperationType == OperationType.Delete)
+                {
+                    foreach (var macaddress in objUserMac.MacAddressList)
+                    {
+                        if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                        {
+                            db.MacAddress.RemoveRange(db.MacAddress.Where(c => c.MacAddressValue == macaddress.MacAddress));
+                            db.SaveChanges();
+                            retStr = "mac address deleted successfully.";
+                            retType = ReturnCode.Success.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                        }
+                        else
+                        {
+                            retStr = "User with  mac address doesnot exist in the database";
+                            retType = ReturnCode.Warning.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                        }
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                retVal = Convert.ToInt32(ReturnCode.Failure);
+                retType = ReturnCode.Warning.ToString();
+                retStr = "some problem occured";
+                log.Error(ex.Message);
+            }
+            objReturn.returncode = retVal;
+            objReturn.msg = retStr;
+            objReturn.type = retType;
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
+            };
+        }
 
         /// <summary>
         /// 
@@ -360,21 +488,27 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/GetMacAddresses")]
         public HttpResponseMessage GetMacAddress(CreateUserViewModel model)
         {
-            log.Info("inside a8Captiveportal/V1/GetMacAddresses");
-
             //First check the Manadatory 
             //validation and show the Error Messages
-            if (string.IsNullOrEmpty(model.UserId))
+            if (model.SiteId == 0)
             {
-                retStr = "Need UserId to get Mac address";
-            }
-            else if (model.SiteId == 0)
-            {
-                retStr = "Need SiteId to get Mac address";
+                retStr = "SiteId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SiteIDRequired);
             }
             else if (!(db.Site.Any(m => m.SiteId == model.SiteId)))
             {
-                retStr = "This particular SiteId Not Exist Please try again with others";
+                retStr = "SiteId Not Exist";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SiteIdNotExist);
+            }
+            else if (string.IsNullOrEmpty(model.UserId))
+            {
+                retStr = "UserId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.UserIdRequired);
+            }
+            else if (string.IsNullOrEmpty(model.SessionId))
+            {
+                retStr = "SessionId missing";
+                retVal = Convert.ToInt32(ErrorCodeWarning.SessionIdRequired);
             }
 
             ReturnMacAesddress objReturnMac = new ReturnMacAesddress();
@@ -385,33 +519,38 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (IsAuthorize(model.SessionId))
                     {
-                        if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
+                        if (db.Users.Any(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId))
                         {
                             int UserId = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).UserId;
                             foreach (var item in db.MacAddress.Where(m => m.UserId == UserId))
                             {
                                 MacAddesses objMacAddress = new MacAddesses();
                                 objMacAddress.MacAddress = item.MacAddressValue;
-                                objReturnMac.lstMacAddresses.Add(objMacAddress);
+                                objReturnMac.MacAddressList.Add(objMacAddress);
                             }
-                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retVal = Convert.ToInt32(ReturnCode.GetMacAddressSuccess);
                             retStr = "Successfully return the MacAddresses";
                             log.Info("Successfully return the MacAddresses");
                             retType = ReturnCode.Success.ToString();
+                        }
+                        else
+                        {
+                            retVal = Convert.ToInt32(ReturnCode.Warning);
+                            retType = ReturnCode.Warning.ToString();
+                            retStr = "UserId or SiteId Not Exist";
                         }
                     }
                     else
                     {
 
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retVal = Convert.ToInt32(ErrorCodeWarning.NonAuthorize);
                         retType = ReturnCode.Warning.ToString();
-                        retStr = "Not Authorize with Sessions" + " " + model.SessionId;
+                        retStr = "Invalid SessionId" + " " + model.SessionId;
                     }
                 }
                 else
                 {
-                    retType = ReturnCode.Success.ToString();
-                    retVal = Convert.ToInt32(ReturnCode.Success);
+                    retType = ReturnCode.Warning.ToString();
                 }
             }
             catch (Exception ex)
@@ -421,9 +560,9 @@ namespace CaptivePortal.API.Controllers
                 retType = ReturnCode.Failure.ToString();
             }
 
-            objReturnMac.StatusReturn.returncode = retVal;
-            objReturnMac.StatusReturn.msg = retStr;
-            objReturnMac.StatusReturn.type = retType;
+            objReturnMac.returncode = retVal;
+            objReturnMac.msg = retStr;
+            objReturnMac.type = retType;
 
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
@@ -469,10 +608,10 @@ namespace CaptivePortal.API.Controllers
                         {
                             db.Users.Remove(user);
                             db.SaveChanges();
-                        retStr = "User is deleted with its associated mac address";
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-                        retType = ReturnCode.Success.ToString();
-                    }
+                            retStr = "User is deleted with its associated mac address";
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                        }
                         else
                         {
                             retStr = "User is not found";
@@ -512,6 +651,133 @@ namespace CaptivePortal.API.Controllers
         }
 
 
+        [HttpPost]
+        [Route("a8Captiveportal/V1/UpdateUser")]
+        public HttpResponseMessage UpdateUser(CreateUserViewModel objUser)
+        {
+            using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
+            {
+                try
+                {
+                    if (IsAuthorize(objUser.SessionId))
+                    {
+                        Users user = new Users();
+
+                        //check mandatory request.
+                        if (objUser.SiteId == 0)
+                        {
+                            retStr = "SiteId missing";
+                        }
+                        else if (!(db.Site.Any(m => m.SiteId == objUser.SiteId)))
+                        {
+                            retStr = "Incorrect SiteId";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.UserId))
+                        {
+                            retStr = "UserId missing";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.UserName))
+                        {
+                            retStr = "Username missing";
+                        }
+                        else if (!(db.Users.Any(m => m.UniqueUserId == objUser.UserId)))
+                        {
+                            retStr = "UserId already exists";
+                        }
+                        else if (string.IsNullOrEmpty(objUser.SessionId))
+                        {
+                            retStr = "SessionId missing";
+                        }
+                        if (string.IsNullOrEmpty(retStr))
+                        {
+                            int userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).UserId;
+                            user = db.Users.Find(userId);
+                            if (!string.IsNullOrEmpty(objUser.UserName))
+                            {
+                                user.UserName = objUser.UserName;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.Password))
+                            {
+                                user.Password = objUser.Password;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.FirstName))
+                            {
+                                user.FirstName = objUser.FirstName;
+                            }
+                            if (!string.IsNullOrEmpty(objUser.LastName))
+                            {
+                                user.LastName = objUser.LastName;
+                            }
+                            if (objUser.AutoLogin || !objUser.AutoLogin)
+                            {
+                                user.AutoLogin = objUser.AutoLogin;
+                            }
+                            if (objUser.MobileNumber != 0)
+                            {
+                                user.MobileNumer = objUser.MobileNumber;
+                            }
+                            user.BirthDate = objUser.BirthDate;
+                            if (!string.IsNullOrEmpty(objUser.Email))
+                            {
+                                user.Email = objUser.Email;
+                            }
+                            if (objUser.GenderId != null)
+                            {
+                                user.GenderId = objUser.GenderId;
+                            }
+                            if (objUser.AgeId != null)
+                            {
+                                user.AgeId = objUser.AgeId;
+                            }
+                            db.Entry(user).State = EntityState.Modified;
+                            db.SaveChanges();
+
+                            log.Info("User Data upadated in user Table");
+
+                            retStr = "user details updated ";
+                            retType = ReturnCode.Success.ToString();
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+
+
+                            objUpdateDb.UpdateUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
+
+                            retVal = Convert.ToInt32(ReturnCode.Success);
+                            retType = ReturnCode.Success.ToString();
+                            retStr = "user details updated ";
+                            dbContextTransaction.Commit();
+                            log.Info("User data commited successfully");
+
+                        }
+                    }
+                    else
+                    {
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
+                        retType = ReturnCode.Warning.ToString();
+                        retStr = "Invalid SessionId";
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
+                    dbContextTransaction.Rollback();
+                    retVal = Convert.ToInt32(ReturnCode.Failure);
+                    retType = ReturnCode.Warning.ToString();
+                    retStr = "some problem occured";
+                    log.Error(ex.Message);
+                }
+                objReturn.returncode = retVal;
+                objReturn.msg = retStr;
+                objReturn.type = retType;
+                JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
+                };
+            }
+        }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -521,24 +787,33 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/LoginWIthNewMacAddress")]
         public HttpResponseMessage LoginWIthNewMacAddress(LoginWIthNewMacAddressModel model)
         {
-            log.Info(" inside a8Captiveportal/V1/LoginWIthNewMacAddress");
             StatusReturn objAutoLoginReturn = new StatusReturn();
             try
             {
+                //if(db.Users.Any(m=>m))
+
                 log.Info(model.UserName);
                 log.Info(model.Password);
+                log.Info(model.SiteId);
 
-                if (db.Users.Any(m => m.UserName == model.UserName))
+                if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
                 {
                     //If User exist then Save the User in MacAddresses table
                     if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
                     {
+                        
                         log.Info("If User exist then Save the User in MacAddresses table");
-                        int UserId = db.Users.Where(m => m.UserName == model.UserName).FirstOrDefault().UserId;
-                        if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAdress && m.UserId == UserId)))
+                        //Get the particualr UserId from the particular Site
+                        int UserId = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).FirstOrDefault().UserId;
+                        log.Info(UserId);
+
+                        //Check that the particular MacAddress exist or Not for particualr User with Different Site
+                        if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == UserId)))
                         {
+                            log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site");
                             MacAddress objMac = new MacAddress();
-                            objMac.MacAddressValue = model.MacAdress;
+
+                            objMac.MacAddressValue = model.MacAddress;
                             objMac.UserId = UserId;
                             objMac.BrowserName = model.BrowserName;
                             objMac.UserAgentName = model.UserAgentName;
@@ -548,7 +823,6 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
 
                             retStr = "Successfully add the Maccadress";
-                            log.Info("Successfully add the Macaddress");
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retType = ReturnCode.Success.ToString();
 
@@ -558,14 +832,14 @@ namespace CaptivePortal.API.Controllers
                     else
                     {
                         retStr = "Please Check the Credential you have Entered";
-                        retVal = Convert.ToInt32(ReturnCode.Success);
+                        retVal = Convert.ToInt32(ReturnCode.Warning);
                         retType = ReturnCode.Success.ToString();
                     }
                 }
                 else
                 {
                     retStr = "UserName Not exist Please Register First";
-                    retVal = Convert.ToInt32(ReturnCode.Success);
+                    retVal = Convert.ToInt32(ReturnCode.Warning);
                     retType = ReturnCode.Success.ToString();
                 }
             }
@@ -620,51 +894,51 @@ namespace CaptivePortal.API.Controllers
         ///// </summary>
         ///// <param name="model"></param>
         ///// <returns></returns>
-        //[HttpPost]
-        //[Route("GetStatusOfUserForSite")]
-        //public HttpResponseMessage GetStatusOfUserForSite(Users model)
-        //{
-        //    try
-        //    { 
-        //        var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
-        //        log.Info(objSite);
+        [HttpPost]
+        [Route("GetStatusOfUserForSite")]
+        public HttpResponseMessage GetStatusOfUserForSite(LoginWIthNewMacAddressModel model)
+        {
+            try
+            {
+                var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+                log.Info(objSite);
 
-        //        //Need to check the MacAddress exist for the particular Site with Autologin true
-        //        if (IsAnyMacAddressExist(model))
-        //        {
-        //            log.Info("inside IsAnyMacAddressExist");
-        //            var objUser = db.Users.FirstOrDefault(m => m.MacAddress == model.MacAddress && m.SiteId == model.SiteId);
+                //Need to check the MacAddress exist for the particular Site with Autologin true
+                if (db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.User.SiteId == model.SiteId))
+                {
+                    log.Info("inside Is Any MacAddressExist For Particular Site");
+                    var objMac = db.MacAddress.FirstOrDefault(m => m.MacAddressValue == model.MacAddress && m.User.SiteId == model.SiteId);
+                    //objMac.User.AutoLogin
+                    //Check the AutoLogin of Site or User 
+                    if (objSite.AutoLogin == true)
+                    {
+                        log.Info("Check the AutoLogin of Site or User");
+                        //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
+                        returnStatus.UserName = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).UserName;
+                        returnStatus.Password = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).Password;
+                        returnStatus.StatusReturn.returncode= Convert.ToInt32(ReturnCode.Success);
 
-        //            //Check the AutoLogin of Site or User 
-        //            if (objUser.AutoLogin == true || objSite.AutoLogin == true)
-        //            {
-        //                log.Info("Check the AutoLogin of Site or User");
 
-        //                objAutoLoginReturn.StatusReturn = new StatusReturn();
-        //                objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-        //                objAutoLoginReturn.UserName = objUser.UserName;
-        //                objAutoLoginReturn.Password = objUser.Password;
+                    }
+                }
+                else
+                {
+                    returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Warning);
+                }
 
-        //            }
-        //        }
-        //        else
-        //        {
-        //            objAutoLoginReturn.StatusReturn = new StatusReturn();
-        //            objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-        //        }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
+            }
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(returnStatus), Encoding.UTF8, "application/json")
+            };
+        }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        log.Error(ex.Message);
-        //        objAutoLoginReturn.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-        //    }
-        //    JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-        //    return new HttpResponseMessage()
-        //    {
-        //        Content = new StringContent(objSerialization.Serialize(objAutoLoginReturn), Encoding.UTF8, "application/json")
-        //    };
-        //}
     }
 
 
@@ -673,6 +947,16 @@ namespace CaptivePortal.API.Controllers
         public int returncode { get; set; }
         public string msg { get; set; }
         public string type { get; set; }
+    }
+    public class AutoLoginStatus
+    {
+        public AutoLoginStatus()
+        {
+            StatusReturn = new StatusReturn();
+        }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public StatusReturn StatusReturn { get; set; }
     }
 
     public class MacAddesses
@@ -684,13 +968,15 @@ namespace CaptivePortal.API.Controllers
     {
         public ReturnMacAesddress()
         {
-            lstMacAddresses = new List<MacAddesses>();
-            StatusReturn = new StatusReturn();
+            MacAddressList = new List<MacAddesses>();
         }
-        public List<MacAddesses> lstMacAddresses { get; set; }
-        public StatusReturn StatusReturn { get; set; }
+      
+        public List<MacAddesses> MacAddressList { get; set; }
+        public int returncode { get; set; }
+        public string type { get; set; }
+        public string msg { get; set; }
     }
-   
+
     public class CreateUserViewModel
     {
         public int SiteId { get; set; }
@@ -724,13 +1010,13 @@ namespace CaptivePortal.API.Controllers
     {
         public string UserName { get; set; }
 
-        public string MacAdress { get; set; }
+        public string MacAddress { get; set; }
 
         public string Password { get; set; }
 
         public string BrowserName { get; set; }
         public string UserAgentName { get; set; }
-
+        public int SiteId { get; set;}
         public string OperatingSystem { get; set; }
 
         public bool IsMobile { get; set; }
@@ -741,13 +1027,47 @@ namespace CaptivePortal.API.Controllers
     {
         public Users objUser { get; set; }
         public MacAddress objMacAddress { get; set; }
+
+        public UsersAddress objAddress { get; set; }
     }
 
     public enum ReturnCode
     {
         Success = 1,
-        Failure = -1,
-        Warning = 2,
+        LoginSuccess = 202,
+        CreateUserSuccess = 204,
+        GetMacAddressSuccess = 206,
+        Failure = 511,
+        Warning = HttpStatusCode.Found
+    }
+
+
+    public enum ErrorCodeWarning
+    {
+        IncorrectPassword = 310,
+        usernameisnotexist = 311,
+        UserNameRequired = 312,
+        PasswordRequired = 313,
+        SiteIDRequired = 314,
+        SiteIdNotExist = 315,
+        UserIdRequired = 316,
+        SessionIdRequired = 317,
+        UserUniqueIdAlreadyExist = 318,
+        MacAddressorUserNameExist = 319,
+        NonAuthorize = 320
+    }
+    public class AddMacModel
+    {
+        public string UserId { get; set; }
+        public int SiteId { get; set; }
+        public string SessionId { get; set; }
+        public OperationType OperationType { get; set; }
+        public List<MacAddesses> MacAddressList { get; set; }
+    }
+    public enum OperationType
+    {
+        Add = 1,
+        Delete = 2
     }
 }
 
