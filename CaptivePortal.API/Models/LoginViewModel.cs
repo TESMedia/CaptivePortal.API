@@ -25,5 +25,13 @@ namespace CaptivePortal.API.Models
         public string Password { get; set; }
 
         public string Email { get; set; }
+        public DebugMode DebugStatus { get; set; }
+
+    }
+
+    public enum DebugMode
+    {
+        on = 1,
+        off = 0
     }
 }

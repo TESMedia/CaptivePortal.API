@@ -18,6 +18,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using System.Net.Mime;
 using System.Net;
+using log4net;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -28,6 +29,9 @@ namespace CaptivePortal.API.Controllers
 
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
+        string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
+        private static ILog Log { get; set; }
+        ILog log = LogManager.GetLogger(typeof(AccountController));
 
         /// <summary>
         /// login operation for global admin.
