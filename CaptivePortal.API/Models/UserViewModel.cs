@@ -8,6 +8,10 @@ namespace CaptivePortal.API.Models
 {
     public class UserViewModel
     {
+        public UserViewModel()
+        {
+            MacAddressList = new List<MacAddress>();
+        }
         public int UserId { get; set; }
         public int SiteId { get; set; }
         public string UserName { get; set; }
@@ -25,7 +29,13 @@ namespace CaptivePortal.API.Models
         public string Term_conditions { get; set; }
         public string Password { get; set; }
         public Status Status { get; set; }
+        public List<MacAddress> MacAddressList { get; set; }
 
+
+    }
+    public class MacAddressViewModel
+    {
+        public UserViewModel UserViewModel { get; set; }
     }
 
     public enum Status
