@@ -33,6 +33,8 @@ namespace CaptivePortal.API.Controllers
         private static ILog Log { get; set; }
         ILog log = LogManager.GetLogger(typeof(AccountController));
 
+        private string retStr = "";
+
         /// <summary>
         /// login operation for global admin.
         /// </summary>
@@ -47,10 +49,20 @@ namespace CaptivePortal.API.Controllers
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
+                    retStr = "logged in successfully"+ admin.UserName;
+                }
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
                 }
             }
             catch (Exception ex)
             {
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
                 throw ex;
             }
             return RedirectToAction("Index", "Admin");
@@ -74,12 +86,28 @@ namespace CaptivePortal.API.Controllers
         ///Get:Create new site 
         public ActionResult CreateNewSite()
         {
-            ViewBag.companies = from item in db.Company.ToList()
-                                select new SelectListItem()
-                                {
-                                    Text = item.CompanyName,
-                                    Value = item.CompanyId.ToString(),
-                                };
+            try
+            {
+                ViewBag.companies = from item in db.Company.ToList()
+                                    select new SelectListItem()
+                                    {
+                                        Text = item.CompanyName,
+                                        Value = item.CompanyId.ToString(),
+                                    };
+                retStr = "view company details";
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
+            }
+            catch(Exception ex)
+            {
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
+            }
             return View();
         }
 
@@ -123,7 +151,7 @@ namespace CaptivePortal.API.Controllers
             {
                 try
                 {
-
+                    retStr = "entered to create new site";
                     string imagepath = null;
                     string bannerPath = null;
                     int orgId = inputData.organisationDdl;
@@ -292,11 +320,20 @@ namespace CaptivePortal.API.Controllers
                     //objForm.HtmlCodeForLogin = dynamicHtmlCode;
                     //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                     //db.SaveChanges();
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
                     return RedirectToAction("Index", "Admin");
                 }
                 catch (Exception ex)
                 {
+                    retStr = "some problem occured";
                     dbContextTransaction.Rollback();
+                    if (debugStatus == DebugMode.off.ToString())
+                    {
+                        log.Info(retStr);
+                    }
 
                     throw ex;
                 }
@@ -330,6 +367,7 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
+                retStr = "populated selected site details to configure";
                 ViewBag.companies = from item in db.Company.ToList()
                                     select new SelectListItem()
                                     {
@@ -365,10 +403,20 @@ namespace CaptivePortal.API.Controllers
                 }
                 objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
 
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
+
                 return View(objViewModel);
             }
             catch (Exception ex)
             {
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
                 throw ex;
             }
         }
@@ -383,10 +431,19 @@ namespace CaptivePortal.API.Controllers
                     var file = Request.Files[fc["BannerIcon"]];
                     byte[] fileBytes = new byte[file.ContentLength];
                     file.InputStream.Read(fileBytes, 0, file.ContentLength);
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
                     return Json("File Uploaded Successfully!");
                 }
                 catch (Exception ex)
                 {
+                    retStr = "some problem occured";
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
                     return Json("Error occurred. Error details: " + ex.Message);
                 }
             }
@@ -409,6 +466,7 @@ namespace CaptivePortal.API.Controllers
             {
                 try
                 {
+                    retStr = "entered to configure site";
                     if (inputData.CompanyName == null)
                     {
                         string imagepath = null;
@@ -524,10 +582,19 @@ namespace CaptivePortal.API.Controllers
                         dbContextTransaction.Commit();
 
                     }
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
                 }
                 catch (Exception ex)
                 {
                     dbContextTransaction.Rollback();
+                    retStr = "some problem occured";
+                    if (debugStatus == DebugMode.off.ToString())
+                    {
+                        log.Info(retStr);
+                    }
                     throw ex;
                 }
                 return RedirectToAction("Home", "Admin");
@@ -627,9 +694,18 @@ namespace CaptivePortal.API.Controllers
                 //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 //objForm.HtmlCodeForLogin = sb.ToString();
                 db.SaveChanges();
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
             }
             catch (Exception ex)
             {
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
                 return Json("Failure");
             }
             return Json("Success");
@@ -646,10 +722,18 @@ namespace CaptivePortal.API.Controllers
                 objForm = db.FormControl.FirstOrDefault(m => m.FormControlId == Id).Forms;
                 db.FormControl.Remove(objFormControl);
                 db.SaveChanges();
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
             }
             catch (Exception ex)
             {
-
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
             }
             return RedirectToAction("ConfigureSite", new { SiteId = objForm.SiteId });
         }
@@ -701,6 +785,7 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
+                retStr = "entered in home to view overall estate";
                 AdminlistViewModel list = new AdminlistViewModel();
                 list.AdminViewlist = new List<AdminViewModel>();
 
@@ -718,11 +803,20 @@ namespace CaptivePortal.API.Controllers
                                    }
                                  ).ToList();
                 list.AdminViewlist.AddRange(siteDetails);
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
 
                 return View(list);
             }
             catch(Exception ex)
             {
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
                 throw ex;
             }
         }
@@ -1044,6 +1138,7 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
+                retStr = "download log file";
                 string path = Server.MapPath("~/Logs/log.txt");
                 System.IO.FileInfo file = new System.IO.FileInfo(path);
                 if (file.Exists)
@@ -1051,10 +1146,19 @@ namespace CaptivePortal.API.Controllers
                     byte[] fileBytes = System.IO.File.ReadAllBytes(path);
                     return File(fileBytes, MediaTypeNames.Application.Octet, "log.txt");
                 }
+                if (debugStatus == DebugMode.on.ToString())
+                {
+                    log.Info(retStr);
+                }
             }
             catch (Exception ex)
             {
                 Response.Write(ex.Message);
+                retStr = "some problem occured";
+                if (debugStatus == DebugMode.off.ToString())
+                {
+                    log.Info(retStr);
+                }
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
