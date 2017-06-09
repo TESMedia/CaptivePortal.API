@@ -35,11 +35,10 @@
                         </ul>
                     </li>
                     <li>
-                        <a><i class="fa fa-desktop"></i> Dashboard <span class="fa fa-chevron-down"></span></a>
+                        <a><i class="fa fa-desktop"></i>View Dashboard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="general_elements.html">Dashboard1</a></li>
-                            <li><a href="media_gallery.html">Dashboard2</a></li>
-                            <li><a href="typography.html">Dashboard3</a></li>
+                            <li><a href="@Url.Action("Index","Admin")">WiFi Summary</a></li>
+                            <li><a href="@Url.Action("LocationDashBoard","Admin")">Location dashboard</a></li>
                         </ul>
                     </li>
                     <li>
@@ -53,7 +52,7 @@
                         <a><i class="fa fa-signal"></i>Manage DashBoard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="#" onclick="uploadFile()">Upload File</a></li>
-                            <li><a href="#">Location Mapping</a></li>
+                            <li><a href="#" onclick="ViewLocations()">Location Mapping</a></li>
                         </ul>
                     </li>
 
@@ -70,7 +69,6 @@
         <!-- /menu footer buttons -->
     </div>
 </div>
-
 <script>
     // var X = localStorage.getItem("SiteId");
     function configureSite() {
@@ -83,8 +81,15 @@
         var siteId = localStorage.getItem("SiteId");
         window.location.href = "/Admin/UserDetails?SiteId=" + siteId
     }
+
     function uploadFile() {
-        
         window.location.href = "/Admin/UploadFile"
     }
+
+    function ViewLocations()
+    {
+        window.location.href = "/Admin/Locations"
+    }
+
+ 
 </script>

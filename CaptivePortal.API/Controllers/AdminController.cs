@@ -17,6 +17,8 @@ using System.Data;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 
+
+
 namespace CaptivePortal.API.Controllers
 {
     public class AdminController : Controller
@@ -26,13 +28,6 @@ namespace CaptivePortal.API.Controllers
 
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
-        //int orgId = 0;
-        //int compId = 0;
-        //int siteId = 0;
-        //int formId = 0;
-        //string imagepath = null;
-        //Form objForm = new Form();
-
 
         /// <summary>
         /// login operation for global admin.
@@ -45,18 +40,9 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
-                string retString = "-1";
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-                    if (user != null)
-                    {
-                        retString = Convert.ToString(user);
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("Login", "Admin");
                 }
             }
             catch (Exception ex)
@@ -687,33 +673,98 @@ namespace CaptivePortal.API.Controllers
                             };
             return View();
         }
+
         public ActionResult Home()
         {
-            AdminlistViewModel list = new AdminlistViewModel();
-            list.AdminViewlist = new List<AdminViewModel>();
+            try
+            {
+                AdminlistViewModel list = new AdminlistViewModel();
+                list.AdminViewlist = new List<AdminViewModel>();
 
-            var result = db.Site.ToList();
+                var result = db.Site.ToList();
 
-            var siteDetails = (from item in result
-                               select new AdminViewModel()
-                               {
-                                   OrganisationName=item.Company.Organisation.OrganisationName,
-                                   CompanyName=item.Company.CompanyName,
-                                   SiteName=item.SiteName,
-                                   DashboardUrl=item.DashboardUrl,
-                                   RtlsUrl=item.RtlsUrl,
-                                   SiteId=item.SiteId
-                               }
-                             ).ToList();
-            list.AdminViewlist.AddRange(siteDetails);
-            
-            return View(list);
+                var siteDetails = (from item in result
+                                   select new AdminViewModel()
+                                   {
+                                       OrganisationName = item.Company.Organisation.OrganisationName,
+                                       CompanyName = item.Company.CompanyName,
+                                       SiteName = item.SiteName,
+                                       DashboardUrl = item.DashboardUrl,
+                                       RtlsUrl = item.RtlsUrl,
+                                       SiteId = item.SiteId
+                                   }
+                                 ).ToList();
+                list.AdminViewlist.AddRange(siteDetails);
+
+                return View(list);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public ActionResult UploadFile()
         {
             return View();
         }
+
+        public ActionResult Locations()
+        {
+            return View();
+        }
+
+        public ActionResult Locationdashboard()
+        {
+            return View();
+        }
+
+        public ActionResult ManageUser()
+        {
+            return View();
+        }
+
+        public ActionResult CreateUser()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public async Task<ActionResult> CreateUserWithRole(CreateUserViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
+        //            var result = await UserManager.CreateAsync(user);
+        //            if (result.Succeeded)
+        //            {
+        //                await this.UserManager.AddToRoleAsync(user.Id, "User");
+        //                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+        //                // Send an email with this link
+        //                //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        //                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        //                //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+        //                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+        //                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        //                await UserManager.SendEmailAsync(user.Id, "Welcome to the Location Services Dashboard", "You are receiving this email as you have been set up as a user of the airloc8 Location Services Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.Please note that your password needs to be at least 6 characters long and include a Special Character, a Number, a Capital Letter and a lower case letter.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
+        //                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+        //                TempData["alertMsg"] = "An Email has sent to your Inbox.";
+        //                return RedirectToAction("UserDetails", "DashBoard");
+        //            }
+        //            //AddErrors(result);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //    // If we got this far, something failed, redisplay form
+        //    return View(model);
+
+        //}
+
         public JsonResult GetCompany(int orgId)
         {
             var result = from item in db.Company.Where(m => m.CompanyId == orgId).ToList()

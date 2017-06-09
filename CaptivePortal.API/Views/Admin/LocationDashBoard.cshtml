@@ -123,12 +123,12 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-             <div class="right_col" role="main">
-                 <iframe id="FrameUploadFile" src="#" style="display:block;height:1000px;width:1000px;">
+            <div class="right_col" role="main">
+                <iframe id="FrameDashBoard" src="#" style="height:1000px;width:1200px;">
 
-                 </iframe>
-             </div>
-           
+                </iframe>
+            </div>
+
             <!-- /page content -->
             <!-- footer content -->
             <footer></footer>
@@ -177,10 +177,10 @@
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
-   <script type="text/javascript">
-       var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()"+"/DashBoard/UploadFileName?SiteName=" + localStorage.getItem("SiteName");
-       $('#FrameUploadFile').attr('src', completeUrl)
-   </script>
 
+    <script type="text/javascript">
+        var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()"+"/Dashboard/Index";
+        $('#FrameDashBoard').attr('src', completeUrl)
+    </script>
 </body>
 </html>
