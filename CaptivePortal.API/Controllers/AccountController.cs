@@ -42,8 +42,6 @@ namespace CaptivePortal.API.Controllers
 
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
 
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -54,7 +52,9 @@ namespace CaptivePortal.API.Controllers
         public HttpResponseMessage Login(Users objUser)
         {
             //log.Info("Enter in a8Captiveportal/V1/Login");
-            retStr = "Enter in a8Captiveportal/V1/Login";
+            string logInfoLogin ="Enter in a8Captiveportal/V1/Login";
+            string logInfoForSessionIdRet = null;
+
             string sessionId = null;
             try
             {
@@ -69,7 +69,7 @@ namespace CaptivePortal.API.Controllers
                         if (db.UserSession.Any(m => m.UserId == UserId))
                         {
                             // log.Info("Insert the UserSession data with SessionId");
-                            retStr = "Insert the UserSession data with SessionId";
+                            logInfoForSessionIdRet = "Insert the UserSession data with SessionId";
                             ApiAccessUserSession UserSession = db.UserSession.FirstOrDefault(m => m.UserId == UserId);
                             UserSession.SessionId = sessionId;
                             db.Entry(UserSession).State = System.Data.Entity.EntityState.Modified;
@@ -103,7 +103,8 @@ namespace CaptivePortal.API.Controllers
 
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    log.Info(retStr);
+                    string logMsg = String.Concat(logInfoLogin, logInfoForSessionIdRet,retStr);
+                    log.Info(logMsg);
                 }
 
             }
@@ -138,8 +139,10 @@ namespace CaptivePortal.API.Controllers
         public HttpResponseMessage CreateUserExpose(CreateUserViewModel objUser)
         {
             //log.Info("Enter in a8Captiveportal/V1/CreateUser");
-            retStr = "Enter in a8Captiveportal/V1/CreateUser";
+            string logInfoCreateUser = "Enter in a8Captiveportal/V1/CreateUser";
+            string logInfoForCreateUserSuccess = null;
             Site objSite = null;
+            string logInfoIsSessionId = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
                 try
@@ -185,7 +188,7 @@ namespace CaptivePortal.API.Controllers
                     if (string.IsNullOrEmpty(retStr))
                     {
                         //log.Info("if No validation Error then Insert the data into the table");
-                        retStr = "if No validation Error then Insert the data into the table";
+                        logInfoForCreateUserSuccess = "if No validation Error then Insert the data into the table";
                         objSite = db.Site.FirstOrDefault(m => m.SiteId == objUser.SiteId);
                         //if Same User with Site Exist then don't allow
                         if (!(db.Users.Any(m => m.UserName == objUser.UserName && m.SiteId == objUser.SiteId)))
@@ -193,7 +196,8 @@ namespace CaptivePortal.API.Controllers
 
                             if (IsAuthorize(objUser.SessionId))
                             {
-                                log.Info("Checked User is authorized."); log.Info("Checked User is authorized.");
+                                //log.Info("Checked User is authorized.");
+                                logInfoIsSessionId = "Checked User is authorized.";
                                 Users objUsers = new Users();
                                 objUsers.CreationDate = DateTime.Now;
                                 objUsers.UpdateDate = DateTime.Now;
@@ -250,7 +254,8 @@ namespace CaptivePortal.API.Controllers
                     }
                     if (debugStatus == DebugMode.on.ToString())
                     {
-                        log.Info(retStr);
+                        string logMsg = string.Concat(logInfoCreateUser, logInfoForCreateUserSuccess, logInfoIsSessionId,retStr);
+                        log.Info(logMsg);
                     }
                 }
                 catch (Exception ex)
@@ -286,7 +291,9 @@ namespace CaptivePortal.API.Controllers
         public HttpResponseMessage CreateUserWifi(UserMacAddressDetails objUserMac)
         {
             //log.Info("Inside in a8Captiveportal/V1/CreateUserWifi");
-            retStr = "Inside in a8Captiveportal/V1/CreateUserWifi";
+            string logInfoCreateUserWifi = "Inside in a8Captiveportal/V1/CreateUserWifi";
+            string logInfoCreateWifiUserSuccess = null;
+            string logInfoCreateUserWifiToMySql = null;
             Site objSite = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
@@ -339,7 +346,7 @@ namespace CaptivePortal.API.Controllers
                             db.SaveChanges();
 
                             //log.Info("User Data saved in user Table");
-                            retStr = "User Data saved in user Table";
+                            logInfoCreateWifiUserSuccess = "User Data saved in user Table";
 
                             //Save all the Users data in MySql DataBase
                             objRegisterDB.CreateNewUser(objUserMac.objUser.UserName, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
@@ -349,7 +356,7 @@ namespace CaptivePortal.API.Controllers
                             retStr = "Successfully Creted the User";
                             dbContextTransaction.Commit();
                             //log.Info("user data saved and commited successfully");
-                            retStr = "user data saved and commited successfully";
+                            logInfoCreateUserWifiToMySql = "user data saved and commited successfully";
 
                         }
                         else
@@ -366,7 +373,8 @@ namespace CaptivePortal.API.Controllers
                     }
                     if (debugStatus == DebugMode.on.ToString())
                     {
-                        log.Info(retStr);
+                        string logMsg = string.Concat(logInfoCreateUserWifi, logInfoCreateWifiUserSuccess, logInfoCreateUserWifiToMySql, retStr);
+                        log.Info(logMsg);
                     }
                 }
                 catch (Exception ex)
@@ -402,6 +410,9 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/UpdateMacAddress")]
         public HttpResponseMessage UpdateMacAddress(AddMacModel objUserMac)
         {
+            string logInfoUpdateMacAddress = "enterd into a8Captiveportal/V1/UpdateMacAddress";
+            string logInfoMacAddressAdded = null;
+            string logInfoMacAddressDeleted = null;
             try
             {
                 MacAddress objMac = new MacAddress();
@@ -446,25 +457,26 @@ namespace CaptivePortal.API.Controllers
                         if (IsAuthorize(objUserMac.SessionId))
                         {
                             userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).UserId;
-                        foreach (var macaddress in objUserMac.MacAddressList)
-                        {
-                            if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                            foreach (var macaddress in objUserMac.MacAddressList)
                             {
-                                retStr = "mac address already exist";
-                                retVal = Convert.ToInt32(ErrorCodeWarning.MacAddressorUserNameExist);
-                                retType = ReturnCode.Warning.ToString();
+                                if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                                {
+                                    retStr = "mac address already exist";
+                                    retVal = Convert.ToInt32(ErrorCodeWarning.MacAddressorUserNameExist);
+                                    retType = ReturnCode.Warning.ToString();
+                                }
+                                else
+                                {
+                                    objMac.MacAddressValue = macaddress.MacAddress;
+                                    objMac.UserId = userId;
+                                    db.MacAddress.Add(objMac);
+                                    db.SaveChanges();
+                                    retStr = "mac address added ";
+                                    logInfoMacAddressAdded = "mac address added";
+                                    retType = ReturnCode.Success.ToString();
+                                    retVal = Convert.ToInt32(ReturnCode.UpdateMacAddressuccess);
+                                }
                             }
-                            else
-                            {
-                                objMac.MacAddressValue = macaddress.MacAddress;
-                                objMac.UserId = userId;
-                                db.MacAddress.Add(objMac);
-                                db.SaveChanges();
-                                retStr = "mac address added ";
-                                retType = ReturnCode.Success.ToString();
-                                retVal = Convert.ToInt32(ReturnCode.UpdateMacAddressuccess);
-                            }
-                        }
                         }
                         else
                         {
@@ -489,6 +501,7 @@ namespace CaptivePortal.API.Controllers
                             db.MacAddress.RemoveRange(db.MacAddress.Where(c => c.MacAddressValue == macaddress.MacAddress));
                             db.SaveChanges();
                             retStr = "mac address deleted ";
+                            logInfoMacAddressDeleted= "mac address deleted ";
                             retType = ReturnCode.Success.ToString();
                             retVal = Convert.ToInt32(ReturnCode.UpdateMacAddressuccess);
                         }
@@ -502,7 +515,8 @@ namespace CaptivePortal.API.Controllers
                 }
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    log.Info(retStr);
+                    string logMsg = string.Concat(logInfoUpdateMacAddress, logInfoMacAddressAdded, logInfoMacAddressDeleted, retStr);
+                    log.Info(logMsg);
                 }
             }
 
@@ -538,6 +552,8 @@ namespace CaptivePortal.API.Controllers
         {
             //First check the Manadatory 
             //validation and show the Error Messages
+            string logInfoGetMacAddress = "entered into a8Captiveportal/V1/GetMacAddresses";
+            string logInfoGetMacAddressRet = null;
             if (model.SiteId == 0)
             {
                 retStr = "SiteId missing";
@@ -578,7 +594,8 @@ namespace CaptivePortal.API.Controllers
                             }
                             retVal = Convert.ToInt32(ReturnCode.GetMacAddressSuccess);
                             retStr = "Successfully return the MacAddresses";
-                            log.Info("Successfully return the MacAddresses");
+                            //log.Info("Successfully return the MacAddresses");
+                            logInfoGetMacAddressRet = "Successfully return the MacAddresses";
                             retType = ReturnCode.Success.ToString();
                         }
                         else
@@ -602,7 +619,8 @@ namespace CaptivePortal.API.Controllers
                 }
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    log.Info(retStr);
+                    string logMsg = string.Concat(logInfoGetMacAddress, logInfoGetMacAddressRet, retStr);
+                    log.Info(logMsg);
                 }
             }
             catch (Exception ex)
@@ -636,7 +654,8 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/DeleteUser")]
         public HttpResponseMessage DeleteWiFiUser(CreateUserViewModel model)
         {
-            retStr = "inside a8Captiveportal/V1/DeleteUser";
+           string logInfoDeleteUser = "inside a8Captiveportal/V1/DeleteUser";
+            string logIfoUserDeleteSuccess = null;
 
             //First check the Manadatory 
             //validation and show the Error Messages
@@ -678,6 +697,7 @@ namespace CaptivePortal.API.Controllers
                             db.Users.Remove(user);
                             db.SaveChanges();
                             retStr = "User deleted ";
+                            logIfoUserDeleteSuccess = "User deleted";
                             retVal = Convert.ToInt32(ReturnCode.DeleteUserSuccess);
                             retType = ReturnCode.Success.ToString();
                         }
@@ -707,7 +727,8 @@ namespace CaptivePortal.API.Controllers
 
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    log.Info(retStr);
+                    string logMsg = string.Concat(logInfoDeleteUser, logIfoUserDeleteSuccess, retStr);
+                    log.Info(logMsg);
                 }
             }
             catch (Exception ex)
@@ -733,6 +754,9 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/UpdateUser")]
         public HttpResponseMessage UpdateUser(CreateUserViewModel objUser)
         {
+            string logInfoUpdateUser = "entered into a8Captiveportal/V1/UpdateUser";
+            string logInfoUpdateUserInSqlDb = null;
+            string logInfoUpdateUserInMySqlDb = null;
             using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
             {
                 try
@@ -816,7 +840,8 @@ namespace CaptivePortal.API.Controllers
                             db.Entry(user).State = EntityState.Modified;
                             db.SaveChanges();
 
-                            log.Info("User Data upadated in user Table");
+                            //log.Info("User Data upadated in user Table");
+                            logInfoUpdateUserInSqlDb = "User Data upadated in user Table";
 
                             retStr = "user details updated ";
                             retType = ReturnCode.Success.ToString();
@@ -828,8 +853,9 @@ namespace CaptivePortal.API.Controllers
                             retVal = Convert.ToInt32(ReturnCode.UpdateUserSuccess);
                             retType = ReturnCode.Success.ToString();
                             retStr = "user details updated ";
+                            logInfoUpdateUserInMySqlDb = "user details updated ";
                             dbContextTransaction.Commit();
-                            log.Info("User data commited successfully");
+                            //log.Info("User data commited successfully");
 
                         }
                     }
@@ -841,6 +867,7 @@ namespace CaptivePortal.API.Controllers
                     }
                     if (debugStatus == DebugMode.on.ToString())
                     {
+                        string logMsg = string.Concat(logInfoUpdateUser, logInfoUpdateUserInSqlDb, logInfoUpdateUserInMySqlDb, retStr);
                         log.Info(retStr);
                     }
                 }
@@ -879,22 +906,31 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/LoginWIthNewMacAddress")]
         public HttpResponseMessage LoginWIthNewMacAddress(LoginWIthNewMacAddressModel model)
         {
+            string logInfoLoginWithNewMac = "a8Captiveportal/V1/LoginWIthNewMacAddress";
+            string logInWithNewMacDetails = null;
+            string logInfoIfUserExist = null;
+            string logInfoIfMacAddExist = null;
             StatusReturn objAutoLoginReturn = new StatusReturn();
             try
             {
                 //if(db.Users.Any(m=>m))
 
-                log.Info(model.UserName);
-                log.Info(model.Password);
-                log.Info(model.SiteId);
+                //log.Info(model.UserName);
+                //log.Info(model.Password);
+                //log.Info(model.SiteId);
+                string userName = model.UserName;
+                string password = model.Password;
+                string sitId = model.SiteId.ToString();
+                logInWithNewMacDetails=string.Concat(userName,password,sitId);
 
                 if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
                 {
                     //If User exist then Save the User in MacAddresses table
                     if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
                     {
-                        
-                        log.Info("If User exist then Save the User in MacAddresses table");
+
+                        //log.Info("If User exist then Save the User in MacAddresses table");
+                        logInfoIfUserExist = "If User exist then Save the User in MacAddresses table";
                         //Get the particualr UserId from the particular Site
                         int UserId = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).FirstOrDefault().UserId;
                         log.Info(UserId);
@@ -902,7 +938,8 @@ namespace CaptivePortal.API.Controllers
                         //Check that the particular MacAddress exist or Not for particualr User with Different Site
                         if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == UserId)))
                         {
-                            log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site");
+                            //log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site");
+                            logInfoIfMacAddExist= "Check that the particular MacAddress exist or Not for particualr User with Different Site";
                             MacAddress objMac = new MacAddress();
 
                             objMac.MacAddressValue = model.MacAddress;
@@ -936,7 +973,8 @@ namespace CaptivePortal.API.Controllers
                 }
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    log.Info(retStr);
+                    string logMsg = string.Concat(logInfoLoginWithNewMac, logInfoIfUserExist, logInfoIfMacAddExist, retStr);
+                    log.Info(logMsg);
                 }
             }
             catch (Exception ex)
@@ -1016,7 +1054,7 @@ namespace CaptivePortal.API.Controllers
                         //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
                         returnStatus.UserName = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).UserName;
                         returnStatus.Password = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).Password;
-                        returnStatus.StatusReturn.returncode= Convert.ToInt32(ReturnCode.Success);
+                        returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
 
 
                     }
@@ -1078,7 +1116,7 @@ namespace CaptivePortal.API.Controllers
         {
             MacAddressList = new List<MacAddesses>();
         }
-      
+
         public List<MacAddesses> MacAddressList { get; set; }
         public int returncode { get; set; }
         public string type { get; set; }
@@ -1124,7 +1162,7 @@ namespace CaptivePortal.API.Controllers
 
         public string BrowserName { get; set; }
         public string UserAgentName { get; set; }
-        public int SiteId { get; set;}
+        public int SiteId { get; set; }
         public string OperatingSystem { get; set; }
 
         public bool IsMobile { get; set; }

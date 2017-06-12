@@ -61,7 +61,7 @@ namespace CaptivePortal.API.Controllers
                 retStr = "some problem occured";
                 if (debugStatus == DebugMode.off.ToString())
                 {
-                    log.Info(retStr);
+                    log.Error(retStr);
                 }
                 throw ex;
             }
