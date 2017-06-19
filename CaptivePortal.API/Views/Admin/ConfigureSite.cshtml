@@ -74,7 +74,7 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
 </head>
-<body class="nav-md">
+<body class="nav-md" onload="onload()">
     <div class="container body">
         <div class="main_container">
             @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
@@ -127,7 +127,7 @@
                                                 <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none">
-                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" ,@required="required"})
+                                                    @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl" })
 
                                                 </div>
                                                 <div style="margin-top:-15px;">
@@ -481,10 +481,22 @@
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
             $('#company-name').show();
-            $('#company-name').attr('required');
+            $('#company-name').prop('required',true);
         } else {
             $('#CompanyDdl').show();
             $('#company-name').hide();
+        }
+    }
+
+    function onload()
+    {
+        if ($('#checkboxCompany').is(':checked')) {
+            $('#CompanyDdl').hide();
+            $('#company-name').show();
+        } else {
+            $('#CompanyDdl').show();
+            $('#company-name').hide();
+            $('#CompanyDdl').prop('required', true);
         }
     }
 

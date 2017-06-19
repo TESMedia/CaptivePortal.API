@@ -212,8 +212,26 @@
                     </div>
                 </div>
 
+                <br />
+                <br />
+                <br />
+                <div class="form-group">
+                    <label for="debugStatus" class="control-label col-md-3" style="margin-left: 123px;padding-left: 20%;">Debug:</label>
+                    <div class="col-md-2">
+                        <input id="debugStatus" class="form-control col-xs-1" type="text" readonly value="On">
+                        <br />
+                        <br />
+                        <br />
+                        <input type="button" id="debuggingAndTracing" class="btn btn-success" value="Turn debug on/off" />
+                        <br />
+                        <br />
+                        <br />
 
+                        <input type="button" id="debuggingAndTracing" class="btn btn-success" value="View log" onclick="location.href='@Url.Action("LogsDownload", "Admin")'" />
 
+                    </div>
+                </div>
+                
 
 
             </div>
