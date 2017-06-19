@@ -16,11 +16,15 @@ using System.Data.Entity;
 using System.Data;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace CaptivePortal.API.Controllers
 {
     public class AdminController : Controller
     {
+
+       // var userStore = new UserStore<IdentityUser>();
         CPDBContext db = new CPDBContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
 
@@ -63,7 +67,7 @@ namespace CaptivePortal.API.Controllers
             {
                 throw ex;
             }
-            return RedirectToAction("Index", "Admin");
+            return RedirectToAction("Home", "Admin");
         }
 
         // GET: Global Admin
@@ -103,8 +107,8 @@ namespace CaptivePortal.API.Controllers
             var result = from item in db.Company.Where(m => m.CompanyId == companyId).ToList()
                          select new
                          {
-                             value = item.Organisation.OrganisationId,
-                             text = item.Organisation.OrganisationName
+                             value = item.Organisation == null ? 0 : item.Organisation.OrganisationId,
+                             text = item.Organisation == null ? "" : item.Organisation.OrganisationName,
                          };
             return Json(result, JsonRequestBehavior.AllowGet);
         }
@@ -134,10 +138,11 @@ namespace CaptivePortal.API.Controllers
 
                 string imagepath = null;
                 string bannerPath = null;
-                int orgId = inputData.organisationDdl;
+               // int orgId = inputData.organisationDdl;
                 string compId = inputData.CompanyDdl;
                 string fileName = null;
                 string TandD = null;
+                int? orgId = null;
 
                 //organisation
                 if (inputData.OrganisationName != null)
@@ -153,6 +158,7 @@ namespace CaptivePortal.API.Controllers
                 //company
                 if (inputData.CompanyName != null)
                 {
+                   
                     Company objCompany = new Company
                     {
                         CompanyName = inputData.CompanyName,
@@ -299,7 +305,7 @@ namespace CaptivePortal.API.Controllers
                 //objForm.HtmlCodeForLogin = dynamicHtmlCode;
                 //db.Entry(objForm).State = System.Data.Entity.EntityState.Modified;
                 //db.SaveChanges();
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Home", "Admin");
             }
             catch (Exception ex)
             {
@@ -697,14 +703,16 @@ namespace CaptivePortal.API.Controllers
             var siteDetails = (from item in result
                                select new AdminViewModel()
                                {
-                                   OrganisationName=item.Company.Organisation.OrganisationName,
+                                   OrganisationName=item.Company.Organisation==null?null:item.Company.Organisation.OrganisationName,
                                    CompanyName=item.Company.CompanyName,
                                    SiteName=item.SiteName,
                                    DashboardUrl=item.DashboardUrl,
                                    RtlsUrl=item.RtlsUrl,
-                                   SiteId=item.SiteId
+                                   SiteId=item.SiteId,
+                                   MySqlIpAddress=item.MySqlIpAddress
+
                                }
-                             ).ToList();
+                             ).OrderBy(m=>m.SiteName).ToList();
             list.AdminViewlist.AddRange(siteDetails);
             
             return View(list);

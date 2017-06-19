@@ -44,10 +44,13 @@
     <style>
         td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
 
-.selected {
+.selectedindex {
     background-color: brown;
-    color: #FFF;
+    color:white;
 }
+    </style>
+    <style>
+        .highlight { background-color: red; }
     </style>
 </head>
 
@@ -140,11 +143,16 @@
                 <div class="row container-fluid">
 
                     <div style="top:35px;width:1000px; height:250px; overflow:auto;">
-                        <table class="table table-hover table-striped table-responsive" id="table" >
+                        <table class="table table-hover table-responsive" id="table" >
                             <thead>
                                 <tr>
-                                    <th style="display:block;">
+                                    
+                                    
+                                    <th style="display:none;">
                                         SiteId
+                                    </th>
+                                    <th>
+                                        Site
                                     </th>
                                     <th>
                                       Org
@@ -152,9 +160,7 @@
                                     <th>
                                        Company
                                     </th>
-                                    <th>
-                                       Site
-                                    </th>
+                                    
                                     <th>
                                        CPT
                                     </th>
@@ -170,21 +176,22 @@
                                 @foreach (var item in Model.AdminViewlist)
                                 {
                                     <tr>
-                                        <td style="display:block;" id="SiteId">
+                                       
+                                        <td style="display:none;" id="SiteId">
                                             @Html.DisplayFor(modelItem => item.SiteId)
-                                        </td>
-                                        
-                                        <td>
-                                        @Html.DisplayFor(modelItem => item.OrganisationName)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.CompanyName)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.SiteName)
                                         </td>
                                         <td>
-                                            @*@Html.DisplayFor(modelItem => item.)*@
+                                            @Html.DisplayFor(modelItem => item.OrganisationName)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CompanyName)
+                                        </td>
+                                        
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MySqlIpAddress)
                                         </td>
                                         <td>
                                             @Html.DisplayFor(modelItem => item.DashboardUrl)
@@ -264,8 +271,9 @@
 </html>
 <script type="text/javascript">
    
-        $("#table tr").click(function(){
-            $(this).addClass('selected').siblings().removeClass('selected');    
+    $("#table tr").click(function () {
+
+            $(this).addClass('selectedindex').siblings().removeClass('selectedindex');
             var SiteId_Value = $(this).find('td:first').html();
             var Site_name = $(this).closest('tr').find('td:eq(3)').text();
             //localStorage.setItem("SiteId", SiteId_Value);

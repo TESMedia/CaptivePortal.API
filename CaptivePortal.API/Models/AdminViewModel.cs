@@ -14,6 +14,7 @@ namespace CaptivePortal.API.Models
         public string RtlsUrl { get; set; }
         public string DashboardUrl { get; set; }
         public int SiteId { get; set; }
+        public string MySqlIpAddress { get; set; }
 
     }
     public class AdminlistViewModel
