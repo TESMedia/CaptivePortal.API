@@ -15,4 +15,14 @@ namespace CaptivePortal.API.Models
 
         public string CmpName { get; set; }
     }
+
+    public class SitelistViewModel
+    {
+        public SitelistViewModel()
+        {
+            SiteViewlist = new List<SiteViewModel>();
+        }
+        public List<SiteViewModel> SiteViewlist { get; set; }
+
+    }
 }

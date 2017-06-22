@@ -32,6 +32,8 @@ namespace CaptivePortal.API.Context
         public DbSet<MacAddress> MacAddress { get; set; }
 
         public DbSet<ApiAccessUserSession> UserSession { get; set; }
+        public DbSet<AdminSiteAccess> AdminSiteAccess { get; set; }
+
 
         //public DbSet<UserSite> UserSite { get; set; }
 

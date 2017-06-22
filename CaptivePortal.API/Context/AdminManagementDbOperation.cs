@@ -41,7 +41,14 @@ namespace CaptivePortal.API.Context
                             new Gender { Value="Male"},new Gender {Value="Female" },new Gender { Value="Not Answered"} 
                         };
                         db.Gender.AddRange(listGender);
-                        
+
+                        List<Role> roles = new List<Role>()
+                        {
+                            new Role {RoleName="GAdmin"},new Role {RoleName="CompanyAdmin" },new Role {RoleName="BusinessUser" },new Role { RoleName="WiFiUser"}
+                        };
+                        db.Role.AddRange(roles);
+                        db.SaveChanges();
+
 
                         db.Users.Add(user);
                         db.SaveChanges();

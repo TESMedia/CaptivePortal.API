@@ -21,13 +21,14 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Net.Mime;
 using System.Net;
 using log4net;
+using System.Net.Mail;
 
 namespace CaptivePortal.API.Controllers
 {
     public class AdminController : Controller
     {
 
-       // var userStore = new UserStore<IdentityUser>();
+        // var userStore = new UserStore<IdentityUser>();
         CPDBContext db = new CPDBContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
 
@@ -48,12 +49,14 @@ namespace CaptivePortal.API.Controllers
         [Route("GAlogin")]
         public ActionResult GALogin(AdminLoginViewModel admin)
         {
+            int siteId = 0;
             try
             {
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-                    retStr = "logged in successfully"+ admin.UserName;
+                    siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.UserId == user.UserId).SiteId);
+                    retStr = "logged in successfully" + admin.UserName;
                 }
                 if (debugStatus == DebugMode.on.ToString())
                 {
@@ -69,7 +72,7 @@ namespace CaptivePortal.API.Controllers
                 }
                 throw ex;
             }
-            return RedirectToAction("Home", "Admin");
+            return RedirectToAction("Home", "Admin", new { siteId = siteId });
         }
 
         // GET: Global Admin
@@ -81,6 +84,68 @@ namespace CaptivePortal.API.Controllers
         public ActionResult Register()
         {
             return View();
+        }
+
+
+        public ActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ResetPasswordForNewUser(ResetPasswordViewModel model)
+        {
+            Users user = db.Users.Where(m => m.Email == model.Email).FirstOrDefault();
+            user.Password = model.Password;
+            db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Login", "Admin");
+        }
+
+
+
+
+        public ActionResult ManageUser(int? siteId, int? page, int? userId, string userName)
+        {
+            UserlistViewModel list = new UserlistViewModel();
+            list.UserViewlist = new List<UserViewModel>();
+            int currentPageIndex = page.HasValue ? page.Value : 1;
+            int PageSize = 5;
+            double TotalPages = 0;
+            siteId = 1;
+            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+            userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+            TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
+            var userViewModelList = (from item in userList
+                                     select new UserViewModel()
+                                     {
+                                         SiteId = siteId.Value,
+                                         UserId = item.UserId,
+                                         UserName = item.UserName,
+                                         CreationDate = item.CreationDate,
+                                         //Lastlogin=
+                                         //Status = item.Status
+                                         Role = db.UserRole.FirstOrDefault(m => m.UserId == item.UserId).Role.RoleName
+
+
+                                     }).ToList();
+            list.UserViewlist.AddRange(userViewModelList);
+
+            if (userId != null)
+            {
+                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+            }
+            else
+            {
+                list.UserView = userViewModelList.FirstOrDefault();
+            }
+            ViewBag.CurrentPage = currentPageIndex;
+            ViewBag.PageSize = PageSize;
+            ViewBag.TotalPages = TotalPages;
+            ViewBag.userName = userName;
+            return View(list);
+
+
         }
 
         /// <summary>
@@ -104,7 +169,7 @@ namespace CaptivePortal.API.Controllers
                     log.Info(retStr);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 retStr = "some problem occured";
                 if (debugStatus == DebugMode.off.ToString())
@@ -785,36 +850,56 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-        public ActionResult Home()
+        public ActionResult Home(int? SiteId)
         {
+            AdminlistViewModel list = new AdminlistViewModel();
             try
             {
-                retStr = "entered in home to view overall estate";
-                AdminlistViewModel list = new AdminlistViewModel();
-                list.AdminViewlist = new List<AdminViewModel>();
-
-                var result = db.Site.ToList();
-
-                var siteDetails = (from item in result
-                                   select new AdminViewModel()
-                                   {
-                                       OrganisationName = item.Company.Organisation.OrganisationName,
-                                       CompanyName = item.Company.CompanyName,
-                                       SiteName = item.SiteName,
-                                       DashboardUrl = item.DashboardUrl,
-                                       RtlsUrl = item.RtlsUrl,
-                                       SiteId = item.SiteId
-                                   }
-                                 ).ToList();
-                list.AdminViewlist.AddRange(siteDetails);
-                if (debugStatus == DebugMode.on.ToString())
+                if (SiteId != 0 && SiteId != null)
                 {
-                    log.Info(retStr);
-                }
+                    int siteId = Convert.ToInt32(SiteId);
+                    retStr = "entered in home to view overall estate";
+                    list.AdminViewlist = new List<AdminViewModel>();
+                    int compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
 
-                return View(list);
+                    var result = db.Site.Where(m => m.CompanyId == compId).ToList();
+
+                    var siteDetails = (from item in result
+                                       select new AdminViewModel()
+                                       {
+                                           OrganisationName = item.Company.Organisation.OrganisationName,
+                                           CompanyName = item.Company.CompanyName,
+                                           SiteName = item.SiteName,
+                                           DashboardUrl = item.DashboardUrl,
+                                           RtlsUrl = item.RtlsUrl,
+                                           SiteId = item.SiteId
+                                       }
+                                     ).ToList();
+                    list.AdminViewlist.AddRange(siteDetails);
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
+                }
+                else
+                {
+                    var result = db.Site.ToList();
+
+                    var siteDetails = (from item in result
+                                       select new AdminViewModel()
+                                       {
+                                           OrganisationName = item.Company.Organisation.OrganisationName,
+                                           CompanyName = item.Company.CompanyName,
+                                           SiteName = item.SiteName,
+                                           DashboardUrl = item.DashboardUrl,
+                                           RtlsUrl = item.RtlsUrl,
+                                           SiteId = item.SiteId
+                                       }
+                                     ).ToList();
+                    list.AdminViewlist.AddRange(siteDetails);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 retStr = "some problem occured";
                 if (debugStatus == DebugMode.off.ToString())
@@ -823,6 +908,7 @@ namespace CaptivePortal.API.Controllers
                 }
                 throw ex;
             }
+            return View(list);
         }
 
         public ActionResult UploadFile()
@@ -840,51 +926,138 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-        public ActionResult ManageUser()
+
+
+        public ActionResult CreateUser(int? siteId)
         {
-            return View();
+            SitelistViewModel list = new SitelistViewModel();
+            try
+            {
+                int compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+                list.SiteViewlist = new List<SiteViewModel>();
+                var siteList = db.Site.Where(m => m.CompanyId == compId).ToList();
+
+                var siteViewModelList = (from item in siteList
+                                         select new SiteViewModel()
+                                         {
+                                             SiteName = item.SiteName
+                                         }).ToList();
+                list.SiteViewlist.AddRange(siteViewModelList);
+                ViewBag.sites = from item in db.Site.Where(m => m.CompanyId == compId).ToList()
+                                select new SelectListItem()
+                                {
+                                    Value = item.SiteId.ToString(),
+                                    Text = item.SiteName
+                                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return View(list);
+
         }
 
-        public ActionResult CreateUser()
+        [HttpPost]
+        public ActionResult CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
         {
-            return View();
+            int userId = 0;
+            string[] restrictedSites = fc["RestrictedSites"].Split(',');
+            string defaultSiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
+            try
+            {
+
+                //save user in user table
+                Users objUser = new Users();
+                objUser.UserName = model.Email;
+                objUser.Email = model.Email;
+                objUser.SiteId = model.SiteDdl;
+                objUser.CreationDate = System.DateTime.Now;
+                objUser.UpdateDate = System.DateTime.Now;
+                db.Users.Add(objUser);
+                db.SaveChanges();
+                userId = objUser.UserId;
+
+                //assign roleId to newly created user save in User
+                UserRole userRole = new UserRole();
+                userRole.RoleId = model.RoleId;
+                userRole.UserId = userId;
+                db.UserRole.Add(userRole);
+                db.SaveChanges();
+
+                //store restricted site in AdminSiteAccess table.
+                foreach (string item in restrictedSites)
+                {
+                    string value = item;
+                    int SiteId = 1;
+                    AdminSiteAccess objAdminSite = new AdminSiteAccess();
+                    objAdminSite.UserId = userId;
+                    objAdminSite.SiteId = SiteId;
+                    objAdminSite.SiteName = value;
+                    objAdminSite.DefaultSiteName = defaultSiteName;
+                    db.AdminSiteAccess.Add(objAdminSite);
+                    db.SaveChanges();
+                }
+
+                string message = string.Empty;
+                switch (userId)
+                {
+                    case -1:
+                        message = "Username already exists.\\nPlease choose a different username.";
+                        break;
+                    case -2:
+                        message = "Supplied email address has already been used.";
+                        break;
+                    default:
+                        message = "Registration successful. Activation email has been sent.";
+                        SendActivationEmail(userId, model.Email);
+                        break;
+                        //}
+                }
+
+                TempData["Success"] = "An account acvtivation link send to your inbox!";
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return RedirectToAction("CreateUser", "Admin");
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> CreateUserWithRole(CreateUserViewModel model)
-        //{
-        //    try
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
-        //            var result = await UserManager.CreateAsync(user);
-        //            if (result.Succeeded)
-        //            {
-        //                await this.UserManager.AddToRoleAsync(user.Id, "User");
-        //                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-        //                // Send an email with this link
-        //                //string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-        //                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-        //                //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-        //                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-        //                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-        //                await UserManager.SendEmailAsync(user.Id, "Welcome to the Location Services Dashboard", "You are receiving this email as you have been set up as a user of the airloc8 Location Services Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.Please note that your password needs to be at least 6 characters long and include a Special Character, a Number, a Capital Letter and a lower case letter.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
-        //                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
-        //                TempData["alertMsg"] = "An Email has sent to your Inbox.";
-        //                return RedirectToAction("UserDetails", "DashBoard");
-        //            }
-        //            //AddErrors(result);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //    // If we got this far, something failed, redisplay form
-        //    return View(model);
+        //send email to verify user
+        private void SendActivationEmail(int userId, string Email)
+        {
+            try
+            {
+                string senderID = "tls@tes.media";
+                IdentityMessage message = new IdentityMessage();
+                message.Subject = "Account activation";
+                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
 
-        //}
+                string Body = "Hello ";
+                Body += "<br /><br />Please click the following link to activate your account";
+                Body += "<br /><a href = '" + baseUrl + "admin/ResetPassword" + "'>Click here to activate your account.</a>";
+                Body += "<br /><br />Thanks";
+                message.Body = Body;
+                message.Destination = Email;
+                using (MailMessage mm = new MailMessage(senderID, message.Destination, message.Subject, message.Body))
+                {
+                    mm.IsBodyHtml = true;
+                    SmtpClient smtp = new SmtpClient();
+                    smtp.Host = "smtp.avecsys.net";
+                    smtp.EnableSsl = false;
+                    NetworkCredential NetworkCred = new NetworkCredential("user@smtp.avecsys.net", "ema1ls3rv3r");
+                    smtp.UseDefaultCredentials = true;
+                    smtp.Credentials = NetworkCred;
+                    smtp.Port = 25;
+                    smtp.Send(mm);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         public JsonResult GetCompany(int orgId)
         {
@@ -1091,7 +1264,7 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-       
+
         [HttpPost]
         public ActionResult UpdatePassword(FormCollection fc)
         {
@@ -1167,7 +1340,7 @@ namespace CaptivePortal.API.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        
+
 
         #region
 
