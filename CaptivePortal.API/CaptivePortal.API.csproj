@@ -248,13 +248,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201706231311338_Initial-Migration.cs" />
-    <Compile Include="Migrations\201706231311338_Initial-Migration.Designer.cs">
-      <DependentUpon>201706231311338_Initial-Migration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201706220649061_added_adminSiteAccess_teble.cs" />
-    <Compile Include="Migrations\201706220649061_added_adminSiteAccess_teble.Designer.cs">
-      <DependentUpon>201706220649061_added_adminSiteAccess_teble.cs</DependentUpon>
+    <Compile Include="Migrations\201706231830021_initial-migrations.cs" />
+    <Compile Include="Migrations\201706231830021_initial-migrations.Designer.cs">
+      <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4595,11 +4591,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201706231311338_Initial-Migration.resx">
-      <DependentUpon>201706231311338_Initial-Migration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201706220649061_added_adminSiteAccess_teble.resx">
-      <DependentUpon>201706220649061_added_adminSiteAccess_teble.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201706231830021_initial-migrations.resx">
+      <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

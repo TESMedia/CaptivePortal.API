@@ -12,7 +12,7 @@ namespace CaptivePortal.API.Models
         [Key]
         public int AdminSiteAccessId { get; set; }
         //foreign key
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int SiteId { get; set; }
         public string SiteName { get; set; }
         public string DefaultSiteName { get; set; }

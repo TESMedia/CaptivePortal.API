@@ -31,10 +31,7 @@ namespace CaptivePortal.API.Controllers
        // DbContext db = new DbContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
 
-        // var userStore = new UserStore<IdentityUser>();
-        CPDBContext db = new CPDBContext();
-        string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
-
+        
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
@@ -58,7 +55,7 @@ namespace CaptivePortal.API.Controllers
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-                    siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.UserId == user.UserId).SiteId);
+                    siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == user.Id).SiteId);
                     retStr = "logged in successfully" + admin.UserName;
                     retStr = "logged in successfully" + admin.UserName;
                 }
@@ -100,7 +97,7 @@ namespace CaptivePortal.API.Controllers
         public ActionResult ResetPasswordForNewUser(ResetPasswordViewModel model)
         {
             Users user = db.Users.Where(m => m.Email == model.Email).FirstOrDefault();
-            user.Password = model.Password;
+            user.PasswordHash = model.Password;
             db.Entry(user).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
             return RedirectToAction("Login", "Admin");
@@ -109,8 +106,9 @@ namespace CaptivePortal.API.Controllers
 
 
 
-        public ActionResult ManageUser(int? siteId, int? page, int? userId, string userName)
+        public ActionResult ManageUser(int? siteId, int? page, string userName)
         {
+            var userId = User.Identity.GetUserId();
             UserlistViewModel list = new UserlistViewModel();
             list.UserViewlist = new List<UserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
@@ -124,12 +122,12 @@ namespace CaptivePortal.API.Controllers
                                      select new UserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                         UserId = item.UserId,
+                                         UserId = userId,
                                          UserName = item.UserName,
                                          CreationDate = item.CreationDate,
                                          //Lastlogin=
                                          //Status = item.Status
-                                         Role = db.UserRole.FirstOrDefault(m => m.UserId == item.UserId).Role.RoleName
+                                         Role = db.UserRole.FirstOrDefault(m => m.UserId == userId).Role.RoleName
 
 
                                      }).ToList();
@@ -903,9 +901,7 @@ namespace CaptivePortal.API.Controllers
                     list.AdminViewlist.AddRange(siteDetails);
                 }
             }
-            catch (Exception ex)
-                return View(list);
-            }
+           
             catch (Exception ex)
             {
                 retStr = "some problem occured";
@@ -968,7 +964,7 @@ namespace CaptivePortal.API.Controllers
         [HttpPost]
         public ActionResult CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
         {
-            int userId = 0;
+            string userId = "";
             string[] restrictedSites = fc["RestrictedSites"].Split(',');
             string defaultSiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
             try
@@ -983,7 +979,7 @@ namespace CaptivePortal.API.Controllers
                 objUser.UpdateDate = System.DateTime.Now;
                 db.Users.Add(objUser);
                 db.SaveChanges();
-                userId = objUser.UserId;
+                userId = objUser.Id;
 
                 //assign roleId to newly created user save in User
                 UserRole userRole = new UserRole();
@@ -1009,10 +1005,11 @@ namespace CaptivePortal.API.Controllers
                 string message = string.Empty;
                 switch (userId)
                 {
-                    case -1:
+                 
+                    case "A":
                         message = "Username already exists.\\nPlease choose a different username.";
                         break;
-                    case -2:
+                    case "B":
                         message = "Supplied email address has already been used.";
                         break;
                     default:
@@ -1032,7 +1029,7 @@ namespace CaptivePortal.API.Controllers
         }
 
         //send email to verify user
-        private void SendActivationEmail(int userId, string Email)
+        private void SendActivationEmail(string userId, string Email)
         {
             try
             {
@@ -1094,8 +1091,9 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId,int? page, string userName, string foreName, string surName)
         {
+            var userId = User.Identity.GetUserId();
             UserlistViewModel list = new UserlistViewModel();
             list.UserViewlist = new List<UserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
@@ -1162,7 +1160,7 @@ namespace CaptivePortal.API.Controllers
 
             if (userId != null)
             {
-                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId ==userId );
             }
             else
             {

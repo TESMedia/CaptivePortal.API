@@ -3,116 +3,21 @@ namespace CaptivePortal.API.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialMigration : DbMigration
+    public partial class initialmigrations : DbMigration
     {
         public override void Up()
         {
             CreateTable(
-                "dbo.Ages",
+                "dbo.AdminSiteAccesses",
                 c => new
                     {
-                        AgeId = c.Int(nullable: false, identity: true),
-                        Value = c.String(maxLength: 50),
-                    })
-                .PrimaryKey(t => t.AgeId);
-            
-            CreateTable(
-                "dbo.Companies",
-                c => new
-                    {
-                        CompanyId = c.Int(nullable: false, identity: true),
-                        CompanyName = c.String(),
-                        OrganisationId = c.Int(),
-                    })
-                .PrimaryKey(t => t.CompanyId)
-                .ForeignKey("dbo.Organisations", t => t.OrganisationId)
-                .Index(t => t.OrganisationId);
-            
-            CreateTable(
-                "dbo.Organisations",
-                c => new
-                    {
-                        OrganisationId = c.Int(nullable: false, identity: true),
-                        OrganisationName = c.String(),
-                    })
-                .PrimaryKey(t => t.OrganisationId);
-            
-            CreateTable(
-                "dbo.Forms",
-                c => new
-                    {
-                        FormId = c.Int(nullable: false, identity: true),
-                        FormName = c.String(),
-                        SiteId = c.Int(nullable: false),
-                        BannerIcon = c.String(),
-                        BackGroundColor = c.String(),
-                        LoginWindowColor = c.String(),
-                        IsPasswordRequire = c.Boolean(nullable: false),
-                        LoginPageTitle = c.String(),
-                        RegistrationPageTitle = c.String(),
-                    })
-                .PrimaryKey(t => t.FormId)
-                .ForeignKey("dbo.Sites", t => t.SiteId, cascadeDelete: true)
-                .Index(t => t.SiteId);
-            
-            CreateTable(
-                "dbo.Sites",
-                c => new
-                    {
-                        SiteId = c.Int(nullable: false, identity: true),
-                        SiteName = c.String(),
-                        CompanyId = c.Int(),
-                        AutoLogin = c.Boolean(),
-                        ControllerIpAddress = c.String(),
-                        MySqlIpAddress = c.String(),
-                        Term_conditions = c.String(),
-                        TermsAndCondDoc = c.String(),
-                        RtlsUrl = c.String(),
-                        DashboardUrl = c.String(),
-                    })
-                .PrimaryKey(t => t.SiteId)
-                .ForeignKey("dbo.Companies", t => t.CompanyId)
-                .Index(t => t.CompanyId);
-            
-            CreateTable(
-                "dbo.FormControls",
-                c => new
-                    {
-                        FormControlId = c.Int(nullable: false, identity: true),
-                        FormId = c.Int(nullable: false),
-                        ControlType = c.String(),
-                        LabelName = c.String(),
-                        LabelNameToDisplay = c.String(),
-                        IsMandetory = c.Boolean(nullable: false),
-                        SiteUrl = c.String(),
-                        HtmlString = c.String(),
-                    })
-                .PrimaryKey(t => t.FormControlId)
-                .ForeignKey("dbo.Forms", t => t.FormId, cascadeDelete: true)
-                .Index(t => t.FormId);
-            
-            CreateTable(
-                "dbo.Genders",
-                c => new
-                    {
-                        GenderId = c.Int(nullable: false, identity: true),
-                        Value = c.String(maxLength: 50),
-                    })
-                .PrimaryKey(t => t.GenderId);
-            
-            CreateTable(
-                "dbo.MacAddresses",
-                c => new
-                    {
-                        MacId = c.Int(nullable: false, identity: true),
-                        MacAddressValue = c.String(maxLength: 20),
+                        AdminSiteAccessId = c.Int(nullable: false, identity: true),
                         UserId = c.String(maxLength: 128),
-                        BrowserName = c.String(),
-                        OperatingSystem = c.String(),
-                        IsMobile = c.Boolean(nullable: false),
-                        UserAgentName = c.String(),
+                        SiteId = c.Int(nullable: false),
+                        SiteName = c.String(),
+                        DefaultSiteName = c.String(),
                     })
-                .PrimaryKey(t => t.MacId)
+                .PrimaryKey(t => t.AdminSiteAccessId)
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId)
                 .Index(t => t.UserId);
             
@@ -164,6 +69,15 @@ namespace CaptivePortal.API.Migrations
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
             
             CreateTable(
+                "dbo.Ages",
+                c => new
+                    {
+                        AgeId = c.Int(nullable: false, identity: true),
+                        Value = c.String(maxLength: 50),
+                    })
+                .PrimaryKey(t => t.AgeId);
+            
+            CreateTable(
                 "dbo.AspNetUserClaims",
                 c => new
                     {
@@ -175,6 +89,15 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.Genders",
+                c => new
+                    {
+                        GenderId = c.Int(nullable: false, identity: true),
+                        Value = c.String(maxLength: 50),
+                    })
+                .PrimaryKey(t => t.GenderId);
             
             CreateTable(
                 "dbo.AspNetUserLogins",
@@ -200,6 +123,97 @@ namespace CaptivePortal.API.Migrations
                 .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.Sites",
+                c => new
+                    {
+                        SiteId = c.Int(nullable: false, identity: true),
+                        SiteName = c.String(),
+                        CompanyId = c.Int(),
+                        AutoLogin = c.Boolean(),
+                        ControllerIpAddress = c.String(),
+                        MySqlIpAddress = c.String(),
+                        Term_conditions = c.String(),
+                        TermsAndCondDoc = c.String(),
+                        RtlsUrl = c.String(),
+                        DashboardUrl = c.String(),
+                    })
+                .PrimaryKey(t => t.SiteId)
+                .ForeignKey("dbo.Companies", t => t.CompanyId)
+                .Index(t => t.CompanyId);
+            
+            CreateTable(
+                "dbo.Companies",
+                c => new
+                    {
+                        CompanyId = c.Int(nullable: false, identity: true),
+                        CompanyName = c.String(),
+                        OrganisationId = c.Int(),
+                    })
+                .PrimaryKey(t => t.CompanyId)
+                .ForeignKey("dbo.Organisations", t => t.OrganisationId)
+                .Index(t => t.OrganisationId);
+            
+            CreateTable(
+                "dbo.Organisations",
+                c => new
+                    {
+                        OrganisationId = c.Int(nullable: false, identity: true),
+                        OrganisationName = c.String(),
+                    })
+                .PrimaryKey(t => t.OrganisationId);
+            
+            CreateTable(
+                "dbo.Forms",
+                c => new
+                    {
+                        FormId = c.Int(nullable: false, identity: true),
+                        FormName = c.String(),
+                        SiteId = c.Int(nullable: false),
+                        BannerIcon = c.String(),
+                        BackGroundColor = c.String(),
+                        LoginWindowColor = c.String(),
+                        IsPasswordRequire = c.Boolean(nullable: false),
+                        LoginPageTitle = c.String(),
+                        RegistrationPageTitle = c.String(),
+                    })
+                .PrimaryKey(t => t.FormId)
+                .ForeignKey("dbo.Sites", t => t.SiteId, cascadeDelete: true)
+                .Index(t => t.SiteId);
+            
+            CreateTable(
+                "dbo.FormControls",
+                c => new
+                    {
+                        FormControlId = c.Int(nullable: false, identity: true),
+                        FormId = c.Int(nullable: false),
+                        ControlType = c.String(),
+                        LabelName = c.String(),
+                        LabelNameToDisplay = c.String(),
+                        IsMandetory = c.Boolean(nullable: false),
+                        SiteUrl = c.String(),
+                        HtmlString = c.String(),
+                    })
+                .PrimaryKey(t => t.FormControlId)
+                .ForeignKey("dbo.Forms", t => t.FormId, cascadeDelete: true)
+                .Index(t => t.FormId);
+            
+            CreateTable(
+                "dbo.MacAddresses",
+                c => new
+                    {
+                        MacId = c.Int(nullable: false, identity: true),
+                        MacAddressValue = c.String(maxLength: 20),
+                        UserId = c.String(maxLength: 128),
+                        BrowserName = c.String(),
+                        OperatingSystem = c.String(),
+                        IsMobile = c.Boolean(nullable: false),
+                        UserAgentName = c.String(),
+                    })
+                .PrimaryKey(t => t.MacId)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
+                .Index(t => t.UserId);
             
             CreateTable(
                 "dbo.Nas",
@@ -334,21 +348,27 @@ namespace CaptivePortal.API.Migrations
             DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.MacAddresses", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.FormControls", "FormId", "dbo.Forms");
+            DropForeignKey("dbo.Forms", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.Sites", "CompanyId", "dbo.Companies");
+            DropForeignKey("dbo.Companies", "OrganisationId", "dbo.Organisations");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "GenderId", "dbo.Genders");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUsers", "AgeId", "dbo.Ages");
-            DropForeignKey("dbo.FormControls", "FormId", "dbo.Forms");
-            DropForeignKey("dbo.Forms", "SiteId", "dbo.Sites");
-            DropForeignKey("dbo.Sites", "CompanyId", "dbo.Companies");
-            DropForeignKey("dbo.Companies", "OrganisationId", "dbo.Organisations");
             DropIndex("dbo.ApiAccessUserSessions", new[] { "UserId" });
             DropIndex("dbo.UsersAddresses", new[] { "UserId" });
             DropIndex("dbo.UserRoles", new[] { "RoleId" });
             DropIndex("dbo.UserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.MacAddresses", new[] { "UserId" });
+            DropIndex("dbo.FormControls", new[] { "FormId" });
+            DropIndex("dbo.Forms", new[] { "SiteId" });
+            DropIndex("dbo.Companies", new[] { "OrganisationId" });
+            DropIndex("dbo.Sites", new[] { "CompanyId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
@@ -357,11 +377,7 @@ namespace CaptivePortal.API.Migrations
             DropIndex("dbo.AspNetUsers", new[] { "SiteId" });
             DropIndex("dbo.AspNetUsers", new[] { "AgeId" });
             DropIndex("dbo.AspNetUsers", new[] { "GenderId" });
-            DropIndex("dbo.MacAddresses", new[] { "UserId" });
-            DropIndex("dbo.FormControls", new[] { "FormId" });
-            DropIndex("dbo.Sites", new[] { "CompanyId" });
-            DropIndex("dbo.Forms", new[] { "SiteId" });
-            DropIndex("dbo.Companies", new[] { "OrganisationId" });
+            DropIndex("dbo.AdminSiteAccesses", new[] { "UserId" });
             DropTable("dbo.ApiAccessUserSessions");
             DropTable("dbo.UsersAddresses");
             DropTable("dbo.UserRoles");
@@ -370,18 +386,19 @@ namespace CaptivePortal.API.Migrations
             DropTable("dbo.RadGroupChecks");
             DropTable("dbo.Radaccts");
             DropTable("dbo.Nas");
-            DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetUserLogins");
-            DropTable("dbo.AspNetUserClaims");
-            DropTable("dbo.AspNetUsers");
             DropTable("dbo.MacAddresses");
-            DropTable("dbo.Genders");
             DropTable("dbo.FormControls");
-            DropTable("dbo.Sites");
             DropTable("dbo.Forms");
             DropTable("dbo.Organisations");
             DropTable("dbo.Companies");
+            DropTable("dbo.Sites");
+            DropTable("dbo.AspNetUserRoles");
+            DropTable("dbo.AspNetUserLogins");
+            DropTable("dbo.Genders");
+            DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Ages");
+            DropTable("dbo.AspNetUsers");
+            DropTable("dbo.AdminSiteAccesses");
         }
     }
 }

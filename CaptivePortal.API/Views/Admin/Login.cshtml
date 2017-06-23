@@ -63,8 +63,8 @@
                         <label for="password" id="pwd">
                             Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
                         </label>
-                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
+                        @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
                     </div>
                     <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
                 </div>
