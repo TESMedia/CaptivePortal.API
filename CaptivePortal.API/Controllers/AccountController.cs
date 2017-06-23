@@ -21,6 +21,7 @@ using System.Collections;
 using System.Web.Http.Cors;
 using System.Web.SessionState;
 using System.Data.Entity;
+using Microsoft.AspNet.Identity;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -32,7 +33,7 @@ namespace CaptivePortal.API.Controllers
         ILog log = LogManager.GetLogger(typeof(AccountController));
         private RegisterDB objRegisterDB = new RegisterDB();
         private ReturnModel ObjReturnModel = new ReturnModel();
-        CPDBContext db = new CPDBContext();
+        Context.DbContext db = new Context.DbContext();
         StatusReturn objReturn = new StatusReturn();
         AutoLoginStatus returnStatus = new AutoLoginStatus();
         private string retStr = "";
@@ -52,7 +53,7 @@ namespace CaptivePortal.API.Controllers
         public HttpResponseMessage Login(Users objUser)
         {
             //log.Info("Enter in a8Captiveportal/V1/Login");
-            string logInfoLogin ="Enter in a8Captiveportal/V1/Login";
+            string logInfoLogin = "Enter in a8Captiveportal/V1/Login";
             string logInfoForSessionIdRet = null;
 
             string sessionId = null;
@@ -60,9 +61,10 @@ namespace CaptivePortal.API.Controllers
             {
                 if (objUser.UserName.ToLower() == "testpurple@mail.com")
                 {
-                    if (db.Users.Any(m => m.UserName.ToLower() == objUser.UserName.ToLower() && m.Password == objUser.Password))
+                    if (db.Users.Any(m => m.UserName.ToLower() == objUser.UserName.ToLower() && m.PasswordHash == objUser.PasswordHash))
                     {
-                        int UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).UserId;
+                        // int UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).UserId;
+                        var UserId = User.Identity.GetUserId();
                         SessionIDManager manager = new SessionIDManager();
                         sessionId = manager.CreateSessionID(HttpContext.Current);
                         //Insert the UserSession data with SessionId
@@ -103,7 +105,7 @@ namespace CaptivePortal.API.Controllers
 
                 if (debugStatus == DebugMode.on.ToString())
                 {
-                    string logMsg = String.Concat(logInfoLogin, logInfoForSessionIdRet,retStr);
+                    string logMsg = String.Concat(logInfoLogin, logInfoForSessionIdRet, retStr);
                     log.Info(logMsg);
                 }
 
@@ -204,7 +206,7 @@ namespace CaptivePortal.API.Controllers
                                 objUsers.UserName = objUser.UserName;
                                 objUsers.FirstName = objUser.FirstName;
                                 objUsers.LastName = objUser.LastName;
-                                objUsers.Password = objUser.Password;
+                                objUsers.PasswordHash = objUser.Password;
                                 objUsers.SiteId = objUser.SiteId;
                                 objUsers.UniqueUserId = objUser.UserId;
                                 objUsers.BirthDate = objUser.BirthDate;
@@ -254,7 +256,7 @@ namespace CaptivePortal.API.Controllers
                     }
                     if (debugStatus == DebugMode.on.ToString())
                     {
-                        string logMsg = string.Concat(logInfoCreateUser, logInfoForCreateUserSuccess, logInfoIsSessionId,retStr);
+                        string logMsg = string.Concat(logInfoCreateUser, logInfoForCreateUserSuccess, logInfoIsSessionId, retStr);
                         log.Info(logMsg);
                     }
                 }
@@ -303,7 +305,7 @@ namespace CaptivePortal.API.Controllers
                     {
                         retStr = "Need UserName for Registration";
                     }
-                    else if (string.IsNullOrEmpty(objUserMac.objUser.Password))
+                    else if (string.IsNullOrEmpty(objUserMac.objUser.PasswordHash))
                     {
                         retStr = "Need Password for Registration";
                     }
@@ -338,10 +340,10 @@ namespace CaptivePortal.API.Controllers
                             objUserMac.objUser.UpdateDate = DateTime.Now;
                             var users = db.Users.Add(objUserMac.objUser);
 
-                            objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
+                            objUserMac.objMacAddress.UserId = objUserMac.objUser.Id;
                             db.MacAddress.Add(objUserMac.objMacAddress);
                             log.Info(objUserMac.objMacAddress);
-                            objUserMac.objAddress.UserId = objUserMac.objUser.UserId;
+                            objUserMac.objAddress.UserId = objUserMac.objUser.Id;
                             db.UsersAddress.Add(objUserMac.objAddress);
                             db.SaveChanges();
 
@@ -349,7 +351,7 @@ namespace CaptivePortal.API.Controllers
                             logInfoCreateWifiUserSuccess = "User Data saved in user Table";
 
                             //Save all the Users data in MySql DataBase
-                            objRegisterDB.CreateNewUser(objUserMac.objUser.UserName, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
+                            objRegisterDB.CreateNewUser(objUserMac.objUser.UserName, objUserMac.objUser.PasswordHash, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
 
                             retVal = Convert.ToInt32(ReturnCode.Success);
                             retType = ReturnCode.Success.ToString();
@@ -416,7 +418,7 @@ namespace CaptivePortal.API.Controllers
             try
             {
                 MacAddress objMac = new MacAddress();
-                int userId = 0;
+                string  userId = "";
 
                 if (objUserMac.OperationType == 0)
                 {
@@ -456,7 +458,7 @@ namespace CaptivePortal.API.Controllers
                     {
                         if (IsAuthorize(objUserMac.SessionId))
                         {
-                            userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).UserId;
+                            userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).Id;
                             foreach (var macaddress in objUserMac.MacAddressList)
                             {
                                 if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
@@ -468,7 +470,7 @@ namespace CaptivePortal.API.Controllers
                                 else
                                 {
                                     objMac.MacAddressValue = macaddress.MacAddress;
-                                    objMac.UserId = userId;
+                                    objMac.UserId = User.Identity.GetUserId(); ;
                                     db.MacAddress.Add(objMac);
                                     db.SaveChanges();
                                     retStr = "mac address added ";
@@ -501,7 +503,7 @@ namespace CaptivePortal.API.Controllers
                             db.MacAddress.RemoveRange(db.MacAddress.Where(c => c.MacAddressValue == macaddress.MacAddress));
                             db.SaveChanges();
                             retStr = "mac address deleted ";
-                            logInfoMacAddressDeleted= "mac address deleted ";
+                            logInfoMacAddressDeleted = "mac address deleted ";
                             retType = ReturnCode.Success.ToString();
                             retVal = Convert.ToInt32(ReturnCode.UpdateMacAddressuccess);
                         }
@@ -585,7 +587,7 @@ namespace CaptivePortal.API.Controllers
                     {
                         if (db.Users.Any(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId))
                         {
-                            int UserId = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).UserId;
+                            string UserId = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).Id;
                             foreach (var item in db.MacAddress.Where(m => m.UserId == UserId))
                             {
                                 MacAddesses objMacAddress = new MacAddesses();
@@ -654,7 +656,7 @@ namespace CaptivePortal.API.Controllers
         [Route("a8Captiveportal/V1/DeleteUser")]
         public HttpResponseMessage DeleteWiFiUser(CreateUserViewModel model)
         {
-           string logInfoDeleteUser = "inside a8Captiveportal/V1/DeleteUser";
+            string logInfoDeleteUser = "inside a8Captiveportal/V1/DeleteUser";
             string logIfoUserDeleteSuccess = null;
 
             //First check the Manadatory 
@@ -798,7 +800,7 @@ namespace CaptivePortal.API.Controllers
                         }
                         if (string.IsNullOrEmpty(retStr))
                         {
-                            int userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).UserId;
+                            string userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).Id;
                             user = db.Users.Find(userId);
                             if (!string.IsNullOrEmpty(objUser.UserName))
                             {
@@ -806,7 +808,7 @@ namespace CaptivePortal.API.Controllers
                             }
                             if (!string.IsNullOrEmpty(objUser.Password))
                             {
-                                user.Password = objUser.Password;
+                                user.PasswordHash = objUser.Password;
                             }
                             if (!string.IsNullOrEmpty(objUser.FirstName))
                             {
@@ -921,29 +923,29 @@ namespace CaptivePortal.API.Controllers
                 string userName = model.UserName;
                 string password = model.Password;
                 string sitId = model.SiteId.ToString();
-                logInWithNewMacDetails=string.Concat(userName,password,sitId);
+                logInWithNewMacDetails = string.Concat(userName, password, sitId);
 
                 if (db.Users.Any(m => m.UserName == model.UserName && m.SiteId == model.SiteId))
                 {
                     //If User exist then Save the User in MacAddresses table
-                    if (db.Users.Any(m => m.UserName == model.UserName && m.Password == model.Password))
+                    if (db.Users.Any(m => m.UserName == model.UserName && m.PasswordHash == model.Password))
                     {
 
                         //log.Info("If User exist then Save the User in MacAddresses table");
                         logInfoIfUserExist = "If User exist then Save the User in MacAddresses table";
                         //Get the particualr UserId from the particular Site
-                        int UserId = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).FirstOrDefault().UserId;
+                        string UserId = db.Users.Where(m => m.UserName == model.UserName && m.SiteId == model.SiteId).FirstOrDefault().Id;
                         log.Info(UserId);
 
                         //Check that the particular MacAddress exist or Not for particualr User with Different Site
                         if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == UserId)))
                         {
                             //log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site");
-                            logInfoIfMacAddExist= "Check that the particular MacAddress exist or Not for particualr User with Different Site";
+                            logInfoIfMacAddExist = "Check that the particular MacAddress exist or Not for particualr User with Different Site";
                             MacAddress objMac = new MacAddress();
 
                             objMac.MacAddressValue = model.MacAddress;
-                            objMac.UserId = UserId;
+                            objMac.UserId = User.Identity.GetUserId();
                             objMac.BrowserName = model.BrowserName;
                             objMac.UserAgentName = model.UserAgentName;
                             objMac.OperatingSystem = model.OperatingSystem;
@@ -1052,8 +1054,8 @@ namespace CaptivePortal.API.Controllers
                     {
                         log.Info("Check the AutoLogin of Site or User");
                         //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        returnStatus.UserName = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).UserName;
-                        returnStatus.Password = db.Users.FirstOrDefault(m => m.UserId == objMac.UserId).Password;
+                        returnStatus.UserName = db.Users.FirstOrDefault(m => m.Id == objMac.UserId).UserName;
+                        returnStatus.Password = db.Users.FirstOrDefault(m => m.Id == objMac.UserId).PasswordHash;
                         returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
 
 

@@ -13,12 +13,12 @@ namespace CaptivePortal.API.Models
         public int UserRoleId { get; set; }
 
        //Foreign key
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public int RoleId { get; set; }
 
         [ForeignKey("UserId")]
         public virtual Users Users { get; set; }
-     
+
         [ForeignKey("RoleId")]
         public virtual Role Role { get; set; }
     }

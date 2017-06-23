@@ -14,7 +14,7 @@ namespace CaptivePortal.API.Controllers
     [RoutePrefix("RealTimeDataApi")]
     public class RealTimeDataApiController : ApiController
     {
-        private CPDBContext db = new CPDBContext();
+        private DbContext db = new DbContext();
 
         /// <summary>
         /// 

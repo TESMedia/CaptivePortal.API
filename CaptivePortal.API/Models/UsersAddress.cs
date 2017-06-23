@@ -22,10 +22,10 @@ namespace CaptivePortal.API.Models
             public string Notes { get; set; }
 
             // Foreign key 
-            public int UserId { get; set; }
+            public string UserId { get; set; }
 
-            [ForeignKey("UserId")]
-            public virtual Users Users { get; set; }
-      
+        [ForeignKey("UserId")]
+        public virtual Users Users { get; set; }
+
     }
 }

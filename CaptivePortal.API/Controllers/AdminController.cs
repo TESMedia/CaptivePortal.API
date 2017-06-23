@@ -26,16 +26,15 @@ namespace CaptivePortal.API.Controllers
 {
     public class AdminController : Controller
     {
-
-       // var userStore = new UserStore<IdentityUser>();
-        CPDBContext db = new CPDBContext();
-        string ConnectionString = ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
+       Context.DbContext db = new Context.DbContext();
+       // DbContext db = new DbContext();
+        string ConnectionString = ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
 
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
         private static ILog Log { get; set; }
-        ILog log = LogManager.GetLogger(typeof(AccountController));
+        ILog log = LogManager.GetLogger(typeof(AdminController));
 
         private string retStr = "";
 
@@ -53,7 +52,7 @@ namespace CaptivePortal.API.Controllers
                 if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
                 {
                     Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-                    retStr = "logged in successfully"+ admin.UserName;
+                    retStr = "logged in successfully" + admin.UserName;
                 }
                 if (debugStatus == DebugMode.on.ToString())
                 {
@@ -104,7 +103,7 @@ namespace CaptivePortal.API.Controllers
                     log.Info(retStr);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 retStr = "some problem occured";
                 if (debugStatus == DebugMode.off.ToString())
@@ -814,7 +813,7 @@ namespace CaptivePortal.API.Controllers
 
                 return View(list);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 retStr = "some problem occured";
                 if (debugStatus == DebugMode.off.ToString())
@@ -969,13 +968,13 @@ namespace CaptivePortal.API.Controllers
                                      select new UserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                         UserId = item.UserId,
+                                       //  UserId = item.UserId,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
-                                         Password = item.Password,
-                                         MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
+                                        // Password = item.Password,
+                                        // MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
 
                                      }).ToList();
             list.UserViewlist.AddRange(userViewModelList);
@@ -1003,16 +1002,17 @@ namespace CaptivePortal.API.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult UserWithProfile(int UserId, int SiteId)
+        public ActionResult UserWithProfile(int SiteId)
         {
-            var userDetail = db.Users.FirstOrDefault(m => m.UserId == UserId);
+            var userid = User.Identity.GetUserId();
+            var userDetail = db.Users.FirstOrDefault(m => m.Id == userid);
             var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
             var siteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
             var model = new MacAddressViewModel();
             UserViewModel objUserViewModel = new UserViewModel();
             if (userDetail != null)
             {
-                objUserViewModel.Password = userDetail.Password;
+                objUserViewModel.Password = userDetail.PasswordHash;
                 objUserViewModel.UserName = userDetail.UserName;
                 objUserViewModel.Gender = db.Gender.FirstOrDefault(m => m.GenderId == userDetail.GenderId).Value;
                 objUserViewModel.AgeRange = db.Age.FirstOrDefault(m => m.AgeId == userDetail.AgeId).Value;
@@ -1022,7 +1022,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
                 objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
                 //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
-                var mac = db.MacAddress.Where(m => m.UserId == UserId).ToList();
+                var mac = db.MacAddress.Where(m => m.UserId ==userid).ToList();
                 //var lastEntry = db.MacAddress.LastOrDefault(m => m.UserId == UserId).MacAddressValue;
                 //objUserViewModel.MacAddress = lastEntry;
                 objUserViewModel.MacAddressList = mac;
@@ -1091,7 +1091,7 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-       
+
         [HttpPost]
         public ActionResult UpdatePassword(FormCollection fc)
         {
@@ -1100,7 +1100,7 @@ namespace CaptivePortal.API.Controllers
             {
                 var objUser = db.Users.Find(userId);
                 {
-                    objUser.Password = fc["NewPassword"];
+                    objUser.PasswordHash = fc["NewPassword"];
                     db.Entry(objUser).State = EntityState.Modified;
                     db.SaveChanges();
                 }
@@ -1116,7 +1116,7 @@ namespace CaptivePortal.API.Controllers
 
                 MacAddress mac = new MacAddress();
                 mac.MacAddressValue = fc["MacAddress"];
-                mac.UserId = userId;
+                mac.UserId = User.Identity.GetUserId();
                 db.MacAddress.Add(mac);
                 //db.Entry(objUser).State = EntityState.Modified;
                 db.SaveChanges();
@@ -1167,14 +1167,14 @@ namespace CaptivePortal.API.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        
+
 
         #region
 
         private DataTable GetData(SqlCommand cmd)
         {
             DataTable dt = new DataTable();
-            String strConnString = System.Configuration.ConfigurationManager.ConnectionStrings["CPDBContext"].ConnectionString;
+            String strConnString = System.Configuration.ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
             SqlConnection con = new SqlConnection(strConnString);
             SqlDataAdapter sda = new SqlDataAdapter();
             cmd.CommandType = CommandType.Text;

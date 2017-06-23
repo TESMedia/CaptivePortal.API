@@ -14,7 +14,7 @@ namespace CaptivePortal.API.Controllers
 {
     public class GetFormDataController : Controller
     {
-        CPDBContext db = new CPDBContext();
+        DbContext db = new DbContext();
      
         [HttpPost]
         public JsonResult GetSiteDetails(FormData formdata)

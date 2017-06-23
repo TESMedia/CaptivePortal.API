@@ -1,4 +1,5 @@
 ﻿using CaptivePortal.API.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -7,13 +8,13 @@ using System.Web;
 
 namespace CaptivePortal.API.Context
 {
-    public class CPDBContext:DbContext
+    public class DbContext: IdentityDbContext<Users>
     {
-        public CPDBContext() : base("name=CPDBContext")
+        public DbContext() : base("name=DbContext")
         {
              
         }
-        public DbSet<Users> Users { get; set; }
+        //public DbSet<Users> User { get; set; }
         public DbSet<UsersAddress> UsersAddress { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<Nas> Nas { get; set; }
@@ -34,7 +35,10 @@ namespace CaptivePortal.API.Context
         public DbSet<ApiAccessUserSession> UserSession { get; set; }
 
         //public DbSet<UserSite> UserSite { get; set; }
-
+        public static DbContext Create()
+        {
+            return new DbContext();
+        }
 
     }
 }

@@ -2,6 +2,7 @@
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -21,8 +22,9 @@ namespace CaptivePortal.API
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            AdminManagementDbOperation objAdminManagementDbOperation = new AdminManagementDbOperation();
-            objAdminManagementDbOperation.PerformDatabaseOperations();
+            Database.SetInitializer<Context.DbContext>(new CreateDatabaseIfNotExists<Context.DbContext>());
+            //AdminManagementDbOperation objAdminManagementDbOperation = new AdminManagementDbOperation();
+            //objAdminManagementDbOperation.PerformDatabaseOperations();
             log4net.Config.XmlConfigurator.Configure(new FileInfo(Server.MapPath("~/Web.config")));
             ILog logger = LogManager.GetLogger(typeof(ApiController));
             logger.Info("Application started successfully.");

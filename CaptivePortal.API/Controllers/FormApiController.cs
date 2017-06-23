@@ -19,7 +19,7 @@ namespace CaptivePortal.API.Controllers
     [RoutePrefix("api/form")]
     public class FormApiController : ApiController
     {
-        private CPDBContext db = new CPDBContext();
+        private DbContext db = new DbContext();
         [HttpPost]
         [Route("LoginFormData")]
         public HttpResponseMessage LoginFormData(FormData formdata)
