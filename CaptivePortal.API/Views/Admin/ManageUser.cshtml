@@ -1,7 +1,9 @@
-﻿@using Newtonsoft.Json.Linq;
+﻿@using CaptivePortal.API.Models
+@model UserlistViewModel
 @{
 
     Layout = null;
+    ViewBag.PageRange = 3;
 }
 
 <!DOCTYPE html>
@@ -123,14 +125,141 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            
+            @*<div class="right_col" role="main">
+                    <div class="">
+                        <a class="btn-success" href="@Url.Action("CreateUser","Admin")">Create New User</a>
+                    </div>
+                    <iframe src="http://localhost:62527/DashBoard/UserDetails" style="display:block;height:1000px;width:1000px;">
+
+                    </iframe>
+                </div>*@
+
+
             <div class="right_col" role="main">
                 <div class="">
-                    <a class="btn-success" href="@Url.Action("CreateUser","Admin")">Create New User</a>
-                </div>
-                <iframe src="http://localhost:62527/DashBoard/UserDetails" style="display:block;height:1000px;width:1000px;">
+                    <div class="page-title">
+                        <div class="title_left">
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="x_panel">
+                                <div class="x_content">
+                                    <br />
+                                    <form></form>
+                                    <div class="col-md-12 text-center">
+                                        <input type="button" class="btn btn-success" onclick="window.location.href = '/admin/CreateUser?SiteId=' + siteId" value="Create New User">
 
-                </iframe>
+                                        <input type="button" class="btn btn-success" onclick="tableToExcel('cpLocalAdminUserTable')" value="Export Data" style="width:15%">
+                                    </div>
+                                    <div class="container">
+                                        <br />
+                                        <form class="form-inline" id="searchForm">
+                                            <div class="form-group">
+                                                <label for="text">Search:</label>
+                                                <input type="text" class="form-control" id="myInput" />
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                    <hr />
+                                    <div class="row container-fluid">
+
+                                        <div style="top:35px;">
+                                            <table class="table table-hover table-striped table-responsive" id="cpLocalAdminUserTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="display:none;">
+                                                            UserId
+                                                        </th>
+
+                                                        <th>
+                                                            Email/Username
+                                                        </th>
+                                                        <th>
+                                                            Created Date
+                                                        </th>
+                                                        @*<th>
+                                                                Site access
+                                                            </th>*@
+
+                                                        <th>
+                                                            Last login
+                                                        </th>
+                                                        <th>
+                                                            Status
+                                                        </th>
+
+                                                        <th>
+                                                            Role
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                @if (Model.UserViewlist != null)
+                                                {
+                                                    <tbody class="pointer" id="UserDetails">
+                                                        @foreach (var item in Model.UserViewlist)
+                                                        {
+                                                            <tr>
+                                                                <td style="display:none;" id="UserId">
+                                                                    @Html.DisplayFor(modelItem => item.UserId)
+                                                                </td>
+
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.UserName)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.CreationDate)
+                                                                </td>
+                                                                @*<td>
+                                                                        @Html.DisplayFor(modelItem => item.SiteAccess)
+                                                                    </td>*@
+
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Lastlogin)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Status)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DisplayFor(modelItem => item.Role)
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                }
+                                                <tfoot>
+                                                    <tr>
+                                                        <td>
+                                                            <ul class="pagination" id="div1">
+                                                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                                                {
+                                                                    if (i >= ViewBag.CurrentPage - ViewBag.PageRange && i <= ViewBag.CurrentPage + ViewBag.PageRange)
+                                                                    {
+                                                                        if (ViewBag.CurrentPage == i)
+                                                                        {
+                                                                            <li class="active"><a id="pageLink" href="#">@i</a></li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li><a id="pageLink" href="#" )">@i</a></li>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- /page content -->
@@ -185,3 +314,26 @@
 
 </body>
 </html>
+
+<script type="text/javascript">
+    //get localstoage value
+    var siteId = localStorage.getItem("SiteId");
+    var siteName = localStorage.getItem("SiteName");
+    document.getElementsByTagName('form')[0].innerHTML = siteName;
+
+    //paging click
+    $("#div1 a").click(function () {
+        $(location).attr('href', '/Admin/ManageUser?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val());
+    });
+
+    //filter any matched string
+    var $rows = $('#cpLocalAdminUserTable tr');
+    $('#myInput').keyup(function () {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+</script>

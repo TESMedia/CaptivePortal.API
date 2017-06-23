@@ -252,14 +252,20 @@
     <Compile Include="Migrations\201706231311338_Initial-Migration.Designer.cs">
       <DependentUpon>201706231311338_Initial-Migration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706220649061_added_adminSiteAccess_teble.cs" />
+    <Compile Include="Migrations\201706220649061_added_adminSiteAccess_teble.Designer.cs">
+      <DependentUpon>201706220649061_added_adminSiteAccess_teble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminSiteAccess.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\Age.cs" />
     <Compile Include="Models\ApiAccessUserSession.cs" />
     <Compile Include="Models\Browser.cs" />
     <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\CreateUserWithRoleViewModel.cs" />
     <Compile Include="Models\Devices.cs" />
     <Compile Include="Models\Form.cs" />
     <Compile Include="Models\FormControl.cs" />
@@ -277,6 +283,7 @@
     <Compile Include="Models\RadGroupCheck.cs" />
     <Compile Include="Models\RegisterViewModel.cs" />
     <Compile Include="Models\RequestViewModel.cs" />
+    <Compile Include="Models\ResetPasswordViewModel.cs" />
     <Compile Include="Models\ReturnModel.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Site.cs" />
@@ -4559,6 +4566,7 @@
     <Content Include="Views\Admin\LocationDashBoard.cshtml" />
     <Content Include="Views\Admin\ManageUser.cshtml" />
     <Content Include="Views\Admin\CreateUser.cshtml" />
+    <Content Include="Views\Admin\ResetPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4589,6 +4597,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706231311338_Initial-Migration.resx">
       <DependentUpon>201706231311338_Initial-Migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706220649061_added_adminSiteAccess_teble.resx">
+      <DependentUpon>201706220649061_added_adminSiteAccess_teble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

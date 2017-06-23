@@ -82,7 +82,7 @@
                                             <div class="form-group">
                                                 <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none" required>
+                                                    <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none" >
                                                     @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl"})
                                                 </div>
                                                 <div style="margin-top:-15px;">
@@ -295,16 +295,16 @@
         }
     }
 
-    function onload() {
-        if ($('#checkboxCompany').is(':checked')) {
-            $('#CompanyDdl').hide();
-            $('#company-name').show();
-        } else {
-            $('#CompanyDdl').show();
-            $('#company-name').hide();
-            $('#CompanyDdl').prop('required', true);
-        }
-    }
+    //function onload() {
+    //    if ($('#checkboxCompany').is(':checked')) {
+    //        $('#CompanyDdl').hide();
+    //        $('#company-name').show();
+    //    } else {
+    //        $('#CompanyDdl').show();
+    //        $('#company-name').hide();
+    //        $('#CompanyDdl').prop('required', true);
+    //    }
+    //}
 
     function showOrganistationTextBox() {
         if ($('#checkboxOrganisation').is(':checked')) {

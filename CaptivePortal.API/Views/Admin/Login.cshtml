@@ -47,25 +47,28 @@
     </div>
     <div role="main" class="main-content" style="margin-top:-40px;">
         <div class="auth-form p-3" id="login">
-           @*<form id="FormLogin">*@
-               @*@Html.AntiForgeryToken()*@
-               @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-               <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
-               <div class="auth-form-body mt-4">
-                   <label for="login_field">
-                       Username or email address
-                   </label>
-                   @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
-                   @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                   <div class="divPas" id="divPas">
-                       <label for="password" id="pwd">
-                           Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
-                       </label>
-                       @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
-                       @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
-                   </div>
-                   <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
-               </div>
+            @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+            {
+                @*<form id="FormLogin">*@
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
+                <div class="auth-form-body mt-4">
+                    <label for="login_field">
+                        Username or email address
+                    </label>
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
+                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                    <div class="divPas" id="divPas">
+                        <label for="password" id="pwd">
+                            Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
+                        </label>
+                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                    <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
+                </div>
+            }
         </div>
     </div>
     <div class="site-footer" role="contentinfo">
@@ -79,19 +82,19 @@
 </body>
 </html>
 <script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
-<script type="text/javascript">
-    jQuery(function ($) {
-        //OnClick testButton do a POST to a login.php with user and pasword
-        //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
-        $("#SignIn").click(function (e) {
-            alert("Hello")
-            $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
-            //$.post("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" }, function (result) {
-            //    alert("sdcs");
-            //});
+@*<script type="text/javascript">
+        jQuery(function ($) {
+            //OnClick testButton do a POST to a login.php with user and pasword
+            //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
+            $("#SignIn").click(function (e) {
+                alert("Hello")
+                $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
+                //$.post("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" }, function (result) {
+                //    alert("sdcs");
+                //});
+            });
         });
-    });
-</script>
+    </script>*@
 
 
 
