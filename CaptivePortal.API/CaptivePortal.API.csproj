@@ -252,6 +252,14 @@
     <Compile Include="Migrations\201706231830021_initial-migrations.Designer.cs">
       <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201706271058116_NewChanges_With_User_UserRole_Role.cs" />
+    <Compile Include="Migrations\201706271058116_NewChanges_With_User_UserRole_Role.Designer.cs">
+      <DependentUpon>201706271058116_NewChanges_With_User_UserRole_Role.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706271205209_rename_default_identirty_teble.cs" />
+    <Compile Include="Migrations\201706271205209_rename_default_identirty_teble.Designer.cs">
+      <DependentUpon>201706271205209_rename_default_identirty_teble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -281,10 +289,8 @@
     <Compile Include="Models\RequestViewModel.cs" />
     <Compile Include="Models\ResetPasswordViewModel.cs" />
     <Compile Include="Models\ReturnModel.cs" />
-    <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\SiteViewModel.cs" />
-    <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\Users.cs" />
     <Compile Include="Models\UsersAddress.cs" />
     <Compile Include="Models\UsersDeviceData.cs" />
@@ -4593,6 +4599,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706231830021_initial-migrations.resx">
       <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706271058116_NewChanges_With_User_UserRole_Role.resx">
+      <DependentUpon>201706271058116_NewChanges_With_User_UserRole_Role.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706271205209_rename_default_identirty_teble.resx">
+      <DependentUpon>201706271205209_rename_default_identirty_teble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -69,10 +69,10 @@ namespace CaptivePortal.API
             }
 
             // creating Creating LocalAdmin role    
-            if (!roleManager.RoleExists("LocalAdmin"))
+            if (!roleManager.RoleExists("CompanyAdmin"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "LocalAdmin";
+                role.Name = "CompanyAdmin";
                 roleManager.Create(role);
 
             }
@@ -86,10 +86,10 @@ namespace CaptivePortal.API
 
             }
             // creating Creating User role    
-            if (!roleManager.RoleExists("User"))
+            if (!roleManager.RoleExists("WifiUser"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "User";
+                role.Name = "WifiUser";
                 roleManager.Create(role);
 
             }

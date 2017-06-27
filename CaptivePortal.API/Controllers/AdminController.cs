@@ -22,6 +22,7 @@ using System.Net.Mime;
 using System.Net;
 using log4net;
 using System.Net.Mail;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -31,7 +32,7 @@ namespace CaptivePortal.API.Controllers
        // DbContext db = new DbContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
 
-        
+        private ApplicationUserManager _userManager;
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
@@ -122,12 +123,12 @@ namespace CaptivePortal.API.Controllers
                                      select new UserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                         UserId = userId,
+                                         UserId = item.Id,
                                          UserName = item.UserName,
                                          CreationDate = item.CreationDate,
                                          //Lastlogin=
                                          //Status = item.Status
-                                         Role = db.UserRole.FirstOrDefault(m => m.UserId == userId).Role.RoleName
+                                         Role = UserManager.GetRoles(item.Id).FirstOrDefault()
 
 
                                      }).ToList();
@@ -962,7 +963,7 @@ namespace CaptivePortal.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
+        public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
         {
             string userId = "";
             string[] restrictedSites = fc["RestrictedSites"].Split(',');
@@ -970,23 +971,25 @@ namespace CaptivePortal.API.Controllers
             try
             {
 
-                //save user in user table
-                Users objUser = new Users();
-                objUser.UserName = model.Email;
-                objUser.Email = model.Email;
-                objUser.SiteId = model.SiteDdl;
-                objUser.CreationDate = System.DateTime.Now;
-                objUser.UpdateDate = System.DateTime.Now;
-                db.Users.Add(objUser);
-                db.SaveChanges();
-                userId = objUser.Id;
-
-                //assign roleId to newly created user save in User
-                UserRole userRole = new UserRole();
-                userRole.RoleId = model.RoleId;
-                userRole.UserId = userId;
-                db.UserRole.Add(userRole);
-                db.SaveChanges();
+                var user = new Users
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    CreationDate = DateTime.Now,
+                    UpdateDate = DateTime.Now,
+                    SiteId = model.SiteDdl,
+                    Status = Status.Active.ToString()
+                };
+                var result = await UserManager.CreateAsync(user);
+                if (result.Succeeded)
+                {
+                    await this.UserManager.AddToRoleAsync(user.Id, model.RoleId);
+                    string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Admin", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //await UserManager.SendEmailAsync(user.Id, "Welcome to the Location Services Dashboard", "You are receiving this email as you have been set up as a user of the airloc8 Location Services Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.Please note that your password needs to be at least 6 characters long and include a Special Character, a Number, a Capital Letter and a lower case letter.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
+                    SendActivationEmail(user.Id, model.Email);
+                    TempData["Success"] = "An Email has sent to your Inbox.";
+                }
 
                 //store restricted site in AdminSiteAccess table.
                 foreach (string item in restrictedSites)
@@ -994,7 +997,7 @@ namespace CaptivePortal.API.Controllers
                     string value = item;
                     int SiteId = 1;
                     AdminSiteAccess objAdminSite = new AdminSiteAccess();
-                    objAdminSite.UserId = userId;
+                    objAdminSite.UserId = user.Id;
                     objAdminSite.SiteId = SiteId;
                     objAdminSite.SiteName = value;
                     objAdminSite.DefaultSiteName = defaultSiteName;
@@ -1002,30 +1005,42 @@ namespace CaptivePortal.API.Controllers
                     db.SaveChanges();
                 }
 
-                string message = string.Empty;
-                switch (userId)
-                {
-                 
-                    case "A":
-                        message = "Username already exists.\\nPlease choose a different username.";
-                        break;
-                    case "B":
-                        message = "Supplied email address has already been used.";
-                        break;
-                    default:
-                        message = "Registration successful. Activation email has been sent.";
-                        SendActivationEmail(userId, model.Email);
-                        break;
-                        //}
-                }
+                //string message = string.Empty;
+                //switch (userId)
+                //{
 
-                TempData["Success"] = "An account acvtivation link send to your inbox!";
+                //    case "A":
+                //        message = "Username already exists.\\nPlease choose a different username.";
+                //        break;
+                //    case "B":
+                //        message = "Supplied email address has already been used.";
+                //        break;
+                //    default:
+                //        message = "Registration successful. Activation email has been sent.";
+                //        SendActivationEmail(userId, model.Email);
+                //        break;
+                //        //}
+                //}
+
+                //TempData["Success"] = "An account acvtivation link send to your inbox!";
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return RedirectToAction("CreateUser", "Admin");
+            return RedirectToAction("CreateUser", "Admin",new { SiteId = model.SiteDdl });
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
         //send email to verify user
