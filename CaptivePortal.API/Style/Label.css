@@ -1,0 +1,7 @@
+﻿body {
+}
+label:after{
+ content:"*" ;
+color:red    
+}
+

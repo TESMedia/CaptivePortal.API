@@ -7,9 +7,48 @@ using CaptivePortal.API.Models;
 using CaptivePortal.API.Context;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
+using System.Net.Mail;
 
 namespace CaptivePortal.API
 {
+
+
+
+    public class EmailService : IIdentityMessageService
+    {
+        public Task SendAsync(IdentityMessage message)
+        {
+            // Plug in your email service here to send an email.
+            //string senderID = "dotnet.sahookashi@gmail.com";// use sender’s email id here..
+            //const string senderPassword = "chand121"; // sender password here…
+            //message.Destination = "praveshtiwariknp@gmail.com";
+            string senderID = "tls@tes.media";
+            SmtpClient smtp = new SmtpClient
+            {
+                Host = "smtp.avecsys.net", // smtp server address here…
+                Port = 25,
+                EnableSsl = false,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                Credentials = new System.Net.NetworkCredential("user@smtp.avecsys.net", "ema1ls3rv3r"),
+                Timeout = 30000,
+            };
+            MailMessage mailMessage = new MailMessage(senderID, message.Destination, message.Subject, message.Body);
+            mailMessage.IsBodyHtml = true;
+            smtp.Send(mailMessage);
+            return Task.FromResult(0);
+
+        }
+    }
+
+    public class SmsService : IIdentityMessageService
+    {
+        public Task SendAsync(IdentityMessage message)
+        {
+            // Plug in your SMS service here to send a text message.
+            return Task.FromResult(0);
+        }
+    }
+
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
 
     public class ApplicationUserManager : UserManager<Users>

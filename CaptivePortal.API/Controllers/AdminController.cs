@@ -105,7 +105,17 @@ namespace CaptivePortal.API.Controllers
         }
 
 
-
+        public JsonResult GetRestrictedSite(int siteId)
+        {
+            int compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+            var result = from item in db.Site.Where(m => m.CompanyId == compId).ToList()
+                         select new
+                         {
+                             value = item.SiteId,
+                             text = item.SiteName,
+                         };
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult ManageUser(int? siteId, int? page, string userName)
         {

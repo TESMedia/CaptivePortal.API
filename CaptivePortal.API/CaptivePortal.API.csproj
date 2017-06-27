@@ -372,6 +372,7 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Style\CheckBox.css" />
     <Content Include="Style\DropDown.css" />
+    <Content Include="Style\Label.css" />
     <Content Include="Vendors\animate.css\animate.css" />
     <Content Include="Vendors\animate.css\animate.min.css" />
     <Content Include="Vendors\animate.css\gulpfile.js" />
