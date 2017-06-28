@@ -8,6 +8,8 @@ using CaptivePortal.API.Context;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
 using System.Net.Mail;
+using System.Configuration;
+using System;
 
 namespace CaptivePortal.API
 {
@@ -18,10 +20,6 @@ namespace CaptivePortal.API
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
-            //string senderID = "dotnet.sahookashi@gmail.com";// use sender’s email id here..
-            //const string senderPassword = "chand121"; // sender password here…
-            //message.Destination = "praveshtiwariknp@gmail.com";
             string senderID = "tls@tes.media";
             SmtpClient smtp = new SmtpClient
             {
@@ -67,19 +65,40 @@ namespace CaptivePortal.API
                 AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
             };
+
             // Configure validation logic for passwords
             manager.PasswordValidator = new PasswordValidator
             {
-                RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true,
+                RequiredLength = 1,
+                RequireNonLetterOrDigit = false,
+                RequireDigit = false,
+                RequireLowercase = false,
+                RequireUppercase = false,
             };
+
+            // Configure user lockout defaults
+            //manager.UserLockoutEnabledByDefault = Convert.ToBoolean(ConfigurationManager.AppSettings["UserLockoutEnabledByDefault"].ToString());
+            //manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(Double.Parse(ConfigurationManager.AppSettings["DefaultAccountLockoutTimeSpan"].ToString()));
+           // manager.MaxFailedAccessAttemptsBeforeLockout = Convert.ToInt32(ConfigurationManager.AppSettings["MaxFailedAccessAttemptsBeforeLockout"].ToString());
+
+            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
+            // You can write your own provider and plug it in here.
+            //manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<ApplicationUser>
+            //{
+            //    MessageFormat = "Your security code is {0}"
+            //});
+            //manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<ApplicationUser>
+            //{
+            //    Subject = "Security Code",
+            //    BodyFormat = "Your security code is {0}"
+            //});
+            manager.EmailService = new EmailService();
+            manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
-                manager.UserTokenProvider = new DataProtectorTokenProvider<Users>(dataProtectionProvider.Create("ASP.NET Identity"));
+                manager.UserTokenProvider =
+                    new DataProtectorTokenProvider<Users>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
         }

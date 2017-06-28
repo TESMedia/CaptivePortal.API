@@ -23,6 +23,7 @@ using System.Net;
 using log4net;
 using System.Net.Mail;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -77,6 +78,20 @@ namespace CaptivePortal.API.Controllers
             return RedirectToAction("Home", "Admin", new { siteId = siteId });
         }
 
+        public ActionResult LogOff()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Login", "Admin");
+        }
+
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
+        }
+
         // GET: Global Admin
         public ActionResult Login()
         {
@@ -89,19 +104,50 @@ namespace CaptivePortal.API.Controllers
         }
 
 
-        public ActionResult ResetPassword()
+        public ActionResult ResetPassword(string userId, string code)
         {
-            return View();
+            ResetPasswordViewModel objResetPassword = new ResetPasswordViewModel();
+            try
+            {
+                using (var db = new Context.DbContext())
+                {
+                    if (userId != null)
+                    {
+                        objResetPassword.Email = db.Users.Where(m => m.Id == userId).FirstOrDefault().Email;
+                        var Code = code.Replace(" ", "+");
+                        objResetPassword.Code = Code;
+                    }
+                    return View(objResetPassword);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                return View(objResetPassword);
+            }
         }
 
         [HttpPost]
-        public ActionResult ResetPasswordForNewUser(ResetPasswordViewModel model)
+        public async System.Threading.Tasks.Task<ActionResult> ResetPasswordForNewUser(ResetPasswordViewModel model)
         {
-            Users user = db.Users.Where(m => m.Email == model.Email).FirstOrDefault();
-            user.PasswordHash = model.Password;
-            db.Entry(user).State = System.Data.Entity.EntityState.Modified;
-            db.SaveChanges();
-            return RedirectToAction("Login", "Admin");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                ModelState.AddModelError("", "Same EmailId is not exist ");
+                return View();
+            }
+            var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Login", "Admin");
+            }
+            return View();
         }
 
 
@@ -160,6 +206,8 @@ namespace CaptivePortal.API.Controllers
 
 
         }
+
+
 
         /// <summary>
         /// Populate company list in dropdown.
@@ -996,8 +1044,8 @@ namespace CaptivePortal.API.Controllers
                     await this.UserManager.AddToRoleAsync(user.Id, model.RoleId);
                     string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Admin", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    //await UserManager.SendEmailAsync(user.Id, "Welcome to the Location Services Dashboard", "You are receiving this email as you have been set up as a user of the airloc8 Location Services Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.Please note that your password needs to be at least 6 characters long and include a Special Character, a Number, a Capital Letter and a lower case letter.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
-                    SendActivationEmail(user.Id, model.Email);
+                    await UserManager.SendEmailAsync(user.Id, "Welcome to the Captive portal Dashboard", "You are receiving this email as you have been set up as a user of the captive portal Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
+                   // SendActivationEmail(user.Id, model.Email);
                     TempData["Success"] = "An Email has sent to your Inbox.";
                 }
 
