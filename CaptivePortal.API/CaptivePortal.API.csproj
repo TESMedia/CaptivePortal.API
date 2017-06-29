@@ -46,6 +46,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Facebook, Version=6.0.10.0, Culture=neutral, PublicKeyToken=58cb4f2111d1e6de, processorArchitecture=MSIL">
+      <HintPath>..\packages\Facebook.7.0.6\lib\net45\Facebook.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
@@ -240,6 +244,7 @@
     <Compile Include="Context\DbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ExternalLoginController.cs" />
     <Compile Include="Controllers\FormApiController.cs" />
     <Compile Include="Controllers\GetFormDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -271,6 +276,7 @@
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\CreateUserWithRoleViewModel.cs" />
     <Compile Include="Models\Devices.cs" />
+    <Compile Include="Models\FacebookChannelHandler.cs" />
     <Compile Include="Models\Form.cs" />
     <Compile Include="Models\FormControl.cs" />
     <Compile Include="Models\FormControlViewModel.cs" />
@@ -317,6 +323,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\login.css" />
+    <Content Include="Content\LoginPage.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -4570,12 +4577,14 @@
     <Content Include="Views\Admin\ManageUser.cshtml" />
     <Content Include="Views\Admin\CreateUser.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
+    <Content Include="Views\ExternalLogin\login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Logs\" />
     <Folder Include="Upload\" />
     <Folder Include="Vendors\google-code-prettify\bin\" />
+    <Folder Include="Views\ExternalProvider\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

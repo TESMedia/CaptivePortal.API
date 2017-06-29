@@ -24,16 +24,17 @@ using log4net;
 using System.Net.Mail;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Threading.Tasks;
 
 namespace CaptivePortal.API.Controllers
 {
     public class AdminController : Controller
     {
-       Context.DbContext db = new Context.DbContext();
-       // DbContext db = new DbContext();
+        Context.DbContext db = new Context.DbContext();
+        // DbContext db = new DbContext();
         string ConnectionString = ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
 
-        private ApplicationUserManager _userManager;
+
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
@@ -42,42 +43,134 @@ namespace CaptivePortal.API.Controllers
 
         private string retStr = "";
 
+
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        private bool _userHasPermission = false;
+        private ApplicationRoleManager _roleManager;
+
+        public AdminController()
+        {
+
+        }
+
+        public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
+
+
+
+
+
+
         /// <summary>
         /// login operation for global admin.
         /// </summary>
         /// <param name="admin"></param>
         /// <returns></returns>
+        //[HttpPost]
+        //[Route("GAlogin")]
+        //public ActionResult GALogin(AdminLoginViewModel admin)
+        //{
+        //    int siteId = 0;
+        //    try
+        //    {
+        //        if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
+        //        {
+        //            Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
+        //            siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == user.Id).SiteId);
+        //            retStr = "logged in successfully" + admin.UserName;
+        //            retStr = "logged in successfully" + admin.UserName;
+        //        }
+        //        if (debugStatus == DebugMode.on.ToString())
+        //        {
+        //            log.Info(retStr);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        retStr = "some problem occured";
+        //        if (debugStatus == DebugMode.off.ToString())
+        //        {
+        //            log.Error(retStr);
+        //        }
+        //        throw ex;
+        //    }
+        //    return RedirectToAction("Home", "Admin", new { siteId = siteId });
+        //}
+
+
+
+
         [HttpPost]
         [Route("GAlogin")]
-        public ActionResult GALogin(AdminLoginViewModel admin)
+        public async Task<ActionResult> GALogin(AdminLoginViewModel model, string returnUrl)
         {
-            int siteId = 0;
             try
             {
-                if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
+                Users existUser = db.Users.Where(u => u.Email == model.UserName).FirstOrDefault();
+                if (!ModelState.IsValid)
                 {
-                    Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-                    siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == user.Id).SiteId);
-                    retStr = "logged in successfully" + admin.UserName;
-                    retStr = "logged in successfully" + admin.UserName;
+                    return View(model);
                 }
-                if (debugStatus == DebugMode.on.ToString())
+
+
+                var result = await SignInManager.PasswordSignInAsync(model.UserName, model.PasswordHash, model.RememberMe, shouldLockout: false);
+
+                switch (result)
                 {
-                    log.Info(retStr);
+                    case SignInStatus.Success:
+                        return RedirectToAction("Home", "Admin");
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("", "Invalid login attempt.");
+                        return View(model);
                 }
             }
             catch (Exception ex)
             {
-                retStr = "some problem occured";
-                if (debugStatus == DebugMode.off.ToString())
-                {
-                    log.Error(retStr);
-                }
                 throw ex;
-            }
-            return RedirectToAction("Home", "Admin", new { siteId = siteId });
-        }
 
+            }
+        }
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
@@ -1089,17 +1182,7 @@ namespace CaptivePortal.API.Controllers
             return RedirectToAction("CreateUser", "Admin",new { SiteId = model.SiteDdl });
         }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+    
 
         //send email to verify user
         private void SendActivationEmail(string userId, string Email)

@@ -22,7 +22,8 @@ namespace CaptivePortal.API.Models
         [EmailAddress(ErrorMessage = "Invalid Email address")]
         public string UserName { get; set; }
         [Required]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
+        public bool RememberMe { get; set; }
 
         public string Email { get; set; }
         public DebugMode DebugStatus { get; set; }
