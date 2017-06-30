@@ -253,6 +253,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201705150821012_Initial_Migrations.cs" />
     <Compile Include="Migrations\201706231830021_initial-migrations.cs" />
     <Compile Include="Migrations\201706231830021_initial-migrations.Designer.cs">
       <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
@@ -264,6 +265,10 @@
     <Compile Include="Migrations\201706271205209_rename_default_identirty_teble.cs" />
     <Compile Include="Migrations\201706271205209_rename_default_identirty_teble.Designer.cs">
       <DependentUpon>201706271205209_rename_default_identirty_teble.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706281528210_Change_Identity_PhoneNumber_To_DefaulSite.cs" />
+    <Compile Include="Migrations\201706281528210_Change_Identity_PhoneNumber_To_DefaulSite.Designer.cs">
+      <DependentUpon>201706281528210_Change_Identity_PhoneNumber_To_DefaulSite.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4615,6 +4620,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201706271205209_rename_default_identirty_teble.resx">
       <DependentUpon>201706271205209_rename_default_identirty_teble.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706281528210_Change_Identity_PhoneNumber_To_DefaulSite.resx">
+      <DependentUpon>201706281528210_Change_Identity_PhoneNumber_To_DefaulSite.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -238,7 +238,15 @@ namespace CaptivePortal.API.Controllers
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("Login", "Admin");
+                string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
+                if(roleName== "BusinessUser" || roleName == "CompanyAdmin" && String.IsNullOrEmpty(user.Sites.DashboardUrl))
+                {
+                    return RedirectPermanent(user.Sites.DashboardUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Login", "Admin");
+                }
             }
             return View();
         }
@@ -1116,7 +1124,6 @@ namespace CaptivePortal.API.Controllers
         [HttpPost]
         public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
         {
-            string userId = "";
             string[] restrictedSites = fc["RestrictedSites"].Split(',');
             string defaultSiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
             try
@@ -1129,7 +1136,8 @@ namespace CaptivePortal.API.Controllers
                     CreationDate = DateTime.Now,
                     UpdateDate = DateTime.Now,
                     SiteId = model.SiteDdl,
-                    Status = Status.Active.ToString()
+                    Status = Status.Active.ToString(),
+                    PhoneNumber= defaultSiteName//Store the SiteName As default Site in Identity Column named PhoneNumber
                 };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)

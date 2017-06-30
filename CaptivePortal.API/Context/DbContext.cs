@@ -12,7 +12,7 @@ namespace CaptivePortal.API.Context
     {
         public DbContext() : base("name=DbContext")
         {
-             
+            Database.SetInitializer<DbContext>(null);
         }
         //public DbSet<Users> User { get; set; }
         public DbSet<UsersAddress> UsersAddress { get; set; }
@@ -51,7 +51,7 @@ namespace CaptivePortal.API.Context
             modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogins");
             modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaims").Property(p => p.Id).HasColumnName("UserClaimId");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles").Property(p => p.Id).HasColumnName("RoleId");
-
+            modelBuilder.Entity<Users>().ToTable("Users").Property(p => p.PhoneNumber).HasColumnName("DefaultSite");
         }
 
     }
