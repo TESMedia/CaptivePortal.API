@@ -1,5 +1,4 @@
-﻿
-<div class="col-md-3 left_col">
+﻿<div class="col-md-3 left_col">
     <div class="left_col scroll-view">
 
 
@@ -31,7 +30,8 @@
                         <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="#" onclick="configureSite()">Configure site</a></li>
-                            <li><a href="ManageUser">ManageUser</a></li>
+                            <li><a href="ManageUser">Manage User</a></li>
+
                         </ul>
                     </li>
                     <li>
@@ -55,6 +55,8 @@
                             <li><a href="#" onclick="ViewLocations()">Location Mapping</a></li>
                         </ul>
                     </li>
+
+                    <li><a onclick="logOut()"><span class="glyphicon glyphicon-off"></span>   Logout</a></li>
 
                 </ul>
             </div>
@@ -91,5 +93,10 @@
         window.location.href = "/Admin/Locations"
     }
 
- 
+    function logOut()
+    {
+        window.location.href = "/Admin/LogOff"
+    }
+
+
 </script>

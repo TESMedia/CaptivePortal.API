@@ -12,7 +12,7 @@ namespace CaptivePortal.API.Context
     {
         public DbContext() : base("name=DbContext")
         {
-             
+            Database.SetInitializer<DbContext>(null);
         }
         //public DbSet<Users> User { get; set; }
         public DbSet<UsersAddress> UsersAddress { get; set; }
@@ -22,12 +22,13 @@ namespace CaptivePortal.API.Context
         public DbSet<Site> Site { get; set; }
         public DbSet<RadGroupCheck> RadGroupCheck { get; set; }
         public DbSet<Radacct> Radacct { get; set; }
-        public DbSet<UserRole> UserRole { get; set; }
-        public DbSet<Role> Role { get; set; }
+        //public DbSet<UserRole> UserRole { get; set; }
+        //public DbSet<Role> Role { get; set; }
         public DbSet <Form> Form { get; set; }
         public DbSet <FormControl> FormControl { get; set; }
         public DbSet<Age> Age { get; set; }
         public DbSet<Gender> Gender { get; set; }
+        public DbSet<IdentityUserRole> UserRoles { get; set; }
 
         //public DbSet<UsersDeviceData> UsersDeviceDatas { get; set; }
         public DbSet<MacAddress> MacAddress { get; set; }
@@ -40,6 +41,19 @@ namespace CaptivePortal.API.Context
         public static DbContext Create()
         {
             return new DbContext();
+        }
+
+        //migration for changing defualt AspNetUser table to customize one.
+        protected override void OnModelCreating(System.Data.Entity.DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Users>().ToTable("Users").Property(p => p.Id).HasColumnName("UserId");
+            modelBuilder.Entity<Users>().ToTable("Users").Property(p => p.PhoneNumber).HasColumnName("DefaultSite");
+            modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles").Property(p => p.UserId).HasColumnName("UserId");
+            modelBuilder.Entity<IdentityUserRole>().ToTable("UserRoles");
+            modelBuilder.Entity<IdentityUserLogin>().ToTable("UserLogins");
+            modelBuilder.Entity<IdentityUserClaim>().ToTable("UserClaims").Property(p => p.Id).HasColumnName("UserClaimId");
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles").Property(p => p.Id).HasColumnName("RoleId");
         }
 
     }
