@@ -248,18 +248,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201705150821012_Initial_Migrations.cs" />
-    <Compile Include="Migrations\201706231830021_initial-migrations.cs" />
-    <Compile Include="Migrations\201706231830021_initial-migrations.Designer.cs">
-      <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.cs" />
-    <Compile Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.Designer.cs">
-      <DependentUpon>201707030744405_removed_Custom_UserRole_And_Role_Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.cs" />
-    <Compile Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.Designer.cs">
-      <DependentUpon>201707030746532_rename_default_Identity_Table_to_CustomNames.cs</DependentUpon>
+    <Compile Include="Migrations\201707041104051_added_initial_migration.cs" />
+    <Compile Include="Migrations\201707041104051_added_initial_migration.Designer.cs">
+      <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4602,14 +4593,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201706231830021_initial-migrations.resx">
-      <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.resx">
-      <DependentUpon>201707030744405_removed_Custom_UserRole_And_Role_Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.resx">
-      <DependentUpon>201707030746532_rename_default_Identity_Table_to_CustomNames.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201707041104051_added_initial_migration.resx">
+      <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

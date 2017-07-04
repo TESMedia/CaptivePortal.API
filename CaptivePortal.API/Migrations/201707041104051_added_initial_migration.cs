@@ -3,7 +3,7 @@ namespace CaptivePortal.API.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initialmigrations : DbMigration
+    public partial class added_initial_migration : DbMigration
     {
         public override void Up()
         {
@@ -18,14 +18,14 @@ namespace CaptivePortal.API.Migrations
                         DefaultSiteName = c.String(),
                     })
                 .PrimaryKey(t => t.AdminSiteAccessId)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
+                .ForeignKey("dbo.Users", t => t.UserId)
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.AspNetUsers",
+                "dbo.Users",
                 c => new
                     {
-                        Id = c.String(nullable: false, maxLength: 128),
+                        UserId = c.String(nullable: false, maxLength: 128),
                         FirstName = c.String(maxLength: 50),
                         LastName = c.String(maxLength: 50),
                         CreationDate = c.DateTime(nullable: false),
@@ -51,7 +51,7 @@ namespace CaptivePortal.API.Migrations
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
                         SecurityStamp = c.String(),
-                        PhoneNumber = c.String(),
+                        DefaultSite = c.String(),
                         PhoneNumberConfirmed = c.Boolean(nullable: false),
                         TwoFactorEnabled = c.Boolean(nullable: false),
                         LockoutEndDateUtc = c.DateTime(),
@@ -59,7 +59,7 @@ namespace CaptivePortal.API.Migrations
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
                     })
-                .PrimaryKey(t => t.Id)
+                .PrimaryKey(t => t.UserId)
                 .ForeignKey("dbo.Ages", t => t.AgeId)
                 .ForeignKey("dbo.Genders", t => t.GenderId)
                 .ForeignKey("dbo.Sites", t => t.SiteId)
@@ -78,16 +78,16 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.AgeId);
             
             CreateTable(
-                "dbo.AspNetUserClaims",
+                "dbo.UserClaims",
                 c => new
                     {
-                        Id = c.Int(nullable: false, identity: true),
+                        UserClaimId = c.Int(nullable: false, identity: true),
                         UserId = c.String(nullable: false, maxLength: 128),
                         ClaimType = c.String(),
                         ClaimValue = c.String(),
                     })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .PrimaryKey(t => t.UserClaimId)
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
@@ -100,7 +100,7 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.GenderId);
             
             CreateTable(
-                "dbo.AspNetUserLogins",
+                "dbo.UserLogins",
                 c => new
                     {
                         LoginProvider = c.String(nullable: false, maxLength: 128),
@@ -108,19 +108,19 @@ namespace CaptivePortal.API.Migrations
                         UserId = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.AspNetUserRoles",
+                "dbo.UserRoles",
                 c => new
                     {
                         UserId = c.String(nullable: false, maxLength: 128),
                         RoleId = c.String(nullable: false, maxLength: 128),
                     })
                 .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);
             
@@ -212,7 +212,7 @@ namespace CaptivePortal.API.Migrations
                         UserAgentName = c.String(),
                     })
                 .PrimaryKey(t => t.MacId)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
+                .ForeignKey("dbo.Users", t => t.UserId)
                 .Index(t => t.UserId);
             
             CreateTable(
@@ -278,34 +278,11 @@ namespace CaptivePortal.API.Migrations
                 "dbo.Roles",
                 c => new
                     {
-                        RoleId = c.Int(nullable: false, identity: true),
-                        RoleName = c.String(),
-                    })
-                .PrimaryKey(t => t.RoleId);
-            
-            CreateTable(
-                "dbo.AspNetRoles",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
+                        RoleId = c.String(nullable: false, maxLength: 128),
                         Name = c.String(nullable: false, maxLength: 256),
                     })
-                .PrimaryKey(t => t.Id)
+                .PrimaryKey(t => t.RoleId)
                 .Index(t => t.Name, unique: true, name: "RoleNameIndex");
-            
-            CreateTable(
-                "dbo.UserRoles",
-                c => new
-                    {
-                        UserRoleId = c.Int(nullable: false, identity: true),
-                        UserId = c.String(maxLength: 128),
-                        RoleId = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.UserRoleId)
-                .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
-                .Index(t => t.UserId)
-                .Index(t => t.RoleId);
             
             CreateTable(
                 "dbo.UsersAddresses",
@@ -323,7 +300,7 @@ namespace CaptivePortal.API.Migrations
                         UserId = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.AddressId)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
+                .ForeignKey("dbo.Users", t => t.UserId)
                 .Index(t => t.UserId);
             
             CreateTable(
@@ -335,53 +312,47 @@ namespace CaptivePortal.API.Migrations
                         SessionId = c.String(),
                     })
                 .PrimaryKey(t => t.UserSessionId)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId)
+                .ForeignKey("dbo.Users", t => t.UserId)
                 .Index(t => t.UserId);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.ApiAccessUserSessions", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.UsersAddresses", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.UserRoles", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.ApiAccessUserSessions", "UserId", "dbo.Users");
+            DropForeignKey("dbo.UsersAddresses", "UserId", "dbo.Users");
             DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
-            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.MacAddresses", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.MacAddresses", "UserId", "dbo.Users");
             DropForeignKey("dbo.FormControls", "FormId", "dbo.Forms");
             DropForeignKey("dbo.Forms", "SiteId", "dbo.Sites");
-            DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUsers", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Users", "SiteId", "dbo.Sites");
             DropForeignKey("dbo.Sites", "CompanyId", "dbo.Companies");
             DropForeignKey("dbo.Companies", "OrganisationId", "dbo.Organisations");
-            DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUsers", "GenderId", "dbo.Genders");
-            DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUsers", "AgeId", "dbo.Ages");
+            DropForeignKey("dbo.UserRoles", "UserId", "dbo.Users");
+            DropForeignKey("dbo.UserLogins", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Users", "GenderId", "dbo.Genders");
+            DropForeignKey("dbo.UserClaims", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Users", "AgeId", "dbo.Ages");
             DropIndex("dbo.ApiAccessUserSessions", new[] { "UserId" });
             DropIndex("dbo.UsersAddresses", new[] { "UserId" });
-            DropIndex("dbo.UserRoles", new[] { "RoleId" });
-            DropIndex("dbo.UserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.Roles", "RoleNameIndex");
             DropIndex("dbo.MacAddresses", new[] { "UserId" });
             DropIndex("dbo.FormControls", new[] { "FormId" });
             DropIndex("dbo.Forms", new[] { "SiteId" });
             DropIndex("dbo.Companies", new[] { "OrganisationId" });
             DropIndex("dbo.Sites", new[] { "CompanyId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
-            DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
-            DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.AspNetUsers", new[] { "SiteId" });
-            DropIndex("dbo.AspNetUsers", new[] { "AgeId" });
-            DropIndex("dbo.AspNetUsers", new[] { "GenderId" });
+            DropIndex("dbo.UserRoles", new[] { "RoleId" });
+            DropIndex("dbo.UserRoles", new[] { "UserId" });
+            DropIndex("dbo.UserLogins", new[] { "UserId" });
+            DropIndex("dbo.UserClaims", new[] { "UserId" });
+            DropIndex("dbo.Users", "UserNameIndex");
+            DropIndex("dbo.Users", new[] { "SiteId" });
+            DropIndex("dbo.Users", new[] { "AgeId" });
+            DropIndex("dbo.Users", new[] { "GenderId" });
             DropIndex("dbo.AdminSiteAccesses", new[] { "UserId" });
             DropTable("dbo.ApiAccessUserSessions");
             DropTable("dbo.UsersAddresses");
-            DropTable("dbo.UserRoles");
-            DropTable("dbo.AspNetRoles");
             DropTable("dbo.Roles");
             DropTable("dbo.RadGroupChecks");
             DropTable("dbo.Radaccts");
@@ -392,12 +363,12 @@ namespace CaptivePortal.API.Migrations
             DropTable("dbo.Organisations");
             DropTable("dbo.Companies");
             DropTable("dbo.Sites");
-            DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetUserLogins");
+            DropTable("dbo.UserRoles");
+            DropTable("dbo.UserLogins");
             DropTable("dbo.Genders");
-            DropTable("dbo.AspNetUserClaims");
+            DropTable("dbo.UserClaims");
             DropTable("dbo.Ages");
-            DropTable("dbo.AspNetUsers");
+            DropTable("dbo.Users");
             DropTable("dbo.AdminSiteAccesses");
         }
     }
