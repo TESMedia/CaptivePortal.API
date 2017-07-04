@@ -37,7 +37,7 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
     <link href="~/Style/CheckBox.css" rel="stylesheet" />
-    <link href="~/Style/RequiredField.css" rel="stylesheet" />
+
 </head>
 
 <body class="nav-md" onload="onload()">
@@ -74,13 +74,13 @@
                                         @using (Html.BeginForm("CreateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                         {
                                             <div class="form-group">
-                                                <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Site Name:</label>
+                                                <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12">Site Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()" required><label class="message" id="message" style="color:red"/>
+                                                    <input id="site-name" class="form-control col-md-7 col-xs-12" type="text" name="SiteName" onchange="doesSiteNameExist()"><label class="message" id="message" style="color:red"/>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Company Name:</label>
+                                                <label for="company-name" class="control-label col-md-3 col-sm-3 col-xs-12">Company Name:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     <input id="company-name" class="form-control col-md-7 col-xs-12" type="text" name="CompanyName" style="display:none" >
                                                     @Html.DropDownList("CompanyDdl", ViewBag.companies as IEnumerable<SelectListItem>, "--Select the Company--", new { @class = "form-control", @id = "CompanyDdl", @name = "CompanyDdl"})
@@ -292,7 +292,6 @@
         } else {
             $('#CompanyDdl').show();
             $('#company-name').hide();
-            $('#company-name').prop('required', true);
         }
     }
 

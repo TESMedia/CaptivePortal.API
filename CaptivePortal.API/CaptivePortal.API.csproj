@@ -248,18 +248,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201705150821012_Initial_Migrations.cs" />
     <Compile Include="Migrations\201706231830021_initial-migrations.cs" />
     <Compile Include="Migrations\201706231830021_initial-migrations.Designer.cs">
       <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.cs" />
-    <Compile Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.Designer.cs">
-      <DependentUpon>201707030744405_removed_Custom_UserRole_And_Role_Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.cs" />
-    <Compile Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.Designer.cs">
-      <DependentUpon>201707030746532_rename_default_Identity_Table_to_CustomNames.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -320,7 +311,6 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\login.css" />
-    <Content Include="Content\LoginPage.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -376,7 +366,6 @@
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Style\CheckBox.css" />
     <Content Include="Style\DropDown.css" />
-    <Content Include="Style\RequiredField.css" />
     <Content Include="Vendors\animate.css\animate.css" />
     <Content Include="Vendors\animate.css\animate.min.css" />
     <Content Include="Vendors\animate.css\gulpfile.js" />
@@ -4604,12 +4593,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201706231830021_initial-migrations.resx">
       <DependentUpon>201706231830021_initial-migrations.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707030744405_removed_Custom_UserRole_And_Role_Table.resx">
-      <DependentUpon>201707030744405_removed_Custom_UserRole_And_Role_Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707030746532_rename_default_Identity_Table_to_CustomNames.resx">
-      <DependentUpon>201707030746532_rename_default_Identity_Table_to_CustomNames.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -46,7 +46,7 @@ namespace CaptivePortal.API
                 //Here we create a Admin super user who will maintain the website                  
 
                 var user = new Users();
-                user.UserName = "admin@airloc8.com";
+                user.UserName = "Admin";
                 user.Email = "admin@airloc8.com";
                 user.CreationDate = DateTime.Now;
                 user.UpdateDate = DateTime.Now;
@@ -69,10 +69,10 @@ namespace CaptivePortal.API
             }
 
             // creating Creating LocalAdmin role    
-            if (!roleManager.RoleExists("CompanyAdmin"))
+            if (!roleManager.RoleExists("LocalAdmin"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "CompanyAdmin";
+                role.Name = "LocalAdmin";
                 roleManager.Create(role);
 
             }
@@ -86,10 +86,10 @@ namespace CaptivePortal.API
 
             }
             // creating Creating User role    
-            if (!roleManager.RoleExists("WiFiUser"))
+            if (!roleManager.RoleExists("User"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "WiFiUser";
+                role.Name = "User";
                 roleManager.Create(role);
 
             }

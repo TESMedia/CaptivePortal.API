@@ -41,7 +41,7 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
     <link href="~/Style/CheckBox.css" rel="stylesheet" />
-    <link href="~/Style/RequiredField.css" rel="stylesheet" />
+
 </head>
 
 <body class="nav-md" onload="onload()">
@@ -83,44 +83,45 @@
                                         {
                                             @*<form>*@
                                             <div class="form-group">
-                                                <label for="Email" class="control-label col-md-3 col-sm-3 col-xs-12  required-field">Email:</label>
+                                                <label for="Email" class="control-label col-md-3 col-sm-3 col-xs-12">Email:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="Email" class="form-control col-md-7 col-xs-12" type="text" name="Email" required>
+                                                    <input id="Email" class="form-control col-md-7 col-xs-12" type="text" name="Email">
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="Role" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Role:</label>
+                                                <label for="Role" class="control-label col-md-3 col-sm-3 col-xs-12">Role:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                                     @*<input id="Role" class="form-control col-md-7 col-xs-12" type="text" name="Role">*@
                                                     @*@Html.DropDownList("RoleDdl", ViewBag.Roles as IEnumerable<SelectListItem>, "--Select the Role--", new { @class = "form-control", @id = "RoleDdl", @name = "RoleDdl" })*@
-                                                    <select class="form-control" name="RoleId" id="RoleId" required>
-                                                        <option value="CompanyAdmin">CompanyAdmin</option>
-                                                        <option value="BusinessUser">BusinessUser</option>
+                                                    <select class="form-control" name="RoleId" id="RoleId">
+                                                        <option value="2">LocalAdmin</option>
+                                                        <option value="3">BusinessUser</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            @*<div class="form-group">
-                                                    <label for="DefaultSite" class="control-label col-md-3 col-sm-3 col-xs-12">Default Site:</label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @Selected = true, @required = "required" })
-                                                    </div>
-                                                </div>*@
+                                            <div class="form-group">
+                                                <label for="DefaultSite" class="control-label col-md-3 col-sm-3 col-xs-12">Default Site:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    @*<input id="DefaultSite" class="form-control col-md-7 col-xs-12" type="text" name="SiteName">*@
+                                                    @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()", @Selected = true })
+                                                </div>
+                                            </div>
 
                                             <div class="form-group">
-                                                <label for="RestrictedSite" class="control-label col-md-3 col-sm-3 col-xs-12">Default Site:</label>
+                                                <label for="RestrictedSite" class="control-label col-md-3 col-sm-3 col-xs-12">Restricted Site:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "dropdown", @name = "SiteDdl", @Selected = true })
-                                                    <div id='checkbox'>
-                                                        @foreach (var item in Model.SiteViewlist)
-                                                        {
-                                                            int index = Model.SiteViewlist.IndexOf(item);
-                                                            string checkBoxId = "Id_CheckBox_" + index;
-                                                            <div data-id="">
-                                                                <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" /> @item.SiteName</div>
-                                                            </div>
-                                                        }
-                                                    </div>
+                                                    @foreach (var item in Model.SiteViewlist)
+                                                    {
+                                                        @*<ul>
+                                                                <li>
+                                                                   @Html.DisplayFor(modelItem => item.SiteName,new { @name= "RestrictedSites" })
+                                                                    <input type="checkbox" value="@item.SiteName" style="width:30px;float: right;margin-right: 70%;" />
+                                                                </li>
+                                                            </ul>*@
+
+                                                        <input type="checkbox" value="@item.SiteName" name="RestrictedSites" id="FocusList" /> @item.SiteName
+                                                    }
                                                 </div>
                                             </div>
 
@@ -133,17 +134,13 @@
                                             @*</form>*@
                                         }
                                     </div>
-
                                 </div>
-
 
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
 
 
@@ -199,38 +196,12 @@
 </body>
 </html>
 <script type="text/javascript">
-    $(function () {
-        $("#SiteDdl").change(function () {
-            if ($(this).val() != "") {
-                $('#restrictedSiteDdl').val('');
-                var id = $(this).val();
-                $.getJSON("/Admin/GetRestrictedSite?siteId=" + id, function (data) {
-                    var items = [];
-                    $.each(data, function (key, value) {
-                        items.push("<option value=" + this.value + ">" + this.text + "</option>");
-                    });
-                    $("#restrictedSiteDdl").html(items.join(' '));
-                });
-            }
-        });
-
-        $('#checkbox').hide();
-        $("#dropdown").change(function () {
-            var index = $(this).val();
-            //        $("[data-id]").show();
-            $("[data-id=" + index + "]").hide();
-            $('#checkbox').show();
-
-            var checkBoxId = "Id_CheckBox_" + (index - 1);
-            $(".checkBoxSites").attr("disabled", false);
-            $(".checkBoxSites").prop('checked', false);
-            $("#" + checkBoxId).prop('checked', true);
-            $("#" + checkBoxId).attr("disabled", true);
-
-        });
-    });
 
 </script>
+
+
+
+
 
 
 
