@@ -30,7 +30,7 @@
                         <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="#" onclick="configureSite()">Configure site</a></li>
-                            <li><a href="ManageUser">Manage User</a></li>
+                            <li><a href="#" onclick="manageUser()">Manage User</a></li>
 
                         </ul>
                     </li>
@@ -76,6 +76,10 @@
     function configureSite() {
         var siteId = localStorage.getItem("SiteId");
         window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
+    }
+    function manageUser() {
+        var siteId = localStorage.getItem("SiteId");
+        window.location.href = "/Admin/ManageUser?SiteId=" + siteId
     }
 
     function viewUser()

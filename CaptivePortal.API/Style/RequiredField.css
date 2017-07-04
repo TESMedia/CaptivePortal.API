@@ -1,0 +1,7 @@
+﻿body {
+}
+
+label.required-field::after { 
+    content: "*";
+    color: red;
+}
