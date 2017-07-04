@@ -8,7 +8,7 @@ namespace CaptivePortal.API.Models
     public class CreateUserWithRoleViewModel
     {
         public string Email { get; set; }
-        public int RoleId { get; set; }
+        public string RoleId { get; set; }
         public int SiteDdl { get; set; }
 
         public CreateUserWithRoleViewModel()

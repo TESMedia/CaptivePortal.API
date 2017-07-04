@@ -11,90 +11,88 @@
 <!DOCTYPE html>
 <html lang="en" class="is-copy-enabled is-u2f-enabled">
 <head>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <meta charset='utf-8'>
-    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/frameworks-0dd18d999f1e3d1e515cf15c5628a70a3859d1af1c5daadeaa73ab4adfdeae9e.css" integrity="sha256-DdGNmZ8ePR5RXPFcViinCjhZ0a8cXareqnOrSt/erp4=" media="all" rel="stylesheet" />
-    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/github-57fffadd96a5e71107e7c0917ec24169796a7b21091c335c4aa4c728d5fd7e54.css" integrity="sha256-V//63Zal5xEH58CRfsJBaXlqeyEJHDNcSqTHKNX9flQ=" media="all" rel="stylesheet" />
-    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/site-70dfb928c731b17636b56e4f6f97ffe02f2e3e94d71f2230379ece855d2904dd.css" integrity="sha256-cN+5KMcxsXY2tW5Pb5f/4C8uPpTXHyIwN57OhV0pBN0=" media="all" rel="stylesheet" />
-    <link crossorigin="anonymous" href="https://assets-cdn.github.com/assets/system-fonts-d60dee4b68e3a38b01c0389551a0e38f04acd897ec85592f405d045ee853b3d1.css" integrity="sha256-1g3uS2jjo4sBwDiVUaDjjwSs2JfshVkvQF0EXuhTs9E=" media="all" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/LoginPage.css" rel="stylesheet" />
     <title>Login In To CaptivePortal</title>
 </head>
 
 
-<body class="logged-out   env-production windows  session-authentication page-responsive min-width-0" style="max-width: 100%;overflow-x: hidden;overflow-y:hidden">
-    <div class="header header-logged-out width-full" role="banner">
-        <div class="container clearfix width-full">
-            <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,icon:logo-wordmark">
-                <img src="~/Images/wifi-297697_1280.png" style="height:50px;width:50px;" id="imageLogo" />
-            </a>
-        </div>
-        <div class="auth-form-header">
-            @*<h1 id="titleID"></h1>*@
-            <h1>Login to Captive Portal</h1>
-        </div>
-        <div class="auth-form-header" style="left:40%;">
-            @if (@TempData["SuccessReset"] != null)
-            {
-                <div class="alert alert-success" style="width:20%;">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-                    @TempData["SuccessReset"]
-                </div>
-            }
-        </div>
+<body>
+    <div class="container-fluid">
+        <div class="card card-container">
 
-    </div>
-    <div role="main" class="main-content" style="margin-top:-40px;">
-        <div class="auth-form p-3" id="login">
-            @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+            <div class="header header-logged-out width-full" role="banner">
+                <center>
+                    <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,">
+                        <img src="~/Images/wifi-297697_1280.png" style="height:50px;width:50px;" id="imageLogo" />
+                    </a>
+
+                </center>
+
+                <div class="auth-form-header" style="left:40%;">
+                    @if (@TempData["SuccessReset"] != null)
             {
-                @*<form id="FormLogin">*@
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
-                <div class="auth-form-body mt-4">
-                    <label for="login_field">
-                        Username or email address
-                    </label>
-                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
-                    @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                    <div class="divPas" id="divPas">
-                        <label for="password" id="pwd">
-                            Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
-                        </label>
-                        @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "password", @type = "password", @tabindex = "2", required = "required" })
-                        @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
-                    </div>
-                    <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
+                        <div class="alert alert-success" style="width:20%;">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+                            @TempData["SuccessReset"]
+                        </div>
+                    }
                 </div>
-            }
+
+            </div>
+            <div role="main" class="main-content" style="margin-top:-40px;">
+                <br /><br />
+                <div class="row">
+                    <center><h2>Login to Captive Portal</h2></center>
+                </div>
+                <div class="auth-form p-3" id="login">
+                    @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
+                        <div class="auth-form-body mt-4">
+                            <label for="login_field">
+                                Username or email address
+                            </label>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            <div class="divPas" id="divPas">
+                                <label for="password" id="pwd">
+                                    Password <a href="#" class="label-link">Forgot password?</a>
+                                </label>
+                                @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "Password", @type = "password", @tabindex = "2", required = "required" })
+                                @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
+                            </div>
+                            <br />
+                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
+                        </div>
+                    }
+                </div>
+            </div>
         </div>
     </div>
-    <div class="site-footer" role="contentinfo">
-        <ul class="site-footer-links">
-            <li><a href="#" data-ga-click="Footer, go to terms, text:terms">Terms</a></li>
-            <li><a href="#" data-ga-click="Footer, go to privacy, text:privacy">Privacy</a></li>
-            <li><a href="#" data-ga-click="Footer, go to security, text:security">Security</a></li>
-            <li><a href="#" data-ga-click="Footer, go to contact, text:contact">Contact</a></li>
-        </ul>
-    </div>
+
 </body>
 </html>
-<script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
-@*<script type="text/javascript">
-        jQuery(function ($) {
-            //OnClick testButton do a POST to a login.php with user and pasword
-            //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
-            $("#SignIn").click(function (e) {
-                alert("Hello")
-                $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
-                //$.post("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" }, function (result) {
-                //    alert("sdcs");
-                //});
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@*<script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
+    <script type="text/javascript">
+            jQuery(function ($) {
+                //OnClick testButton do a POST to a login.php with user and pasword
+                //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
+                $("#SignIn").click(function (e) {
+                    $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
+                    ;
+                });
             });
-        });
-    </script>*@
-
-
-
+        </script>*@
