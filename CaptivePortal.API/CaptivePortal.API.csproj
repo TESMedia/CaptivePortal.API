@@ -252,6 +252,10 @@
     <Compile Include="Migrations\201707041104051_added_initial_migration.Designer.cs">
       <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs" />
+    <Compile Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.Designer.cs">
+      <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -4595,6 +4599,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707041104051_added_initial_migration.resx">
       <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.resx">
+      <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

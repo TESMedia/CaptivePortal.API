@@ -108,26 +108,31 @@
                                                 </div>*@
 
                                             <div class="form-group">
-                                                <label for="RestrictedSite" class="control-label col-md-3 col-sm-3 col-xs-12">Default Site:</label>
+                                                <label for="RestrictedSite" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Default Site:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "dropdown", @name = "SiteDdl", @Selected = true })
-                                                    <div id='checkbox'>
-                                                        @foreach (var item in Model.SiteViewlist)
-                                                        {
-                                                            int index = Model.SiteViewlist.IndexOf(item);
-                                                            string checkBoxId = "Id_CheckBox_" + index;
-                                                            <div data-id="">
-                                                                <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" /> @item.SiteName</div>
-                                                            </div>
-                                                        }
-                                                    </div>
+                                                    @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "dropdown", @name = "SiteDdl", @Selected = true, @required = "required" })
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="Site_Access" class="control-label col-md-3 col-sm-3 col-xs-12">Site Access:</label>
+                                                <div id='checkbox' class="col-md-6 col-sm-6 col-xs-12">
+                                                    @foreach (var item in Model.SiteViewlist)
+                                                    {
+                                                        int index = Model.SiteViewlist.IndexOf(item);
+                                                        string checkBoxId = "Id_CheckBox_" + index;
+                                                        <div data-id="">
+                                                            <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" value=@item.SiteName /> @item.SiteName</div>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
                                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                                                     <input type="submit" id="createUserWithRole" class="btn btn-success" value="Create" />
-                                                    <input type="button" id="Cancel" class="btn btn-danger" value="Cancel" />
+                                                    <input type="button" id="Cancel" class="btn btn-danger" value="Cancel" onclick="cancel()" />
                                                 </div>
                                             </div>
                                             @*</form>*@
@@ -214,12 +219,10 @@
             }
         });
 
-        $('#checkbox').hide();
         $("#dropdown").change(function () {
             var index = $(this).val();
             //        $("[data-id]").show();
             $("[data-id=" + index + "]").hide();
-            $('#checkbox').show();
 
             var checkBoxId = "Id_CheckBox_" + (index - 1);
             $(".checkBoxSites").attr("disabled", false);

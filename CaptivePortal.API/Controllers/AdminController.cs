@@ -1150,9 +1150,8 @@ namespace CaptivePortal.API.Controllers
         }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
+        public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc, string[] RestrictedSites)
         {
-           // string[] restrictedSites = fc["RestrictedSites"].Split(',');
             string defaultSiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
             try
             {
@@ -1174,42 +1173,26 @@ namespace CaptivePortal.API.Controllers
                     string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Admin", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Welcome to the Captive portal Dashboard", "You are receiving this email as you have been set up as a user of the captive portal Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
-                    // SendActivationEmail(user.Id, model.Email);
                     TempData["Success"] = "An Email has sent to your Inbox.";
+
+                    //sites which are selected by admin to give access to company admin ,store in AdminSiteAccessTable
+                    foreach (var item in RestrictedSites)
+                    {
+                        AdminSiteAccess objAdminSite = new AdminSiteAccess();
+                        objAdminSite.UserId = user.Id;
+                        objAdminSite.SiteId = model.SiteDdl;
+                        objAdminSite.SiteName = item;
+                        db.AdminSiteAccess.Add(objAdminSite);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    TempData["Success"] = "Username"+" "+model.Email+" "+"already taken." ;
                 }
 
-                //store restricted site in AdminSiteAccess table.
-                //foreach (string item in restrictedSites)
-                //{
-                //    string value = item;
-                //    int SiteId = 1;
-                //    AdminSiteAccess objAdminSite = new AdminSiteAccess();
-                //    objAdminSite.UserId = user.Id;
-                //    objAdminSite.SiteId = SiteId;
-                //    objAdminSite.SiteName = value;
-                //    objAdminSite.DefaultSiteName = defaultSiteName;
-                //    db.AdminSiteAccess.Add(objAdminSite);
-                //    db.SaveChanges();
-                //}
+                
 
-                //string message = string.Empty;
-                //switch (userId)
-                //{
-
-                //    case "A":
-                //        message = "Username already exists.\\nPlease choose a different username.";
-                //        break;
-                //    case "B":
-                //        message = "Supplied email address has already been used.";
-                //        break;
-                //    default:
-                //        message = "Registration successful. Activation email has been sent.";
-                //        SendActivationEmail(userId, model.Email);
-                //        break;
-                //        //}
-                //}
-
-                //TempData["Success"] = "An account acvtivation link send to your inbox!";
             }
             catch (Exception ex)
             {
@@ -1219,41 +1202,6 @@ namespace CaptivePortal.API.Controllers
         }
 
 
-
-        //send email to verify user
-        private void SendActivationEmail(string userId, string Email)
-        {
-            try
-            {
-                string senderID = "tls@tes.media";
-                IdentityMessage message = new IdentityMessage();
-                message.Subject = "Account activation";
-                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
-
-                string Body = "Hello ";
-                Body += "<br /><br />Please click the following link to activate your account";
-                Body += "<br /><a href = '" + baseUrl + "admin/ResetPassword" + "'>Click here to activate your account.</a>";
-                Body += "<br /><br />Thanks";
-                message.Body = Body;
-                message.Destination = Email;
-                using (MailMessage mm = new MailMessage(senderID, message.Destination, message.Subject, message.Body))
-                {
-                    mm.IsBodyHtml = true;
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "smtp.avecsys.net";
-                    smtp.EnableSsl = false;
-                    NetworkCredential NetworkCred = new NetworkCredential("user@smtp.avecsys.net", "ema1ls3rv3r");
-                    smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = NetworkCred;
-                    smtp.Port = 25;
-                    smtp.Send(mm);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
 
         public JsonResult GetCompany(int orgId)
         {
