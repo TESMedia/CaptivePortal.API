@@ -161,8 +161,9 @@ namespace CaptivePortal.API.Controllers
                         return RedirectToAction("Home", "Admin");
                     case SignInStatus.Failure:
                     default:
-                        ModelState.AddModelError("", "Invalid login attempt.");
-                        return View(model);
+                        // ModelState.AddModelError("", "Invalid login attempt.");
+                        TempData["SuccessReset"]="Invalid login attempt.";
+                        return RedirectToAction("Login", "Admin");
                 }
             }
             catch (Exception ex)
@@ -1282,9 +1283,9 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId, int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId, string userId,int? page, string userName, string foreName, string surName)
         {
-            var userId = User.Identity.GetUserId();
+            userId = User.Identity.GetUserId();
             UserlistViewModel list = new UserlistViewModel();
             list.UserViewlist = new List<UserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
@@ -1338,7 +1339,7 @@ namespace CaptivePortal.API.Controllers
                                      select new UserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                         //  UserId = item.UserId,
+                                         UserId = item.Id,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
@@ -1372,10 +1373,10 @@ namespace CaptivePortal.API.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult UserWithProfile(int SiteId)
+        public ActionResult UserWithProfile(int SiteId, string userId)
         {
-            var userid = User.Identity.GetUserId();
-            var userDetail = db.Users.FirstOrDefault(m => m.Id == userid);
+             userId = User.Identity.GetUserId();
+            var userDetail = db.Users.FirstOrDefault(m => m.Id == userId);
             var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
             var siteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
             var model = new MacAddressViewModel();
@@ -1392,7 +1393,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
                 objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
                 //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
-                var mac = db.MacAddress.Where(m => m.UserId == userid).ToList();
+                var mac = db.MacAddress.Where(m => m.UserId == userId).ToList();
                 //var lastEntry = db.MacAddress.LastOrDefault(m => m.UserId == UserId).MacAddressValue;
                 //objUserViewModel.MacAddress = lastEntry;
                 objUserViewModel.MacAddressList = mac;

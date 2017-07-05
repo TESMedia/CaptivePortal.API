@@ -71,7 +71,7 @@
                                 <div class="x_content">
                                     <br />
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
-                                        @using (Html.BeginForm("CreateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        @using (Html.BeginForm("CreateSiteAndLoginRegisterConf", "Admin", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateForm()" }))
                                         {
                                             <div class="form-group">
                                                 <label for="site-name" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Site Name:</label>
@@ -288,11 +288,30 @@
         if ($('#checkboxCompany').is(':checked')) {
             $('#CompanyDdl').hide();
             $('#company-name').show();
-            $('#company-name').prop('required', true);
+            $('#CompanyDdl').prop('required', false);
+            $('#company-name').prop('required', false);
         } else {
             $('#CompanyDdl').show();
             $('#company-name').hide();
-            $('#company-name').prop('required', true);
+            //$('#company-name').prop('required', true);
+        }
+    }
+
+    function validateForm() {
+        if ($('#checkboxCompany').is(':checked')) {
+            var isCompanyName = $("#company-name").val();
+            if (isCompanyName == "") {
+                $('#company-name').prop('required', true);
+            }
+            else {
+                $('#CompanyDdl').prop('required', false);
+            }
+        }
+        else {
+            var isCompanyDdl = $("#CompanyDdl").val();
+            if (isCompanyDdl == "") {
+                $('#CompanyDdl').prop('required', true);
+            }
         }
     }
 
@@ -419,7 +438,7 @@
     //    if ($("input[name='optionval']").length > 1) {
     //        $("input[name='optionval']:eq(" + (length - 1) + ")").remove();
     //    }
-    //});
+        //});
 </script>
 
 
