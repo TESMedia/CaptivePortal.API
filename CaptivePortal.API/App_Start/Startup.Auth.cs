@@ -74,7 +74,7 @@ namespace CaptivePortal.API
 
                 AppId = "275827382889134",
                 AppSecret = "25b0438224195ebd72cf2cd859f70bfc",
-                BackchannelHttpHandler = new FacebookChannelHandler(),
+                //BackchannelHttpHandler = new FacebookChannelHandler(),
                 UserInformationEndpoint = "https://graph.facebook.com/v2.9/me?fields=id,email",
                 Provider = new FacebookAuthenticationProvider()
                 {

@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class rename_default_identirty_teble : IMigrationMetadata
+    public sealed partial class removed_defaultSiteName_from_AdminSiteAcces_Table : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(rename_default_identirty_teble));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(removed_defaultSiteName_from_AdminSiteAcces_Table));
         
         string IMigrationMetadata.Id
         {
-            get { return "201706271205209_rename_default_identirty_teble"; }
+            get { return "201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table"; }
         }
         
         string IMigrationMetadata.Source

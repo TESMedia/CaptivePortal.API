@@ -1,5 +1,4 @@
-﻿
-<div class="col-md-3 left_col">
+﻿<div class="col-md-3 left_col">
     <div class="left_col scroll-view">
 
 
@@ -30,9 +29,9 @@
                     <li>
                         <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="#" onclick="configureSite()">Configure site</a></li>
-                            <li><a href="ManageUser">ManageUser</a></li>
-                            
+                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Configure site</a></li>
+                            <li><a href="ManageUser" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Manage User</a></li>
+                            <li><a href="CreatePromotionalMaterial" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Manage promotion</a></li>
                         </ul>
                     </li>
                     <li>
@@ -45,7 +44,7 @@
                     <li>
                         <a><i class="fa fa-users"></i> User Management <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="#" onclick="viewUser()">View Users</a></li>
+                            <li><a href="UserDetails" onclick="location.href = this.href + '?siteId=' + siteId; return false;">View Users</a></li>
                             <li><a href="Register">Register User</a></li>
                         </ul>
                     </li>
@@ -73,17 +72,21 @@
     </div>
 </div>
 <script>
-    // var X = localStorage.getItem("SiteId");
-    function configureSite() {
-        var siteId = localStorage.getItem("SiteId");
-        window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
-    }
+    var siteId = localStorage.getItem("SiteId");
+    //function configureSite() {
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
+    //}
+    //function manageUser() {
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/ManageUser?SiteId=" + siteId
+    //}
 
-    function viewUser()
-    {
-        var siteId = localStorage.getItem("SiteId");
-        window.location.href = "/Admin/UserDetails?SiteId=" + siteId
-    }
+    //function viewUser()
+    //{
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/UserDetails?SiteId=" + siteId
+    //}
 
     function uploadFile() {
         window.location.href = "/Admin/UploadFile"
@@ -99,5 +102,5 @@
         window.location.href = "/Admin/LogOff"
     }
 
- 
+
 </script>

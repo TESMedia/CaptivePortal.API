@@ -101,10 +101,10 @@ namespace CaptivePortal.API
 
             }
             // creating Creating User role    
-            if (!roleManager.RoleExists("WifiUser"))
+            if (!roleManager.RoleExists("WiFiUser"))
             {
                 var role = new Microsoft.AspNet.Identity.EntityFramework.IdentityRole();
-                role.Name = "WifiUser";
+                role.Name = "WiFiUser";
                 roleManager.Create(role);
 
             }

@@ -7,16 +7,19 @@ using System.Web;
 
 namespace CaptivePortal.API.Models
 {
-    public class AdminSiteAccess
+    public class UserRole
     {
         [Key]
-        public int AdminSiteAccessId { get; set; }
-        //foreign key
+        public int UserRoleId { get; set; }
+
+       //Foreign key
         public string UserId { get; set; }
-        public int SiteId { get; set; }
-        public string SiteName { get; set; }
+        public int RoleId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual Users User { get; set; }
+        public virtual Users Users { get; set; }
+
+        [ForeignKey("RoleId")]
+        public virtual Role Role { get; set; }
     }
 }

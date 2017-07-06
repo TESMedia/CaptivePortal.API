@@ -25,6 +25,7 @@ namespace CaptivePortal.API.Models
         public string PasswordHash { get; set; }
         public bool RememberMe { get; set; }
 
+
         public string Email { get; set; }
         public DebugMode DebugStatus { get; set; }
 
