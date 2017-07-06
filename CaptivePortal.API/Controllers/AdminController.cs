@@ -547,7 +547,7 @@ namespace CaptivePortal.API.Controllers
                     {
                         log.Info(retStr);
                     }
-                    return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Home", "Admin");
                 }
                 catch (Exception ex)
                 {
@@ -1339,15 +1339,15 @@ namespace CaptivePortal.API.Controllers
         [HttpPost]
         public ActionResult UserWithProfile(int SiteId)
         {
-            var userid = User.Identity.GetUserId();
-            var userDetail = db.Users.FirstOrDefault(m => m.Id == userid);
+            //var userid = User.Identity.GetUserId();
+            var userDetail = db.WifiUsers.FirstOrDefault(m => m.SiteId == SiteId);
             var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
             var siteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
             var model = new MacAddressViewModel();
             UserViewModel objUserViewModel = new UserViewModel();
             if (userDetail != null)
             {
-                objUserViewModel.Password = userDetail.PasswordHash;
+                objUserViewModel.Password = userDetail.Password;
                 objUserViewModel.UserName = userDetail.UserName;
                 objUserViewModel.Gender = db.Gender.FirstOrDefault(m => m.GenderId == userDetail.GenderId).Value;
                 objUserViewModel.AgeRange = db.Age.FirstOrDefault(m => m.AgeId == userDetail.AgeId).Value;
@@ -1357,7 +1357,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
                 objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
                 //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
-                var mac = db.MacAddress.Where(m => m.UserId ==userid).ToList();
+                var mac = db.MacAddress.Where(m => m.WifiUsers.SiteId == SiteId).ToList();
                 //var lastEntry = db.MacAddress.LastOrDefault(m => m.UserId == UserId).MacAddressValue;
                 //objUserViewModel.MacAddress = lastEntry;
                 objUserViewModel.MacAddressList = mac;
@@ -1400,7 +1400,7 @@ namespace CaptivePortal.API.Controllers
                     objUser.UserName = fc["UserName"];
                     objUser.GenderId = Convert.ToInt32(fc["GenderId"]);
                     objUser.AgeId = Convert.ToInt32(fc["AgeId"]);
-                    objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
+                   
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
                     objUser.Status = fc["Status"].ToString();
@@ -1451,7 +1451,7 @@ namespace CaptivePortal.API.Controllers
 
                 MacAddress mac = new MacAddress();
                 mac.MacAddressValue = fc["MacAddress"];
-                mac.UserId = User.Identity.GetUserId();
+                mac.UserId = userId;
                 db.MacAddress.Add(mac);
                 //db.Entry(objUser).State = EntityState.Modified;
                 db.SaveChanges();

@@ -14,7 +14,7 @@ namespace CaptivePortal.API.Context
         {
              
         }
-        //public DbSet<Users> User { get; set; }
+        public DbSet<WifiUser> WifiUsers { get; set; }
         public DbSet<UsersAddress> UsersAddress { get; set; }
         public DbSet<Company> Company { get; set; }
         public DbSet<Nas> Nas { get; set; }

@@ -67,7 +67,22 @@ namespace CaptivePortal.API
 
                 }
             }
+            List<Age> listAge = new List<Age>()
+                        {
+                             new Age { Value = "0-17" }, new Age { Value = "18-24" }, new Age { Value = "25-34" }, new Age { Value = "35-44" }, new Age { Value = "45-54" }, new Age { Value = "55-64" }, new Age { Value = "65++" }
+                        };
 
+            context.Age.AddRange(listAge);
+
+            List<Gender> listGender = new List<Gender>()
+                        {
+                            new Gender { Value="Male"},new Gender {Value="Female" },new Gender { Value="Not Answered"}
+                        };
+            context.Gender.AddRange(listGender);
+
+
+
+            context.SaveChanges();
             // creating Creating LocalAdmin role    
             if (!roleManager.RoleExists("CompanyAdmin"))
             {

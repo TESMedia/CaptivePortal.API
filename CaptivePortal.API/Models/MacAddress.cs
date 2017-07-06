@@ -16,10 +16,10 @@ namespace CaptivePortal.API.Models
         //[Index("Index_MacUnique", 1, IsUnique = true)]
         public string MacAddressValue { get; set; }
 
-        public string UserId { get; set; }
+        public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public Users User { get; set; }
+        public WifiUser WifiUsers { get; set; }
 
         public string BrowserName { get; set; }
 

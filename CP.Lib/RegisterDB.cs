@@ -43,8 +43,8 @@ namespace CP.Lib
             {
                 myCommand.CommandText = "insert into radcheck (username,attribute,op,value) VALUES('" + userName + "','user-password',':=','" + UserPassword + "')";
                 myCommand.ExecuteNonQuery();
-                myCommand.CommandText = "insert into userinfo (username, email,firstname,lastname) VALUES('" + userName + "','" + Email + "','" + firstname + "','" + lastname + "')";
-                myCommand.ExecuteNonQuery();
+                //myCommand.CommandText = "insert into userinfo (username, email,firstname,lastname) VALUES('" + userName + "','" + Email + "','" + firstname + "','" + lastname + "')";
+                //myCommand.ExecuteNonQuery();
                 myTrans.Commit();
                 log.Info("Users records are written to database.");
               
