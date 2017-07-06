@@ -382,6 +382,46 @@ namespace CaptivePortal.API.Controllers
         }
 
 
+        public ActionResult CreatePromotionalMaterial()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult StorePromotionalMaterial(ManagePromotion model)
+        {
+            string optionalPicturePath = null;
+            string OptionalPictureForSuccessPage = null;
+
+            //image path
+            if (Request.Files["OptionalPicture"].ContentLength > 0)
+            {
+                var httpPostedFile = Request.Files["OptionalPicture"];
+                string savedPath = HostingEnvironment.MapPath("/Images/" + model.SiteId);
+                optionalPicturePath = "/Images/" + model.SiteId + "/" + httpPostedFile.FileName;
+                string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                if (!System.IO.Directory.Exists(savedPath))
+                {
+                    Directory.CreateDirectory(savedPath);
+                }
+                httpPostedFile.SaveAs(completePath);
+                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                OptionalPictureForSuccessPage = baseUrl + optionalPicturePath;
+            }
+
+            ManagePromotion objManagePromotion = new ManagePromotion();
+            objManagePromotion.SiteId = model.SiteId;
+            objManagePromotion.SuccessPageOption = model.SuccessPageOption;
+            objManagePromotion.WebPageURL = model.WebPageURL;
+            objManagePromotion.OptionalPictureForSuccessPage = OptionalPictureForSuccessPage;
+            db.ManagePromotion.Add(objManagePromotion);
+            db.SaveChanges();
+
+            return RedirectToAction("Home","Admin");
+        }
+
+
         /// <summary>
         /// Create new site/org/comp/field.
         /// </summary>

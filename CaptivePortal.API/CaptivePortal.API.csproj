@@ -256,6 +256,10 @@
     <Compile Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.Designer.cs">
       <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707060616529_added_ManagePromotion_table.cs" />
+    <Compile Include="Migrations\201707060616529_added_ManagePromotion_table.Designer.cs">
+      <DependentUpon>201707060616529_added_ManagePromotion_table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -276,6 +280,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MacAddress.cs" />
+    <Compile Include="Models\ManagePromotion.cs" />
     <Compile Include="Models\Nas.cs" />
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Organisation.cs" />
@@ -4569,6 +4574,7 @@
     <Content Include="Views\Admin\ManageUser.cshtml" />
     <Content Include="Views\Admin\CreateUser.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
+    <Content Include="Views\Admin\CreatePromotionalMaterial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4602,6 +4608,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.resx">
       <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707060616529_added_ManagePromotion_table.resx">
+      <DependentUpon>201707060616529_added_ManagePromotion_table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

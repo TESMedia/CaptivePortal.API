@@ -86,5 +86,20 @@ namespace CaptivePortal.API.Controllers
             string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
             return Request.CreateResponse(HttpStatusCode.OK, new { TandD }, JsonMediaTypeFormatter.DefaultMediaType);
         }
+
+        [HttpPost]
+        [Route("ManagePromotion")]
+        public HttpResponseMessage GetPromotionalData(FormData formdata)
+        {
+            ReturnPromationalData PromotinalData = new ReturnPromationalData();
+            var formResult = db.ManagePromotion.Where(m => m.SiteId == formdata.SiteId).ToList();
+            var jsonFormData = formResult[0];
+
+            PromotinalData.SuccessPageOption = jsonFormData.SuccessPageOption;
+            PromotinalData.WebPageURL = jsonFormData.WebPageURL;
+            PromotinalData.OptionalPictureForSuccessPage = jsonFormData.OptionalPictureForSuccessPage;
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { PromotinalData }, JsonMediaTypeFormatter.DefaultMediaType);
+        }
     }
 }
