@@ -3,7 +3,7 @@ namespace CaptivePortal.API.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class added_initial_migration : DbMigration
+    public partial class Merge_All_Migrations : DbMigration
     {
         public override void Up()
         {
@@ -15,7 +15,6 @@ namespace CaptivePortal.API.Migrations
                         UserId = c.String(maxLength: 128),
                         SiteId = c.Int(nullable: false),
                         SiteName = c.String(),
-                        DefaultSiteName = c.String(),
                     })
                 .PrimaryKey(t => t.AdminSiteAccessId)
                 .ForeignKey("dbo.Users", t => t.UserId)
@@ -35,18 +34,10 @@ namespace CaptivePortal.API.Migrations
                         GenderId = c.Int(),
                         AgeId = c.Int(),
                         SiteId = c.Int(),
-                        AutoLogin = c.Boolean(),
                         promotional_email = c.Boolean(),
                         ThirdPartyOptIn = c.Boolean(),
                         UserOfDataOptIn = c.Boolean(),
                         Status = c.String(maxLength: 50),
-                        Custom1 = c.String(maxLength: 50),
-                        Custom2 = c.String(maxLength: 50),
-                        Custom3 = c.String(maxLength: 50),
-                        Custom4 = c.String(maxLength: 50),
-                        Custom5 = c.String(maxLength: 50),
-                        Custom6 = c.String(maxLength: 50),
-                        UniqueUserId = c.String(),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
@@ -205,15 +196,67 @@ namespace CaptivePortal.API.Migrations
                     {
                         MacId = c.Int(nullable: false, identity: true),
                         MacAddressValue = c.String(maxLength: 20),
-                        UserId = c.String(maxLength: 128),
+                        UserId = c.Int(nullable: false),
                         BrowserName = c.String(),
                         OperatingSystem = c.String(),
                         IsMobile = c.Boolean(nullable: false),
                         UserAgentName = c.String(),
                     })
                 .PrimaryKey(t => t.MacId)
-                .ForeignKey("dbo.Users", t => t.UserId)
+                .ForeignKey("dbo.WifiUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.WifiUsers",
+                c => new
+                    {
+                        UserId = c.Int(nullable: false, identity: true),
+                        FirstName = c.String(maxLength: 50),
+                        LastName = c.String(maxLength: 50),
+                        Email = c.String(maxLength: 50),
+                        UserName = c.String(maxLength: 50),
+                        Password = c.String(maxLength: 50),
+                        CreationDate = c.DateTime(nullable: false),
+                        UpdateDate = c.DateTime(nullable: false),
+                        BirthDate = c.DateTime(),
+                        MobileNumer = c.Int(),
+                        GenderId = c.Int(),
+                        AgeId = c.Int(),
+                        SiteId = c.Int(),
+                        AutoLogin = c.Boolean(),
+                        promotional_email = c.Boolean(),
+                        ThirdPartyOptIn = c.Boolean(),
+                        UserOfDataOptIn = c.Boolean(),
+                        Status = c.String(maxLength: 50),
+                        Custom1 = c.String(maxLength: 50),
+                        Custom2 = c.String(maxLength: 50),
+                        Custom3 = c.String(maxLength: 50),
+                        Custom4 = c.String(maxLength: 50),
+                        Custom5 = c.String(maxLength: 50),
+                        Custom6 = c.String(maxLength: 50),
+                        UniqueUserId = c.String(),
+                    })
+                .PrimaryKey(t => t.UserId)
+                .ForeignKey("dbo.Ages", t => t.AgeId)
+                .ForeignKey("dbo.Genders", t => t.GenderId)
+                .ForeignKey("dbo.Sites", t => t.SiteId)
+                .Index(t => t.GenderId)
+                .Index(t => t.AgeId)
+                .Index(t => t.SiteId);
+            
+            CreateTable(
+                "dbo.ManagePromotions",
+                c => new
+                    {
+                        ManagePromotionId = c.Int(nullable: false, identity: true),
+                        SiteId = c.Int(nullable: false),
+                        SuccessPageOption = c.String(),
+                        WebPageURL = c.String(),
+                        OptionalPictureForSuccessPage = c.String(),
+                    })
+                .PrimaryKey(t => t.ManagePromotionId)
+                .ForeignKey("dbo.Sites", t => t.SiteId, cascadeDelete: true)
+                .Index(t => t.SiteId);
             
             CreateTable(
                 "dbo.Nas",
@@ -297,10 +340,10 @@ namespace CaptivePortal.API.Migrations
                         Country = c.String(),
                         PostCode = c.String(),
                         Notes = c.String(),
-                        UserId = c.String(maxLength: 128),
+                        UserId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.AddressId)
-                .ForeignKey("dbo.Users", t => t.UserId)
+                .ForeignKey("dbo.WifiUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
@@ -320,9 +363,13 @@ namespace CaptivePortal.API.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.ApiAccessUserSessions", "UserId", "dbo.Users");
-            DropForeignKey("dbo.UsersAddresses", "UserId", "dbo.Users");
+            DropForeignKey("dbo.UsersAddresses", "UserId", "dbo.WifiUsers");
             DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
-            DropForeignKey("dbo.MacAddresses", "UserId", "dbo.Users");
+            DropForeignKey("dbo.ManagePromotions", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.MacAddresses", "UserId", "dbo.WifiUsers");
+            DropForeignKey("dbo.WifiUsers", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.WifiUsers", "GenderId", "dbo.Genders");
+            DropForeignKey("dbo.WifiUsers", "AgeId", "dbo.Ages");
             DropForeignKey("dbo.FormControls", "FormId", "dbo.Forms");
             DropForeignKey("dbo.Forms", "SiteId", "dbo.Sites");
             DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.Users");
@@ -337,6 +384,10 @@ namespace CaptivePortal.API.Migrations
             DropIndex("dbo.ApiAccessUserSessions", new[] { "UserId" });
             DropIndex("dbo.UsersAddresses", new[] { "UserId" });
             DropIndex("dbo.Roles", "RoleNameIndex");
+            DropIndex("dbo.ManagePromotions", new[] { "SiteId" });
+            DropIndex("dbo.WifiUsers", new[] { "SiteId" });
+            DropIndex("dbo.WifiUsers", new[] { "AgeId" });
+            DropIndex("dbo.WifiUsers", new[] { "GenderId" });
             DropIndex("dbo.MacAddresses", new[] { "UserId" });
             DropIndex("dbo.FormControls", new[] { "FormId" });
             DropIndex("dbo.Forms", new[] { "SiteId" });
@@ -357,6 +408,8 @@ namespace CaptivePortal.API.Migrations
             DropTable("dbo.RadGroupChecks");
             DropTable("dbo.Radaccts");
             DropTable("dbo.Nas");
+            DropTable("dbo.ManagePromotions");
+            DropTable("dbo.WifiUsers");
             DropTable("dbo.MacAddresses");
             DropTable("dbo.FormControls");
             DropTable("dbo.Forms");

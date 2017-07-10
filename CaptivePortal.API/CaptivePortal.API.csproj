@@ -248,29 +248,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201707041104051_added_initial_migration.cs" />
-    <Compile Include="Migrations\201707041104051_added_initial_migration.Designer.cs">
-      <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs" />
-    <Compile Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.Designer.cs">
-      <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707060616529_added_ManagePromotion_table.cs" />
-    <Compile Include="Migrations\201707060616529_added_ManagePromotion_table.Designer.cs">
-      <DependentUpon>201707060616529_added_ManagePromotion_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707030847402_Add-wifiUser_table.cs" />
-    <Compile Include="Migrations\201707030847402_Add-wifiUser_table.Designer.cs">
-      <DependentUpon>201707030847402_Add-wifiUser_table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707031011071_changeIn_identity-table.cs" />
-    <Compile Include="Migrations\201707031011071_changeIn_identity-table.Designer.cs">
-      <DependentUpon>201707031011071_changeIn_identity-table.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201707051112241_changeIn_user-table.cs" />
-    <Compile Include="Migrations\201707051112241_changeIn_user-table.Designer.cs">
-      <DependentUpon>201707051112241_changeIn_user-table.cs</DependentUpon>
+    <Compile Include="Migrations\201707100244182_Merge_All_Migrations.cs" />
+    <Compile Include="Migrations\201707100244182_Merge_All_Migrations.Designer.cs">
+      <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -4617,23 +4597,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201707041104051_added_initial_migration.resx">
-      <DependentUpon>201707041104051_added_initial_migration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.resx">
-      <DependentUpon>201707051318063_removed_defaultSiteName_from_AdminSiteAcces_Table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707060616529_added_ManagePromotion_table.resx">
-      <DependentUpon>201707060616529_added_ManagePromotion_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707030847402_Add-wifiUser_table.resx">
-      <DependentUpon>201707030847402_Add-wifiUser_table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707031011071_changeIn_identity-table.resx">
-      <DependentUpon>201707031011071_changeIn_identity-table.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707051112241_changeIn_user-table.resx">
-      <DependentUpon>201707051112241_changeIn_user-table.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201707100244182_Merge_All_Migrations.resx">
+      <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
