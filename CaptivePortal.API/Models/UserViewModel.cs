@@ -36,6 +36,38 @@ namespace CaptivePortal.API.Models
 
 
     }
+
+
+    public class WifiUserViewModel
+    {
+        public WifiUserViewModel()
+        {
+            MacAddressList = new List<MacAddress>();
+        }
+        public int UserId { get; set; }
+        public int SiteId { get; set; }
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string Lastlogin { get; set; }
+        public string SiteAccess { get; set; }
+        public string Role { get; set; }
+        public string MacAddress { get; set; }
+        public string MobileNumber { get; set; }
+        public string Gender { get; set; }
+        public bool AutoLogin { get; set; }
+        public string AgeRange { get; set; }
+        public bool PromotionEmailOptIn { get; set; }
+        public bool ThirdPartyOptIn { get; set; }
+        public bool UserOfDataOptIn { get; set; }
+        public string Term_conditions { get; set; }
+        public string Password { get; set; }
+        public Status Status { get; set; }
+        public List<MacAddress> MacAddressList { get; set; }
+
+
+    }
     public class MacAddressViewModel
     {
         public UserViewModel UserViewModel { get; set; }
@@ -77,6 +109,19 @@ namespace CaptivePortal.API.Models
         public string Custom5 { get; set; }
         public string Custom6 { get; set; }
 
+    }
+
+
+    public class WifiUserlistViewModel
+    {
+        public WifiUserlistViewModel()
+        {
+            WifiUserViewlist = new List<WifiUserViewModel>();
+            WifiUserLabelModalViewList = new SelectList(new List<UserLabelModalViewModel>());
+        }
+        public List<WifiUserViewModel> WifiUserViewlist { get; set; }
+        public WifiUserViewModel WifiUserView { get; set; }
+        public SelectList WifiUserLabelModalViewList { get; set; }
     }
 
 

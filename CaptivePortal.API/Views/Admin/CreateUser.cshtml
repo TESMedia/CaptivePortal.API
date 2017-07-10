@@ -120,10 +120,10 @@
                                                 <div id='checkbox' class="col-md-6 col-sm-6 col-xs-12">
                                                     @foreach (var item in Model.SiteViewlist)
                                                     {
-                                                        int index = Model.SiteViewlist.IndexOf(item);
-                                                        string checkBoxId = "Id_CheckBox_" + index;
+                                                        //int index = Model.SiteViewlist.IndexOf(item);
+                                                        string checkBoxId = "Id_CheckBox_" + @item.SiteId;
                                                         <div data-id="">
-                                                            <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" value=@item.SiteName /> @item.SiteName</div>
+                                                            <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" value=@item.SiteId /> @item.SiteName</div>
                                                         </div>
                                                     }
                                                 </div>
@@ -224,7 +224,7 @@
             //        $("[data-id]").show();
             $("[data-id=" + index + "]").hide();
 
-            var checkBoxId = "Id_CheckBox_" + (index - 1);
+            var checkBoxId = "Id_CheckBox_" + (index);
             $(".checkBoxSites").attr("disabled", false);
             $(".checkBoxSites").prop('checked', false);
             $("#" + checkBoxId).prop('checked', true);

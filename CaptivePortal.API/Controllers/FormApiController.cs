@@ -24,17 +24,23 @@ namespace CaptivePortal.API.Controllers
         [Route("LoginFormData")]
         public HttpResponseMessage LoginFormData(FormData formdata)
         {
-            var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
-            var jsonFormData = formResult[0];
             ReturnLoginFormData objLoginFormData = new ReturnLoginFormData();
-            objLoginFormData.SiteId = formdata.SiteId;
-            objLoginFormData.BannerIcon = jsonFormData.BannerIcon;
-            objLoginFormData.BackGroundColor = jsonFormData.BackGroundColor;
-            objLoginFormData.IsPasswordRequire = jsonFormData.IsPasswordRequire;
-            objLoginFormData.LoginWindowColor = jsonFormData.LoginWindowColor;
-            objLoginFormData.LoginPageTitle = jsonFormData.LoginPageTitle;
-            //json = JsonConvert.SerializeObject(objLoginFormData);
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+            try
+            {
+                var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
+                var jsonFormData = formResult[0];
+                objLoginFormData.SiteId = formdata.SiteId;
+                objLoginFormData.BannerIcon = jsonFormData.BannerIcon;
+                objLoginFormData.BackGroundColor = jsonFormData.BackGroundColor;
+                objLoginFormData.IsPasswordRequire = jsonFormData.IsPasswordRequire;
+                objLoginFormData.LoginWindowColor = jsonFormData.LoginWindowColor;
+                objLoginFormData.LoginPageTitle = jsonFormData.LoginPageTitle;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return new HttpResponseMessage()
             {
                 Content = new StringContent(objSerialization.Serialize(objLoginFormData), Encoding.UTF8, "application/json")
@@ -79,11 +85,18 @@ namespace CaptivePortal.API.Controllers
         [Route("TermAndConditionContent")]
         public HttpResponseMessage GetTermAndConditionContent(FormData formdata)
         {
-            var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
-            var jsonFormData = formResult[0];
-            var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
-
-            string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
+            string TandD = null;
+            try
+            {
+                var formResult = db.Form.Where(m => m.SiteId == formdata.SiteId).ToList();
+                var jsonFormData = formResult[0];
+                var formControlResult = db.FormControl.Where(m => m.FormId == jsonFormData.FormId).ToList();
+                TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
             return Request.CreateResponse(HttpStatusCode.OK, new { TandD }, JsonMediaTypeFormatter.DefaultMediaType);
         }
 
@@ -92,14 +105,22 @@ namespace CaptivePortal.API.Controllers
         public HttpResponseMessage GetPromotionalData(FormData formdata)
         {
             ReturnPromationalData PromotinalData = new ReturnPromationalData();
-            var formResult = db.ManagePromotion.Where(m => m.SiteId == formdata.SiteId).ToList();
-            var jsonFormData = formResult[0];
+            if (formdata.SiteId != 0)
+            {
+                var formResult = db.ManagePromotion.Where(m => m.SiteId == formdata.SiteId).ToList();
+                var jsonFormData = formResult[0];
 
-            PromotinalData.SuccessPageOption = jsonFormData.SuccessPageOption;
-            PromotinalData.WebPageURL = jsonFormData.WebPageURL;
-            PromotinalData.OptionalPictureForSuccessPage = jsonFormData.OptionalPictureForSuccessPage;
+                PromotinalData.SuccessPageOption = jsonFormData.SuccessPageOption;
+                PromotinalData.WebPageURL = jsonFormData.WebPageURL;
+                PromotinalData.OptionalPictureForSuccessPage = jsonFormData.OptionalPictureForSuccessPage;
+                return Request.CreateResponse(HttpStatusCode.OK, new { PromotinalData }, JsonMediaTypeFormatter.DefaultMediaType);
+            }
+            else
+            {
+                string err = "SiteId required.";
+                return Request.CreateResponse(HttpStatusCode.OK, err);
+            }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { PromotinalData }, JsonMediaTypeFormatter.DefaultMediaType);
         }
     }
 }
