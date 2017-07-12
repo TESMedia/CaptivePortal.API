@@ -9,7 +9,7 @@ namespace CaptivePortal.API.Models
     public class Organisation
     {
         [Key]
-        public int OrganisationId { get; set; }
+        public int ? OrganisationId { get; set; }
         public string OrganisationName { get; set; }
     }
 }

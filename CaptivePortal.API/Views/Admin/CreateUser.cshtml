@@ -73,6 +73,7 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_content">
+                                    <form></form>
                                     <br />
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
                                         @if (TempData["Success"] != null)
@@ -204,6 +205,12 @@
 </body>
 </html>
 <script type="text/javascript">
+
+
+    var siteId = localStorage.getItem("SiteId");
+    var siteName = localStorage.getItem("SiteName");
+    document.getElementsByTagName('form')[0].innerHTML = siteName;
+
     $(function () {
         $("#SiteDdl").change(function () {
             if ($(this).val() != "") {

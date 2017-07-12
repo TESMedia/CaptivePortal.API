@@ -74,6 +74,11 @@
                                     <form></form>
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
 
+                                        @if (TempData["Success"] != null)
+                                        {
+                                            <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+                                        }
+
                                         @using (Html.BeginForm("StorePromotionalMaterial", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                         {
                                             @*<form>

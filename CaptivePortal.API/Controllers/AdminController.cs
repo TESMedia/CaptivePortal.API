@@ -158,11 +158,12 @@ namespace CaptivePortal.API.Controllers
                 switch (result)
                 {
                     case SignInStatus.Success:
-                        return RedirectToAction("Home", "Admin", new { SiteId = existUser.SiteId });
+                        //return RedirectToAction("Home", "Admin", new { SiteId = existUser.SiteId, UserName = existUser.UserName });
+                        return Json("success", JsonRequestBehavior.AllowGet);
                     case SignInStatus.Failure:
                     default:
                         // ModelState.AddModelError("", "Invalid login attempt.");
-                        TempData["SuccessReset"]="Invalid login attempt.";
+                        TempData["SuccessReset"] = "Invalid login attempt.";
                         return RedirectToAction("Login", "Admin");
                 }
             }
@@ -240,7 +241,7 @@ namespace CaptivePortal.API.Controllers
             if (result.Succeeded)
             {
                 string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
-                if (roleName == "BusinessUser" || roleName == "CompanyAdmin" && String.IsNullOrEmpty(user.Sites.DashboardUrl))
+                if (roleName == "BusinessUser" && !(String.IsNullOrEmpty(user.Sites.DashboardUrl)))
                 {
                     return RedirectPermanent(user.Sites.DashboardUrl);
                 }
@@ -270,12 +271,12 @@ namespace CaptivePortal.API.Controllers
             UserlistViewModel list = new UserlistViewModel();
             try
             {
-                if (siteId!=null)
+                if (siteId != null)
                 {
                     var userId = User.Identity.GetUserId();
                     list.UserViewlist = new List<UserViewModel>();
                     int currentPageIndex = page.HasValue ? page.Value : 1;
-                    int PageSize = 5;
+                    int PageSize = 20;
                     double TotalPages = 0;
                     var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
                     userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
@@ -287,7 +288,7 @@ namespace CaptivePortal.API.Controllers
                                                  UserId = item.Id,
                                                  UserName = item.UserName,
                                                  CreationDate = item.CreationDate,
-                                                 //Lastlogin=
+                                                 Lastlogin=item.UpdateDate,
                                                  //Status = item.Status
                                                  Role = UserManager.GetRoles(item.Id).FirstOrDefault()
 
@@ -315,7 +316,7 @@ namespace CaptivePortal.API.Controllers
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -400,7 +401,7 @@ namespace CaptivePortal.API.Controllers
         {
             string optionalPicturePath = null;
             string OptionalPictureForSuccessPage = null;
-
+            
             //image path
             if (Request.Files["OptionalPicture"].ContentLength > 0)
             {
@@ -426,7 +427,7 @@ namespace CaptivePortal.API.Controllers
             db.ManagePromotion.Add(objManagePromotion);
             db.SaveChanges();
 
-            return RedirectToAction("Home","Admin");
+            return RedirectToAction("Home", "Admin");
         }
 
 
@@ -463,7 +464,7 @@ namespace CaptivePortal.API.Controllers
                         };
                         db.Organisation.Add(objOrganisation);
                         db.SaveChanges();
-                        orgId = objOrganisation.OrganisationId;
+                        orgId = Convert.ToInt32(objOrganisation.OrganisationId);
                     }
                     //company
                     if (inputData.CompanyName != null)
@@ -471,7 +472,7 @@ namespace CaptivePortal.API.Controllers
                         Company objCompany = new Company
                         {
                             CompanyName = inputData.CompanyName,
-                            OrganisationId =orgId == 0 ? null : (int?)Convert.ToInt32(orgId)
+                            OrganisationId = orgId == 0 ? null : (int?)Convert.ToInt32(orgId)
                         };
                         db.Company.Add(objCompany);
                         db.SaveChanges();
@@ -658,12 +659,12 @@ namespace CaptivePortal.API.Controllers
         /// </summary>
         /// <param name="SiteId"></param>
         /// <returns></returns>
-        public ActionResult ConfigureSite(int ? SiteId)
+        public ActionResult ConfigureSite(int? SiteId)
         {
             FormViewModel objViewModel = new FormViewModel();
             try
             {
-                if (SiteId!=null)
+                if (SiteId != null)
                 {
                     retStr = "populated selected site details to configure";
                     ViewBag.companies = from item in db.Company.ToList()
@@ -1087,37 +1088,64 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-        [Authorize(Roles = "GlobalAdmin,CompanyAdmin")]
-        public ActionResult Home(int? SiteId)
+        //[Authorize(Roles = "GlobalAdmin,CompanyAdmin")]
+        public ActionResult Home()
         {
             AdminlistViewModel list = new AdminlistViewModel();
+            list.AdminViewlist = new List<AdminViewModel>();
+
+            string userId = User.Identity.GetUserId();
+            string role = UserManager.GetRoles(userId).FirstOrDefault();
+            ViewBag.roleOfUser = role;
+            int siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == userId).SiteId);
+
+            retStr = "entered in home to view overall estate";
+            int compId = 0;
+            //int orgId = Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId) == 0 ? 0 : Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId);
             try
             {
-                if (SiteId != 0 && SiteId != null)
+                if (siteId != 0 && siteId != null)
                 {
-                    int siteId = Convert.ToInt32(SiteId);
-                    retStr = "entered in home to view overall estate";
-                    list.AdminViewlist = new List<AdminViewModel>();
-                    int compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
-
-                    var result = db.Site.Where(m => m.CompanyId == compId).ToList();
-
-                    var siteDetails = (from item in result
-                                       select new AdminViewModel()
-                                       {
-                                           OrganisationName = item.Company.Organisation == null ? null : item.Company.Organisation.OrganisationName,
-
-                                           CompanyName = item.Company.CompanyName,
-                                           SiteName = item.SiteName,
-                                           DashboardUrl = item.DashboardUrl,
-                                           RtlsUrl = item.RtlsUrl,
-                                           SiteId = item.SiteId
-                                       }
-                                     ).ToList();
-                    list.AdminViewlist.AddRange(siteDetails);
-                    if (debugStatus == DebugMode.on.ToString())
+                    if (role == "CompanyAdmin")
                     {
-                        log.Info(retStr);
+                        compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+
+                        var accessSite = db.AdminSiteAccess.Where(m => m.UserId == userId).ToList();
+                        var accessSiteDetails = (from site in accessSite
+                                                 select new AdminViewModel()
+                                                 {
+                                                     // OrganisationName = db.Organisation.FirstOrDefault(m=>m.OrganisationId==orgId).OrganisationName,
+                                                     CompanyName =db.Company.FirstOrDefault(m=>m.CompanyId==compId).CompanyName,
+                                                     SiteName = site.SiteName,
+                                                     DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).DashboardUrl,
+                                                     RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).RtlsUrl,
+                                                     DefaultSite = db.Users.FirstOrDefault(m => m.Id == userId).PhoneNumber,//default site to access
+                                                     SiteId = site.SiteId
+                                                 }).ToList();
+                        list.AdminViewlist.AddRange(accessSiteDetails);
+                    }
+                    else
+                    {
+
+                        compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+                        var result = db.Site.Where(m => m.CompanyId == compId).ToList();
+                        var siteDetails = (from item in result
+                                           select new AdminViewModel()
+                                           {
+                                               OrganisationName = item.Company.Organisation == null ? null : item.Company.Organisation.OrganisationName,
+
+                                               CompanyName = item.Company.CompanyName,
+                                               SiteName = item.SiteName,
+                                               DashboardUrl = item.DashboardUrl,
+                                               RtlsUrl = item.RtlsUrl,
+                                               SiteId = item.SiteId
+                                           }
+                                         ).ToList();
+                        list.AdminViewlist.AddRange(siteDetails);
+                        if (debugStatus == DebugMode.on.ToString())
+                        {
+                            log.Info(retStr);
+                        }
                     }
                 }
                 else
@@ -1151,14 +1179,30 @@ namespace CaptivePortal.API.Controllers
             return View(list);
         }
 
-        public ActionResult UploadFile()
+        public ActionResult UploadFile(int ? siteId)
         {
-            return View();
+            if(siteId!=0 && siteId!=null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["SiteIdCheck"] = "Please select any of the site and then upload";
+                return RedirectToAction("Home", "Admin");
+            }
         }
 
-        public ActionResult Locations()
+        public ActionResult Locations(int? siteId)
         {
-            return View();
+            if (siteId != 0 && siteId != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["SiteIdCheck"] = "Please select any of the site and then got location mapping";
+                return RedirectToAction("Home", "Admin");
+            }
         }
 
         public ActionResult Locationdashboard()
@@ -1225,23 +1269,32 @@ namespace CaptivePortal.API.Controllers
                     await UserManager.SendEmailAsync(user.Id, "Welcome to the Captive portal Dashboard", "You are receiving this email as you have been set up as a user of the captive portal Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
                     TempData["Success"] = "An Email has sent to your Inbox.";
 
+                    AdminSiteAccess objAdminSite1 = new AdminSiteAccess();
+                    objAdminSite1.UserId = user.Id;
+                    objAdminSite1.SiteId = model.SiteDdl;
+                    objAdminSite1.SiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
+                    db.AdminSiteAccess.Add(objAdminSite1);
+                    db.SaveChanges();
+
                     //sites which are selected by admin to give access to company admin ,store in AdminSiteAccessTable
                     foreach (var item in RestrictedSites)
                     {
                         AdminSiteAccess objAdminSite = new AdminSiteAccess();
+                        int x = 0;
+                        Int32.TryParse(item, out x);
                         objAdminSite.UserId = user.Id;
                         objAdminSite.SiteId = model.SiteDdl;
-                        objAdminSite.SiteName = item;
+                        objAdminSite.SiteName = db.Site.FirstOrDefault(m => m.SiteId == x).SiteName;
                         db.AdminSiteAccess.Add(objAdminSite);
                         db.SaveChanges();
                     }
                 }
                 else
                 {
-                    TempData["Success"] = "Username"+" "+model.Email+" "+"already taken." ;
+                    TempData["Success"] = "Username" + " " + model.Email + " " + "already taken.";
                 }
 
-                
+
 
             }
             catch (Exception ex)
@@ -1281,7 +1334,7 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId, int ? userId,int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName)
         {
             //userId = User.Identity.GetUserId();
             WifiUserlistViewModel list = new WifiUserlistViewModel();
@@ -1342,6 +1395,7 @@ namespace CaptivePortal.API.Controllers
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
+                                         //SiteName= SiteName
                                          // Password = item.Password,
                                          // MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
 
@@ -1350,7 +1404,7 @@ namespace CaptivePortal.API.Controllers
 
             if (userId != null)
             {
-                list.WifiUserView = userViewModelList.FirstOrDefault(m => m.UserId==userId);
+                list.WifiUserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
             }
             else
             {
@@ -1434,7 +1488,7 @@ namespace CaptivePortal.API.Controllers
                     objUser.UserName = fc["UserName"];
                     objUser.GenderId = Convert.ToInt32(fc["GenderId"]);
                     objUser.AgeId = Convert.ToInt32(fc["AgeId"]);
-                   
+
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
                     objUser.Status = fc["Status"].ToString();

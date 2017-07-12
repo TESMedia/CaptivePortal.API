@@ -252,6 +252,10 @@
     <Compile Include="Migrations\201707100244182_Merge_All_Migrations.Designer.cs">
       <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201707110617329_allow_null_to_organistaion.cs" />
+    <Compile Include="Migrations\201707110617329_allow_null_to_organistaion.Designer.cs">
+      <DependentUpon>201707110617329_allow_null_to_organistaion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -4599,6 +4603,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201707100244182_Merge_All_Migrations.resx">
       <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707110617329_allow_null_to_organistaion.resx">
+      <DependentUpon>201707110617329_allow_null_to_organistaion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -143,7 +143,10 @@
                     <p class="alert alert-success" id="successMessage">@TempData["SiteIdCheck"]</p>
                 }
                 <h1>Overall Estate</h1>
-                <button type="button" style="float:right" class="btn btn-success" onclick="window.location.href='CreateNewSite'">Create New Site</button>
+                @if (ViewBag.roleOfUser == "GlobalAdmin")
+                {
+                    <button type="button" style="float:right" class="btn btn-success" onclick="window.location.href='CreateNewSite'">Create New Site</button>
+                }
                 <div class="row container-fluid">
 
                     <div style="top:35px;width:1000px; height:250px; overflow:auto;">
@@ -219,7 +222,7 @@
                 <br />
                 <br />
                 <br />
-                <div class="form-group">
+                <div class="form-group" style="display:none">
                     <label for="debugStatus" class="control-label col-md-3" style="margin-left: 123px;padding-left: 20%;">Debug:</label>
                     <div class="col-md-2">
                         <input id="debugStatus" class="form-control col-xs-1" type="text" readonly value="On">
@@ -297,7 +300,7 @@
 
             $(this).addClass('selectedindex').siblings().removeClass('selectedindex');
             var SiteId_Value = $(this).find('td:first').html();
-            var Site_name = $(this).closest('tr').find('td:eq(3)').text();
+            var Site_name = $(this).closest('tr').find('td:eq(1)').text();
             //localStorage.setItem("SiteId", SiteId_Value);
             var SiteId = localStorage.getItem("SiteId");
             localStorage.setItem("SiteId", SiteId_Value);

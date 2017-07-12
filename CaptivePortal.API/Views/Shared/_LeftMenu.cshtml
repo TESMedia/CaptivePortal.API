@@ -36,24 +36,24 @@
                     <li>
                         <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Configure site</a></li>
-                            <li><a href="ManageUser" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Manage User</a></li>
-                            <li><a href="CreatePromotionalMaterial" onclick="location.href = this.href + '?siteId=' + siteId; return false;">Manage promotion</a></li>
+                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Configure site</a></li>
+                            <li><a href="ManageUser" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage User</a></li>
+                            <li><a href="CreatePromotionalMaterial" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage promotion</a></li>
                         </ul>
                     </li>
 
                     <li>
                         <a><i class="fa fa-users"></i> Manage Wi-fi User <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="UserDetails" onclick="location.href = this.href + '?siteId=' + siteId; return false;">View Wi-fi users</a></li>
+                            <li><a href="UserDetails" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View Wi-fi users</a></li>
                             <li><a href="Register">Register Wi-fi user</a></li>
                         </ul>
                     </li>
                     <li>
                         <a><i class="fa fa-signal"></i>Manage DashBoard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="#" onclick="uploadFile()">Upload File</a></li>
-                            <li><a href="#" onclick="ViewLocations()">Location Mapping</a></li>
+                            <li><a href="UploadFile" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Upload File</a></li>
+                            <li><a href="Locations" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Location Mapping</a></li>
                         </ul>
                     </li>
 
@@ -73,7 +73,7 @@
     </div>
 </div>
 <script>
-    var siteId = localStorage.getItem("SiteId");
+    //var siteId = localStorage.getItem("SiteId");
     //function configureSite() {
     //    var siteId = localStorage.getItem("SiteId");
     //    window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
