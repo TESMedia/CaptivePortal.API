@@ -46,4 +46,12 @@ namespace CaptivePortal.API.Models
         public List<ReturnRegisterFormData> ReteurnRegisterFormList { get; set; }
     }
 
+
+    public class ReturnPromationalData
+    {
+        public string SuccessPageOption { get; set; }
+        public string WebPageURL { get; set; }
+        public string OptionalPictureForSuccessPage { get; set; }
+    }
+
 }

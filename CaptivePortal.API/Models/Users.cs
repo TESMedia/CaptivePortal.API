@@ -16,7 +16,7 @@ namespace CaptivePortal.API.Models
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<Users> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            var userIdentity = await manager.CreateIdentityAsync(this,DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
         }
@@ -58,12 +58,6 @@ namespace CaptivePortal.API.Models
 
         public int? SiteId { get; set; }
 
-
-
-        public bool? AutoLogin { get; set; }
-
-
-
         public bool? promotional_email { get; set; }
 
 
@@ -82,46 +76,6 @@ namespace CaptivePortal.API.Models
 
 
 
-        [MaxLength(50)]
-
-        public string Custom1 { get; set; }
-
-
-
-        [MaxLength(50)]
-
-        public string Custom2 { get; set; }
-
-
-
-        [MaxLength(50)]
-
-        public string Custom3 { get; set; }
-
-
-
-        [MaxLength(50)]
-
-        public string Custom4 { get; set; }
-
-
-
-        [MaxLength(50)]
-
-        public string Custom5 { get; set; }
-
-
-
-        [MaxLength(50)]
-
-        public string Custom6 { get; set; }
-
-
-
-        public string UniqueUserId { get; set; }
-
-
-
         [ForeignKey("AgeId")]
 
         public virtual Age Ages { get; set; }
@@ -131,8 +85,6 @@ namespace CaptivePortal.API.Models
         [ForeignKey("GenderId")]
 
         public virtual Gender Genders { get; set; }
-
-
 
         public virtual Site Sites { get; set; }
     }

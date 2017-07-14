@@ -1,5 +1,4 @@
-﻿
-<div class="col-md-3 left_col">
+﻿<div class="col-md-3 left_col">
     <div class="left_col scroll-view">
 
 
@@ -28,14 +27,6 @@
                         <a href="Home"><i class="fa fa-home"></i> Home </a>
                     </li>
                     <li>
-                        <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
-                        <ul class="nav child_menu">
-                            <li><a href="#" onclick="configureSite()">Configure site</a></li>
-                            <li><a href="ManageUser">ManageUser</a></li>
-                            
-                        </ul>
-                    </li>
-                    <li>
                         <a><i class="fa fa-desktop"></i>View Dashboard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="@Url.Action("Index","Admin")">WiFi Summary</a></li>
@@ -43,17 +34,26 @@
                         </ul>
                     </li>
                     <li>
-                        <a><i class="fa fa-users"></i> User Management <span class="fa fa-chevron-down"></span></a>
+                        <a><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="#" onclick="viewUser()">View Users</a></li>
-                            <li><a href="Register">Register User</a></li>
+                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Configure site</a></li>
+                            <li><a href="ManageUser" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage User</a></li>
+                            <li><a href="CreatePromotionalMaterial" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage promotion</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-users"></i> Manage Wi-fi User <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="UserDetails" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View Wi-fi users</a></li>
+                            <li><a href="Register">Register Wi-fi user</a></li>
                         </ul>
                     </li>
                     <li>
                         <a><i class="fa fa-signal"></i>Manage DashBoard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="#" onclick="uploadFile()">Upload File</a></li>
-                            <li><a href="#" onclick="ViewLocations()">Location Mapping</a></li>
+                            <li><a href="UploadFile" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Upload File</a></li>
+                            <li><a href="Locations" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Location Mapping</a></li>
                         </ul>
                     </li>
 
@@ -73,17 +73,21 @@
     </div>
 </div>
 <script>
-    // var X = localStorage.getItem("SiteId");
-    function configureSite() {
-        var siteId = localStorage.getItem("SiteId");
-        window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
-    }
+    //var siteId = localStorage.getItem("SiteId");
+    //function configureSite() {
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/ConfigureSite?SiteId=" + siteId
+    //}
+    //function manageUser() {
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/ManageUser?SiteId=" + siteId
+    //}
 
-    function viewUser()
-    {
-        var siteId = localStorage.getItem("SiteId");
-        window.location.href = "/Admin/UserDetails?SiteId=" + siteId
-    }
+    //function viewUser()
+    //{
+    //    var siteId = localStorage.getItem("SiteId");
+    //    window.location.href = "/Admin/UserDetails?SiteId=" + siteId
+    //}
 
     function uploadFile() {
         window.location.href = "/Admin/UploadFile"
@@ -99,5 +103,5 @@
         window.location.href = "/Admin/LogOff"
     }
 
- 
+
 </script>

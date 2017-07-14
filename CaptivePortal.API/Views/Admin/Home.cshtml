@@ -151,8 +151,15 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div class="right_col" role="main">
+                @if (TempData["SiteIdCheck"] != null)
+                {
+                    <p class="alert alert-success" id="successMessage">@TempData["SiteIdCheck"]</p>
+                }
                 <h1>Overall Estate</h1>
-                <button type="button" style="float:right" class="btn btn-success" onclick="window.location.href='CreateNewSite'">Create New Site</button>
+                @if (ViewBag.roleOfUser == "GlobalAdmin")
+                {
+                    <button type="button" style="float:right" class="btn btn-success" onclick="window.location.href='CreateNewSite'">Create New Site</button>
+                }
                 <div class="row container-fluid">
 
                     <div style="top:35px;width:1000px; height:250px; overflow:auto;">

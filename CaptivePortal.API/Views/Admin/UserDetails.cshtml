@@ -1,11 +1,11 @@
 ﻿@using CaptivePortal.API.Models
-@model UserlistViewModel
+@model WifiUserlistViewModel
 
 
 
 @{
     Layout = null;
-    ViewBag.PageRange = 3;
+    ViewBag.PageRange = 20;
 
 }
 
@@ -69,6 +69,19 @@
                                 <div class="x_content">
                                     <br />
                                     <form></form>
+                                    <br />
+                                    @*<div class="row">
+                                        <div class="col-md-6 col-sm-6 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    site
+                                                       <div class="dropdown">
+                                                            @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, new { @class = "form-control col-md-7 col-xs-12", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()", @Selected = true, @value = ViewBag.SiteName })
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
                                     <div class="col-md-12 text-center">
                                         <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
                                     </div>
@@ -126,10 +139,15 @@
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                @if (Model.UserViewlist != null)
+                                                @*@if (TempData["Success"] != null)
+                                                {
+                                                    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+                                                }*@
+
+                                                @if (Model.WifiUserViewlist != null)
                                                 {
                                                     <tbody class="pointer" id="UserDetails">
-                                                        @foreach (var item in Model.UserViewlist)
+                                                        @foreach (var item in Model.WifiUserViewlist)
                                                         {
                                                             <tr>
                                                                 <td style="display:none;" id="UserId">
@@ -200,7 +218,7 @@
                                                 <li><a href="#">Devices</a></li>
 
                                             </ul>*@
-                                        @if (Model.UserView != null)
+                                        @if (Model.WifiUserView != null)
                                         {
 
                                             <div role="tabpanel" id="dvPassport" style="display:none">
@@ -212,7 +230,7 @@
                                                 </ul>
 
                                                 <div class="tab-content" id="UserView">
-                                                    @Html.Partial("~/Views/Shared/_UserDetails.cshtml", Model.UserView)
+                                                    @Html.Partial("~/Views/Shared/_UserDetails.cshtml", Model.WifiUserView)
                                                 </div>
                                             </div>
                                         }

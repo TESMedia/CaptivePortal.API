@@ -18,28 +18,27 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/LoginPage.css" rel="stylesheet" />
-    <title>Login In To CaptivePortal</title>
+    <title>Login In To  a8 Platform</title>
 </head>
 
 
 <body>
     <div class="container-fluid">
         <div class="card card-container">
-            
-            <div class="header header-logged-out width-full" role="banner">
-                <center>
-                    <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,">
-                        <img src="~/Images/wifi-297697_1280.png" style="height:50px;width:50px;" id="imageLogo" />
-                    </a>
 
-                </center>
-               <br /><br /><br />
-                <center><h2>Login to Captive Portal</h2></center>
-                
+            <div class="header header-logged-out width-full" role="banner">
+                @*<center>
+                    <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,">
+                        <img src="~/Images/images.png" style="height:50px;width:50px;" id="imageLogo" />
+                    </a>
+                   
+
+                </center>*@
+
                 <div class="auth-form-header" style="left:40%;">
                     @if (@TempData["SuccessReset"] != null)
-            {
-                        <div class="alert alert-success" style="width:20%;">
+                    {
+                        <div class="alert alert-success">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
                             @TempData["SuccessReset"]
                         </div>
@@ -48,10 +47,14 @@
 
             </div>
             <div role="main" class="main-content" style="margin-top:-40px;">
+                
+                <div class="row">
+                    <center><h2>Login to <img src="~/Images/images.png" style="height:50px;width:50px;" id="imageLogo" /> platform</h2></center>
+                </div>
+                <br /><br />
                 <div class="auth-form p-3" id="login">
-                    @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
-            {
-                        @*<form id="FormLogin">*@
+                    @*@using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))*@
+                    @*{*@
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
@@ -61,27 +64,23 @@
                             </label>
                             @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
                             @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                            <br />
                             <div class="divPas" id="divPas">
                                 <label for="password" id="pwd">
-                                    Password <a href="@Url.Action("ForgotPassword", "Account")" class="label-link">Forgot password?</a>
+                                    Password       &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="label-link">Forgot password?</a>
                                 </label>
                                 @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "Password", @type = "password", @tabindex = "2", required = "required" })
                                 @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
                             </div>
-                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
+                            <br />
+                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="button" value="Sign in" id="SignIn" />
                         </div>
-                    }
+                    @*}*@
                 </div>
             </div>
-            <div class="site-footer" role="contentinfo">
-                <ul class="site-footer-links">
-                    <li><a href="#" data-ga-click="Footer, go to terms, text:terms">Terms</a></li>
-                    <li><a href="#" data-ga-click="Footer, go to privacy, text:privacy">Privacy</a></li>
-                    <li><a href="#" data-ga-click="Footer, go to security, text:security">Security</a></li>
-                    <li><a href="#" data-ga-click="Footer, go to contact, text:contact">Contact</a></li>
-                </ul>
-            </div>
-            </div></div>
+        </div>
+    </div>
+
 </body>
 </html>
 
@@ -89,21 +88,39 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+
 <script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
-@*<script type="text/javascript">
-        jQuery(function ($) {
-            //OnClick testButton do a POST to a login.php with user and pasword
-            //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
-            $("#SignIn").click(function (e) {
-                alert("Hello")
-                $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
-                //$.post("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" }, function (result) {
-                //    alert("sdcs");
-                //});
+<script type="text/javascript">
+    jQuery(function ($) {
+        //OnClick testButton do a POST to a login.php with user and pasword
+        //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
+        $("#SignIn").click(function (e) {
+            $.post("/Admin/GALogin", { UserName: $("#login_field").val(), PasswordHash: $("#password").val() }, function () {
+                if ($("#login_field").val() == "admin@airloc8.com")
+                {
+                    $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
+                    ;
+                }
+                else
+                {
+                    window.location.href = "/Admin/Home";
+                }
             });
         });
-    </script>*@
+    });
 
+    $("#login_field").keyup(function () {
+       
+            var UserName = localStorage.getItem("UserName");
+            localStorage.setItem("UserName", UserName)
+            UserName = document.getElementById("login_field").value;
+            //localStorage.setItem("SiteId", SiteId)
+            if (UserName != localStorage.getItem("UserName")) {
+                SiteId = document.getElementById("login_field").value;
+                localStorage.setItem("UserName", UserName)
+                window.localStorage.setItem("UserName", UserName);
+            }
+       
+    });
 
-
-
+</script>

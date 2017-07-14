@@ -6,10 +6,11 @@ using System.Web;
 
 namespace CaptivePortal.API.Models
 {
-    public class Organisation
+    public class Role
     {
         [Key]
-        public int ? OrganisationId { get; set; }
-        public string OrganisationName { get; set; }
+        public int RoleId { get; set; }
+
+        public string RoleName { get; set;}
     }
 }

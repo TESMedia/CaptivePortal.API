@@ -158,11 +158,13 @@ namespace CaptivePortal.API.Controllers
                 switch (result)
                 {
                     case SignInStatus.Success:
-                        return RedirectToAction("Home", "Admin");
+                        //return RedirectToAction("Home", "Admin", new { SiteId = existUser.SiteId, UserName = existUser.UserName });
+                        return Json("success", JsonRequestBehavior.AllowGet);
                     case SignInStatus.Failure:
                     default:
-                        ModelState.AddModelError("", "Invalid login attempt.");
-                        return View(model);
+                        // ModelState.AddModelError("", "Invalid login attempt.");
+                        TempData["SuccessReset"] = "Invalid login attempt.";
+                        return RedirectToAction("Login", "Admin");
                 }
             }
             catch (Exception ex)
@@ -238,7 +240,15 @@ namespace CaptivePortal.API.Controllers
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
-                return RedirectToAction("Login", "Admin");
+                string roleName = UserManager.GetRoles(user.Id).FirstOrDefault();
+                if (roleName == "BusinessUser" && !(String.IsNullOrEmpty(user.Sites.DashboardUrl)))
+                {
+                    return RedirectPermanent(user.Sites.DashboardUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Login", "Admin");
+                }
             }
             return View();
         }
@@ -258,43 +268,58 @@ namespace CaptivePortal.API.Controllers
 
         public ActionResult ManageUser(int? siteId, int? page, string userName)
         {
-            var userId = User.Identity.GetUserId();
             UserlistViewModel list = new UserlistViewModel();
-            list.UserViewlist = new List<UserViewModel>();
-            int currentPageIndex = page.HasValue ? page.Value : 1;
-            int PageSize = 5;
-            double TotalPages = 0;
-            siteId = 1;
-            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
-            userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-            TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
-            var userViewModelList = (from item in userList
-                                     select new UserViewModel()
-                                     {
-                                         SiteId = siteId.Value,
-                                         UserId = item.Id,
-                                         UserName = item.UserName,
-                                         CreationDate = item.CreationDate,
-                                         //Lastlogin=
-                                         //Status = item.Status
-                                         Role = UserManager.GetRoles(item.Id).FirstOrDefault()
-
-
-                                     }).ToList();
-            list.UserViewlist.AddRange(userViewModelList);
-
-            if (userId != null)
+            try
             {
-                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+                if (siteId != null)
+                {
+                    var userId = User.Identity.GetUserId();
+                    list.UserViewlist = new List<UserViewModel>();
+                    int currentPageIndex = page.HasValue ? page.Value : 1;
+                    int PageSize = 20;
+                    double TotalPages = 0;
+                    var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+                    userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                    TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
+                    var userViewModelList = (from item in userList
+                                             select new UserViewModel()
+                                             {
+                                                 SiteId = siteId.Value,
+                                                 UserId = item.Id,
+                                                 UserName = item.UserName,
+                                                 CreationDate = item.CreationDate,
+                                                 Lastlogin=item.UpdateDate,
+                                                 //Status = item.Status
+                                                 Role = UserManager.GetRoles(item.Id).FirstOrDefault()
+
+
+                                             }).ToList();
+                    list.UserViewlist.AddRange(userViewModelList);
+
+                    if (userId != null)
+                    {
+                        list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+                    }
+                    else
+                    {
+                        list.UserView = userViewModelList.FirstOrDefault();
+                    }
+                    ViewBag.CurrentPage = currentPageIndex;
+                    ViewBag.PageSize = PageSize;
+                    ViewBag.TotalPages = TotalPages;
+                    ViewBag.userName = userName;
+                }
+                else
+                {
+                    TempData["SiteIdCheck"] = "Please select any of the site and then manage user or If site is not there create new site";
+                    return RedirectToAction("Home", "Admin");
+
+                }
             }
-            else
+            catch (Exception ex)
             {
-                list.UserView = userViewModelList.FirstOrDefault();
+                throw ex;
             }
-            ViewBag.CurrentPage = currentPageIndex;
-            ViewBag.PageSize = PageSize;
-            ViewBag.TotalPages = TotalPages;
-            ViewBag.userName = userName;
             return View(list);
 
 
@@ -358,6 +383,54 @@ namespace CaptivePortal.API.Controllers
         }
 
 
+        public ActionResult CreatePromotionalMaterial(int? SiteId)
+        {
+            if (SiteId == null)
+            {
+                TempData["SiteIdCheck"] = "Please select any of the site and then manage promotional thing or If site is not there create new site";
+                return RedirectToAction("Home", "Admin");
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public ActionResult StorePromotionalMaterial(ManagePromotion model)
+        {
+            string optionalPicturePath = null;
+            string OptionalPictureForSuccessPage = null;
+            
+            //image path
+            if (Request.Files["OptionalPicture"].ContentLength > 0)
+            {
+                var httpPostedFile = Request.Files["OptionalPicture"];
+                string savedPath = HostingEnvironment.MapPath("/Images/" + model.SiteId);
+                optionalPicturePath = "/Images/" + model.SiteId + "/" + httpPostedFile.FileName;
+                string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                if (!System.IO.Directory.Exists(savedPath))
+                {
+                    Directory.CreateDirectory(savedPath);
+                }
+                httpPostedFile.SaveAs(completePath);
+                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                OptionalPictureForSuccessPage = baseUrl + optionalPicturePath;
+            }
+
+            ManagePromotion objManagePromotion = new ManagePromotion();
+            objManagePromotion.SiteId = model.SiteId;
+            objManagePromotion.SuccessPageOption = model.SuccessPageOption;
+            objManagePromotion.WebPageURL = model.WebPageURL;
+            objManagePromotion.OptionalPictureForSuccessPage = OptionalPictureForSuccessPage;
+            db.ManagePromotion.Add(objManagePromotion);
+            db.SaveChanges();
+
+            return RedirectToAction("Home", "Admin");
+        }
+
+
         /// <summary>
         /// Create new site/org/comp/field.
         /// </summary>
@@ -391,7 +464,7 @@ namespace CaptivePortal.API.Controllers
                         };
                         db.Organisation.Add(objOrganisation);
                         db.SaveChanges();
-                        orgId = objOrganisation.OrganisationId;
+                        orgId = Convert.ToInt32(objOrganisation.OrganisationId);
                     }
                     //company
                     if (inputData.CompanyName != null)
@@ -399,7 +472,7 @@ namespace CaptivePortal.API.Controllers
                         Company objCompany = new Company
                         {
                             CompanyName = inputData.CompanyName,
-                            OrganisationId = orgId,
+                            OrganisationId = orgId == 0 ? null : (int?)Convert.ToInt32(orgId)
                         };
                         db.Company.Add(objCompany);
                         db.SaveChanges();
@@ -547,7 +620,7 @@ namespace CaptivePortal.API.Controllers
                     {
                         log.Info(retStr);
                     }
-                    return RedirectToAction("Index", "Admin");
+                    return RedirectToAction("Home", "Admin");
                 }
                 catch (Exception ex)
                 {
@@ -586,53 +659,62 @@ namespace CaptivePortal.API.Controllers
         /// </summary>
         /// <param name="SiteId"></param>
         /// <returns></returns>
-        public ActionResult ConfigureSite(int SiteId)
+        public ActionResult ConfigureSite(int? SiteId)
         {
+            FormViewModel objViewModel = new FormViewModel();
             try
             {
-                retStr = "populated selected site details to configure";
-                ViewBag.companies = from item in db.Company.ToList()
-                                    select new SelectListItem()
-                                    {
-                                        Text = item.CompanyName,
-                                        Value = item.CompanyId.ToString(),
-                                    };
-                List<string> columnsList = db.Database.SqlQuery<string>("select column_name from information_schema.columns where table_name = 'users'").ToList();
-                FormViewModel objViewModel = new FormViewModel();
-
-                Form objForm = db.Form.FirstOrDefault(m => m.SiteId == SiteId);
-                objForm.SiteId = SiteId;
-                objViewModel.SiteId = SiteId;
-                objViewModel.FormId = objForm.FormId;
-                objViewModel.SiteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
-                objViewModel.BannerIcon = objForm.BannerIcon;
-                objViewModel.BackGroundColor = objForm.BackGroundColor;
-                objViewModel.LoginWindowColor = objForm.LoginWindowColor;
-                objViewModel.IsPasswordRequire = objForm.IsPasswordRequire;
-                objViewModel.LoginPageTitle = objForm.LoginPageTitle;
-                objViewModel.AutoLogin = Convert.ToBoolean(objForm.Site.AutoLogin);
-                objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
-                objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
-                objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
-                objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
-                objViewModel.DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).DashboardUrl;
-                objViewModel.RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).RtlsUrl;
-
-                objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
-                objViewModel.fieldlabel = columnsList;
-                if (db.Site.Any(m => m.SiteId == SiteId))
+                if (SiteId != null)
                 {
-                    objViewModel.CompanyDdl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId.ToString();
-                }
-                objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
+                    retStr = "populated selected site details to configure";
+                    ViewBag.companies = from item in db.Company.ToList()
+                                        select new SelectListItem()
+                                        {
+                                            Text = item.CompanyName,
+                                            Value = item.CompanyId.ToString(),
+                                        };
+                    List<string> columnsList = db.Database.SqlQuery<string>("select column_name from information_schema.columns where table_name = 'users'").ToList();
 
-                if (debugStatus == DebugMode.on.ToString())
+                    Form objForm = db.Form.FirstOrDefault(m => m.SiteId == SiteId);
+                    objForm.SiteId = Convert.ToInt32(SiteId);
+                    objViewModel.SiteId = Convert.ToInt32(SiteId);
+                    objViewModel.FormId = objForm.FormId;
+                    objViewModel.SiteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
+                    objViewModel.BannerIcon = objForm.BannerIcon;
+                    objViewModel.BackGroundColor = objForm.BackGroundColor;
+                    objViewModel.LoginWindowColor = objForm.LoginWindowColor;
+                    objViewModel.IsPasswordRequire = objForm.IsPasswordRequire;
+                    objViewModel.LoginPageTitle = objForm.LoginPageTitle;
+                    objViewModel.AutoLogin = Convert.ToBoolean(objForm.Site.AutoLogin);
+                    objViewModel.RegistrationPageTitle = objForm.RegistrationPageTitle;
+                    objViewModel.ControllerIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).ControllerIpAddress;
+                    objViewModel.MySqlIpAddress = db.Site.FirstOrDefault(m => m.SiteId == SiteId).MySqlIpAddress;
+                    objViewModel.Term_conditions = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
+                    objViewModel.DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).DashboardUrl;
+                    objViewModel.RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).RtlsUrl;
+
+                    objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
+                    objViewModel.fieldlabel = columnsList;
+                    if (db.Site.Any(m => m.SiteId == SiteId))
+                    {
+                        objViewModel.CompanyDdl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId.ToString();
+                    }
+                    objViewModel.FormControls = db.FormControl.Where(m => m.FormId == objForm.FormId).ToList();
+
+                    if (debugStatus == DebugMode.on.ToString())
+                    {
+                        log.Info(retStr);
+                    }
+
+                }
+                else
                 {
-                    log.Info(retStr);
-                }
 
-                return View(objViewModel);
+                    TempData["SiteIdCheck"] = "Please select any of the site you want to cofigure if site is not available please create new site and configure";
+                    return RedirectToAction("Home", "Admin");
+                }
             }
+
             catch (Exception ex)
             {
                 retStr = "some problem occured";
@@ -642,6 +724,8 @@ namespace CaptivePortal.API.Controllers
                 }
                 throw ex;
             }
+            return View(objViewModel);
+
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
@@ -1004,35 +1088,64 @@ namespace CaptivePortal.API.Controllers
             return View();
         }
 
-        public ActionResult Home(int? SiteId)
+        //[Authorize(Roles = "GlobalAdmin,CompanyAdmin")]
+        public ActionResult Home()
         {
             AdminlistViewModel list = new AdminlistViewModel();
+            list.AdminViewlist = new List<AdminViewModel>();
+
+            string userId = User.Identity.GetUserId();
+            string role = UserManager.GetRoles(userId).FirstOrDefault();
+            ViewBag.roleOfUser = role;
+            int siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == userId).SiteId);
+
+            retStr = "entered in home to view overall estate";
+            int compId = 0;
+            //int orgId = Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId) == 0 ? 0 : Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId);
             try
             {
-                if (SiteId != 0 && SiteId != null)
+                if (siteId != 0 && siteId != null)
                 {
-                    int siteId = Convert.ToInt32(SiteId);
-                    retStr = "entered in home to view overall estate";
-                    list.AdminViewlist = new List<AdminViewModel>();
-                    int compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
-
-                    var result = db.Site.Where(m => m.CompanyId == compId).ToList();
-
-                    var siteDetails = (from item in result
-                                       select new AdminViewModel()
-                                       {
-                                           OrganisationName = item.Company.Organisation.OrganisationName,
-                                           CompanyName = item.Company.CompanyName,
-                                           SiteName = item.SiteName,
-                                           DashboardUrl = item.DashboardUrl,
-                                           RtlsUrl = item.RtlsUrl,
-                                           SiteId = item.SiteId
-                                       }
-                                     ).ToList();
-                    list.AdminViewlist.AddRange(siteDetails);
-                    if (debugStatus == DebugMode.on.ToString())
+                    if (role == "CompanyAdmin")
                     {
-                        log.Info(retStr);
+                        compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+
+                        var accessSite = db.AdminSiteAccess.Where(m => m.UserId == userId).ToList();
+                        var accessSiteDetails = (from site in accessSite
+                                                 select new AdminViewModel()
+                                                 {
+                                                     // OrganisationName = db.Organisation.FirstOrDefault(m=>m.OrganisationId==orgId).OrganisationName,
+                                                     CompanyName =db.Company.FirstOrDefault(m=>m.CompanyId==compId).CompanyName,
+                                                     SiteName = site.SiteName,
+                                                     DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).DashboardUrl,
+                                                     RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).RtlsUrl,
+                                                     DefaultSite = db.Users.FirstOrDefault(m => m.Id == userId).PhoneNumber,//default site to access
+                                                     SiteId = site.SiteId
+                                                 }).ToList();
+                        list.AdminViewlist.AddRange(accessSiteDetails);
+                    }
+                    else
+                    {
+
+                        compId = db.Site.FirstOrDefault(m => m.SiteId == siteId).Company.CompanyId;
+                        var result = db.Site.Where(m => m.CompanyId == compId).ToList();
+                        var siteDetails = (from item in result
+                                           select new AdminViewModel()
+                                           {
+                                               OrganisationName = item.Company.Organisation == null ? null : item.Company.Organisation.OrganisationName,
+
+                                               CompanyName = item.Company.CompanyName,
+                                               SiteName = item.SiteName,
+                                               DashboardUrl = item.DashboardUrl,
+                                               RtlsUrl = item.RtlsUrl,
+                                               SiteId = item.SiteId
+                                           }
+                                         ).ToList();
+                        list.AdminViewlist.AddRange(siteDetails);
+                        if (debugStatus == DebugMode.on.ToString())
+                        {
+                            log.Info(retStr);
+                        }
                     }
                 }
                 else
@@ -1042,7 +1155,7 @@ namespace CaptivePortal.API.Controllers
                     var siteDetails = (from item in result
                                        select new AdminViewModel()
                                        {
-                                           OrganisationName = item.Company.Organisation.OrganisationName,
+                                           OrganisationName = item.Company.Organisation == null ? null : item.Company.Organisation.OrganisationName,
                                            CompanyName = item.Company.CompanyName,
                                            SiteName = item.SiteName,
                                            DashboardUrl = item.DashboardUrl,
@@ -1053,7 +1166,7 @@ namespace CaptivePortal.API.Controllers
                     list.AdminViewlist.AddRange(siteDetails);
                 }
             }
-           
+
             catch (Exception ex)
             {
                 retStr = "some problem occured";
@@ -1066,14 +1179,30 @@ namespace CaptivePortal.API.Controllers
             return View(list);
         }
 
-        public ActionResult UploadFile()
+        public ActionResult UploadFile(int ? siteId)
         {
-            return View();
+            if(siteId!=0 && siteId!=null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["SiteIdCheck"] = "Please select any of the site and then upload";
+                return RedirectToAction("Home", "Admin");
+            }
         }
 
-        public ActionResult Locations()
+        public ActionResult Locations(int? siteId)
         {
-            return View();
+            if (siteId != 0 && siteId != null)
+            {
+                return View();
+            }
+            else
+            {
+                TempData["SiteIdCheck"] = "Please select any of the site and then got location mapping";
+                return RedirectToAction("Home", "Admin");
+            }
         }
 
         public ActionResult Locationdashboard()
@@ -1095,7 +1224,8 @@ namespace CaptivePortal.API.Controllers
                 var siteViewModelList = (from item in siteList
                                          select new SiteViewModel()
                                          {
-                                             SiteName = item.SiteName
+                                             SiteName = item.SiteName,
+                                             SiteId = item.SiteId
                                          }).ToList();
                 list.SiteViewlist.AddRange(siteViewModelList);
                 ViewBag.sites = from item in db.Site.Where(m => m.CompanyId == compId).ToList()
@@ -1114,10 +1244,8 @@ namespace CaptivePortal.API.Controllers
         }
 
         [HttpPost]
-        public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc)
+        public async System.Threading.Tasks.Task<ActionResult> CreateUserWithRole(CreateUserWithRoleViewModel model, FormCollection fc, string[] RestrictedSites)
         {
-            string userId = "";
-            string[] restrictedSites = fc["RestrictedSites"].Split(',');
             string defaultSiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
             try
             {
@@ -1129,7 +1257,8 @@ namespace CaptivePortal.API.Controllers
                     CreationDate = DateTime.Now,
                     UpdateDate = DateTime.Now,
                     SiteId = model.SiteDdl,
-                    Status = Status.Active.ToString()
+                    Status = Status.Active.ToString(),
+                    PhoneNumber = defaultSiteName//Store the SiteName As default Site in Identity Column named PhoneNumber
                 };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -1138,86 +1267,44 @@ namespace CaptivePortal.API.Controllers
                     string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ResetPassword", "Admin", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Welcome to the Captive portal Dashboard", "You are receiving this email as you have been set up as a user of the captive portal Dashboard. To complete the registration process please click <a href=\"" + callbackUrl + "\">here</a>" + " " + "to reset your password and login.If you have any issues with the login process, or were not expecting this email, please email support@airloc8.com.");
-                   // SendActivationEmail(user.Id, model.Email);
                     TempData["Success"] = "An Email has sent to your Inbox.";
-                }
 
-                //store restricted site in AdminSiteAccess table.
-                foreach (string item in restrictedSites)
-                {
-                    string value = item;
-                    int SiteId = 1;
-                    AdminSiteAccess objAdminSite = new AdminSiteAccess();
-                    objAdminSite.UserId = user.Id;
-                    objAdminSite.SiteId = SiteId;
-                    objAdminSite.SiteName = value;
-                    objAdminSite.DefaultSiteName = defaultSiteName;
-                    db.AdminSiteAccess.Add(objAdminSite);
+                    AdminSiteAccess objAdminSite1 = new AdminSiteAccess();
+                    objAdminSite1.UserId = user.Id;
+                    objAdminSite1.SiteId = model.SiteDdl;
+                    objAdminSite1.SiteName = db.Site.FirstOrDefault(m => m.SiteId == model.SiteDdl).SiteName;
+                    db.AdminSiteAccess.Add(objAdminSite1);
                     db.SaveChanges();
+
+                    //sites which are selected by admin to give access to company admin ,store in AdminSiteAccessTable
+                    foreach (var item in RestrictedSites)
+                    {
+                        AdminSiteAccess objAdminSite = new AdminSiteAccess();
+                        int x = 0;
+                        Int32.TryParse(item, out x);
+                        objAdminSite.UserId = user.Id;
+                        objAdminSite.SiteId = model.SiteDdl;
+                        objAdminSite.SiteName = db.Site.FirstOrDefault(m => m.SiteId == x).SiteName;
+                        db.AdminSiteAccess.Add(objAdminSite);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    TempData["Success"] = "Username" + " " + model.Email + " " + "already taken.";
                 }
 
-                //string message = string.Empty;
-                //switch (userId)
-                //{
 
-                //    case "A":
-                //        message = "Username already exists.\\nPlease choose a different username.";
-                //        break;
-                //    case "B":
-                //        message = "Supplied email address has already been used.";
-                //        break;
-                //    default:
-                //        message = "Registration successful. Activation email has been sent.";
-                //        SendActivationEmail(userId, model.Email);
-                //        break;
-                //        //}
-                //}
 
-                //TempData["Success"] = "An account acvtivation link send to your inbox!";
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            return RedirectToAction("CreateUser", "Admin",new { SiteId = model.SiteDdl });
+            return RedirectToAction("CreateUser", "Admin", new { SiteId = model.SiteDdl });
         }
 
-    
 
-        //send email to verify user
-        private void SendActivationEmail(string userId, string Email)
-        {
-            try
-            {
-                string senderID = "tls@tes.media";
-                IdentityMessage message = new IdentityMessage();
-                message.Subject = "Account activation";
-                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
-
-                string Body = "Hello ";
-                Body += "<br /><br />Please click the following link to activate your account";
-                Body += "<br /><a href = '" + baseUrl + "admin/ResetPassword" + "'>Click here to activate your account.</a>";
-                Body += "<br /><br />Thanks";
-                message.Body = Body;
-                message.Destination = Email;
-                using (MailMessage mm = new MailMessage(senderID, message.Destination, message.Subject, message.Body))
-                {
-                    mm.IsBodyHtml = true;
-                    SmtpClient smtp = new SmtpClient();
-                    smtp.Host = "smtp.avecsys.net";
-                    smtp.EnableSsl = false;
-                    NetworkCredential NetworkCred = new NetworkCredential("user@smtp.avecsys.net", "ema1ls3rv3r");
-                    smtp.UseDefaultCredentials = true;
-                    smtp.Credentials = NetworkCred;
-                    smtp.Port = 25;
-                    smtp.Send(mm);
-                }
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
 
         public JsonResult GetCompany(int orgId)
         {
@@ -1247,11 +1334,11 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId,int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName)
         {
-            var userId = User.Identity.GetUserId();
-            UserlistViewModel list = new UserlistViewModel();
-            list.UserViewlist = new List<UserViewModel>();
+            //userId = User.Identity.GetUserId();
+            WifiUserlistViewModel list = new WifiUserlistViewModel();
+            list.WifiUserViewlist = new List<WifiUserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
             int PageSize = 5;
             double TotalPages = 0;
@@ -1259,7 +1346,7 @@ namespace CaptivePortal.API.Controllers
             {
                 siteId = 1;
             }
-            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+            var userList = db.WifiUsers.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
             if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
             {
@@ -1268,7 +1355,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only foreName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.Users.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.WifiUsers.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1278,7 +1365,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only surName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(foreName))
                     {
-                        userList = db.Users.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.WifiUsers.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1288,7 +1375,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only username  for searching or filter
                     if (string.IsNullOrEmpty(foreName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.Users.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.WifiUsers.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1300,27 +1387,28 @@ namespace CaptivePortal.API.Controllers
                 TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
             }
             var userViewModelList = (from item in userList
-                                     select new UserViewModel()
+                                     select new WifiUserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                       //  UserId = item.UserId,
+                                         UserId = item.UserId,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
-                                        // Password = item.Password,
-                                        // MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
+                                         //SiteName= SiteName
+                                         // Password = item.Password,
+                                         // MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
 
                                      }).ToList();
-            list.UserViewlist.AddRange(userViewModelList);
+            list.WifiUserViewlist.AddRange(userViewModelList);
 
             if (userId != null)
             {
-                list.UserView = userViewModelList.FirstOrDefault(m => m.UserId ==userId );
+                list.WifiUserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
             }
             else
             {
-                list.UserView = userViewModelList.FirstOrDefault();
+                list.WifiUserView = userViewModelList.FirstOrDefault();
             }
             ViewBag.CurrentPage = currentPageIndex;
             ViewBag.PageSize = PageSize;
@@ -1337,17 +1425,17 @@ namespace CaptivePortal.API.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult UserWithProfile(int SiteId)
+        public ActionResult UserWithProfile(int SiteId, string userId)
         {
-            var userid = User.Identity.GetUserId();
-            var userDetail = db.Users.FirstOrDefault(m => m.Id == userid);
+            //var userid = User.Identity.GetUserId();
+            var userDetail = db.WifiUsers.FirstOrDefault(m => m.SiteId == SiteId);
             var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
             var siteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
             var model = new MacAddressViewModel();
-            UserViewModel objUserViewModel = new UserViewModel();
+            WifiUserViewModel objUserViewModel = new WifiUserViewModel();
             if (userDetail != null)
             {
-                objUserViewModel.Password = userDetail.PasswordHash;
+                objUserViewModel.Password = userDetail.Password;
                 objUserViewModel.UserName = userDetail.UserName;
                 objUserViewModel.Gender = db.Gender.FirstOrDefault(m => m.GenderId == userDetail.GenderId).Value;
                 objUserViewModel.AgeRange = db.Age.FirstOrDefault(m => m.AgeId == userDetail.AgeId).Value;
@@ -1357,7 +1445,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
                 objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
                 //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
-                var mac = db.MacAddress.Where(m => m.UserId ==userid).ToList();
+                var mac = db.MacAddress.Where(m => m.WifiUsers.SiteId == SiteId).ToList();
                 //var lastEntry = db.MacAddress.LastOrDefault(m => m.UserId == UserId).MacAddressValue;
                 //objUserViewModel.MacAddress = lastEntry;
                 objUserViewModel.MacAddressList = mac;
@@ -1400,7 +1488,7 @@ namespace CaptivePortal.API.Controllers
                     objUser.UserName = fc["UserName"];
                     objUser.GenderId = Convert.ToInt32(fc["GenderId"]);
                     objUser.AgeId = Convert.ToInt32(fc["AgeId"]);
-                    objUser.AutoLogin = Convert.ToBoolean(fc["AutoLogin"]);
+
                     //objUser.MobileNumber = fc["MobileNumber"];
                     //objUser.IntStatus = Convert.ToString(fc["Status"]);
                     objUser.Status = fc["Status"].ToString();
@@ -1451,7 +1539,7 @@ namespace CaptivePortal.API.Controllers
 
                 MacAddress mac = new MacAddress();
                 mac.MacAddressValue = fc["MacAddress"];
-                mac.UserId = User.Identity.GetUserId();
+                mac.UserId = userId;
                 db.MacAddress.Add(mac);
                 //db.Entry(objUser).State = EntityState.Modified;
                 db.SaveChanges();

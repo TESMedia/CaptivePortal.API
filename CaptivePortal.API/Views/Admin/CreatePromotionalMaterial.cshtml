@@ -1,7 +1,4 @@
-﻿@using CaptivePortal.API.Models
-@model SitelistViewModel
-@{
-    ViewBag.Title = "ManageUser";
+﻿@{
     Layout = null;
 
 }
@@ -73,70 +70,70 @@
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_content">
-                                    <form></form>
                                     <br />
+                                    <form></form>
                                     <div id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">
+
                                         @if (TempData["Success"] != null)
                                         {
                                             <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
                                         }
-                                        @using (Html.BeginForm("CreateUserWithRole", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                                        {
-                                            @*<form>*@
-                                            <div class="form-group">
-                                                <label for="Email" class="control-label col-md-3 col-sm-3 col-xs-12  required-field">Email:</label>
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    <input id="Email" class="form-control col-md-7 col-xs-12" type="text" name="Email" required>
-                                                </div>
-                                            </div>
 
+                                        @using (Html.BeginForm("StorePromotionalMaterial", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            @*<form>
+                                            *@
                                             <div class="form-group">
-                                                <label for="Role" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Role:</label>
+                                                <label for="Success_Page_Option" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Success Page Option:</label>
+
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @*<input id="Role" class="form-control col-md-7 col-xs-12" type="text" name="Role">*@
-                                                    @*@Html.DropDownList("RoleDdl", ViewBag.Roles as IEnumerable<SelectListItem>, "--Select the Role--", new { @class = "form-control", @id = "RoleDdl", @name = "RoleDdl" })*@
-                                                    <select class="form-control" name="RoleId" id="RoleId" required>
-                                                        <option value="CompanyAdmin">CompanyAdmin</option>
-                                                        <option value="BusinessUser">BusinessUser</option>
+                                                    <select class="form-control" name="SuccessPageOption" id="SuccessPageOption" required onchange="OnChange(this.form.SuccessPageOption);">
+                                                        <option value="Display">Display</option>
+                                                        <option value="Supress">Supress</option>
+                                                        <option value="Route to URL">Route to URL</option>
                                                     </select>
                                                 </div>
-                                            </div>
-                                            @*<div class="form-group">
-                                                    <label for="DefaultSite" class="control-label col-md-3 col-sm-3 col-xs-12">Default Site:</label>
-                                                    <div class="col-md-6 col-sm-6 col-xs-12">
-                                                        @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "SiteDdl", @name = "SiteDdl", @Selected = true, @required = "required" })
-                                                    </div>
-                                                </div>*@
 
-                                            <div class="form-group">
-                                                <label for="RestrictedSite" class="control-label col-md-3 col-sm-3 col-xs-12 required-field">Default Site:</label>
+                                            </div>
+
+                                            <div class="form-group" style="display:none">
+                                                <label for="SiteId" class="control-label col-md-3 col-sm-3 col-xs-12">Site Id:</label>
                                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, "--Select the Site--", new { @class = "form-control", @id = "dropdown", @name = "SiteDdl", @Selected = true, @required = "required" })
+                                                    <input id="SiteId" class="form-control col-md-7 col-xs-12" type="text" name="SiteId" value="">
 
                                                 </div>
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="Site_Access" class="control-label col-md-3 col-sm-3 col-xs-12">Site Access:</label>
-                                                <div id='checkbox' class="col-md-6 col-sm-6 col-xs-12">
-                                                    @foreach (var item in Model.SiteViewlist)
-                                                    {
-                                                        //int index = Model.SiteViewlist.IndexOf(item);
-                                                        string checkBoxId = "Id_CheckBox_" + @item.SiteId;
-                                                        <div data-id="">
-                                                            <div for=@checkBoxId><input id=@checkBoxId name="RestrictedSites" type="checkbox" class="checkBoxSites" value=@item.SiteId /> @item.SiteName</div>
-                                                        </div>
-                                                    }
+                                                <label for="Web_Page_URL" class="control-label col-md-3 col-sm-3 col-xs-12">Web Page URL:</label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input id="Web_Page_URL" class="form-control col-md-7 col-xs-12" type="text" name="WebPageURL">
+
                                                 </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <label for="OptionalPicture" class="control-label col-md-3 col-sm-3 col-xs-12">Optional Picture:</label>
+
+
+                                                <div class="col-md-3">
+                                                    <input id="OptionalPicture" readonly class="form-control col-md-3" type="text" name="OptionalPictureForSuccessPage">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input id="browse" type="file" name="OptionalPicture" style="display:none" onChange="Handlechange();">
+                                                    <input type="button" class="btn btn-success" value="Browse" id="OptionalPicture" name="OptionalPicture" onclick="HandleBrowseClick();" />
+                                                </div>
+
+                                            </div>
+
 
                                             <div class="form-group">
                                                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                                    <input type="submit" id="createUserWithRole" class="btn btn-success" value="Create" />
-                                                    <input type="button" id="Cancel" class="btn btn-danger" value="Cancel" onclick="cancel()" />
+                                                    <input type="submit" id="Save" class="btn btn-success" value="Save" />
                                                 </div>
                                             </div>
-                                            @*</form>*@
+                                            @*
+                                                </form>*@
                                         }
                                     </div>
 
@@ -204,43 +201,45 @@
 
 </body>
 </html>
+
 <script type="text/javascript">
 
-
     var siteId = localStorage.getItem("SiteId");
+    document.getElementById('SiteId').value = siteId;
     var siteName = localStorage.getItem("SiteName");
     document.getElementsByTagName('form')[0].innerHTML = siteName;
 
-    $(function () {
-        $("#SiteDdl").change(function () {
-            if ($(this).val() != "") {
-                $('#restrictedSiteDdl').val('');
-                var id = $(this).val();
-                $.getJSON("/Admin/GetRestrictedSite?siteId=" + id, function (data) {
-                    var items = [];
-                    $.each(data, function (key, value) {
-                        items.push("<option value=" + this.value + ">" + this.text + "</option>");
-                    });
-                    $("#restrictedSiteDdl").html(items.join(' '));
-                });
-            }
-        });
 
-        $("#dropdown").change(function () {
-            var index = $(this).val();
-            //        $("[data-id]").show();
-            $("[data-id=" + index + "]").hide();
 
-            var checkBoxId = "Id_CheckBox_" + (index);
-            $(".checkBoxSites").attr("disabled", false);
-            $(".checkBoxSites").prop('checked', false);
-            $("#" + checkBoxId).prop('checked', true);
-            $("#" + checkBoxId).attr("disabled", true);
+    function HandleBrowseClick() {
+        var fileinput = document.getElementById("browse");
+        fileinput.click();
+    }
 
-        });
-    });
+    function Handlechange() {
+        var fileinput = document.getElementById("browse");
+        var textinput = document.getElementById("OptionalPicture");
+        textinput.value = fileinput.value;
+    }
+
+
+    function OnChange(dropdown)
+{
+    var myindex  = dropdown.selectedIndex
+    var SelValue = dropdown.options[myindex].value
+
+    if(SelValue=="Route to URL")
+    {
+    document.getElementById("Web_Page_URL").required = true;
+    }
+    else
+    {
+    document.getElementById("Web_Page_URL").required = false;
+    }
+}
 
 </script>
+
 
 
 
