@@ -42,15 +42,28 @@
     <link href="~/build/css/custom.css" rel="stylesheet" />
     @*<script src="~/build/js/index.js"></script>*@
     <style>
-        td {border: 1px #DDD solid; padding: 5px; cursor: pointer;}
+        td {
+            border: 1px #DDD solid;
+            padding: 5px;
+            cursor: pointer;
+        }
 
-.selectedindex {
-    background-color: brown;
-    color:white;
-}
+        .selectedindex {
+            background-color: brown;
+            color: white;
+        }
     </style>
     <style>
-        .highlight { background-color: red; }
+        .highlight {
+            background-color: red;
+        }
+    </style>
+    <style>
+        /*    */
+        .cellContainer {
+            width: 25%;
+            float: left;
+        }
     </style>
 </head>
 
@@ -143,11 +156,11 @@
                 <div class="row container-fluid">
 
                     <div style="top:35px;width:1000px; height:250px; overflow:auto;">
-                        <table class="table table-hover table-responsive" id="table" >
+                        <table class="table table-hover table-responsive" id="table">
                             <thead>
                                 <tr>
-                                    
-                                    
+
+
                                     <th style="display:none;">
                                         SiteId
                                     </th>
@@ -155,17 +168,17 @@
                                         Site
                                     </th>
                                     <th>
-                                      Org
+                                        Org
                                     </th>
                                     <th>
-                                       Company
+                                        Company
                                     </th>
-                                    
+
                                     <th>
-                                       CPT
+                                        CPT
                                     </th>
                                     <th>
-                                       LocationDashBoard
+                                        LocationDashBoard
                                     </th>
                                     <th>
                                         RTLS
@@ -176,7 +189,7 @@
                                 @foreach (var item in Model.AdminViewlist)
                                 {
                                     <tr>
-                                       
+
                                         <td style="display:none;" id="SiteId">
                                             @Html.DisplayFor(modelItem => item.SiteId)
                                         </td>
@@ -189,7 +202,7 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.CompanyName)
                                         </td>
-                                        
+
                                         <td>
                                             @Html.DisplayFor(modelItem => item.MySqlIpAddress)
                                         </td>
@@ -199,39 +212,110 @@
                                         <td>
                                             @Html.DisplayFor(modelItem => item.RtlsUrl)
                                         </td>
-                                       
+
 
                                     </tr>
                                 }
                             </tbody>
 
 
-                         
+
                         </table>
 
+
                     </div>
+                    <br /><br /><br /><br />
+                    <div>
+                       <h4>Site:<label id="site_name"></label></h4> 
+                    </div>
+                    <div style="width:100%; height: 200px;">
+                        <form class="form-horizontal">
+                            <div class="cellContainer">
+                                <div style="margin: 5px; background-color: white;">
+                                    <center><h3><u>Site Status</u></h3></center>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="Controller">Controller:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Controller" name="Controller" readonly="readonly" value="NotDeployed">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="Radius">Radius:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Radius"  name="Radius" readonly="readonly"  value="NotDeployed">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="RTLSAPI">RTLS-API:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="RTLSAPI"  name="RTLSAPI" readonly="readonly"  value="NotDeployed">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="WiFiAPI">Wi-Fi API:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="WiFiAPI"  name="WiFiAPI" readonly="readonly"  value="NotDeployed">
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                            </div>
+
+                            <div class="cellContainer">
+                                <div style="margin: 5px; background-color: white;">
+                                    <center><h3><u>Site Status(last hour)</u></h3></center>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="Sessions">Sessions:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Sessions" name="Sessions" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="SiteUsers">Site Users:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="SiteUsers" name="SiteUsers" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-5" for="Loggederrors">Logged errors:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="Loggederrors" name="Loggederrors" readonly="readonly">
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div class="cellContainer">
+                                <div style="margin: 5px;"></div>
+                            </div>
+
+                            <div class="cellContainer">
+                                <input id="debugStatus" class="form-control col-xs-1" type="text" readonly value="On">
+                                <br />
+                                <br />
+                                <br />
+                                <input type="button" id="debuggingAndTracing" class="btn btn-success" value="Turn debug on/off" />
+                                <br />
+                                <br />
+                                <br />
+
+                                <input type="button" id="debuggingAndTracing" class="btn btn-success" value="View log" onclick="location.href='@Url.Action("LogsDownload", "Admin")'" />
+
+                            </div>
+                        </form>
+                    </div>
+
+                    
+
                 </div>
 
                 <br />
                 <br />
                 <br />
-                <div class="form-group">
-                    <label for="debugStatus" class="control-label col-md-3" style="margin-left: 123px;padding-left: 20%;">Debug:</label>
-                    <div class="col-md-2">
-                        <input id="debugStatus" class="form-control col-xs-1" type="text" readonly value="On">
-                        <br />
-                        <br />
-                        <br />
-                        <input type="button" id="debuggingAndTracing" class="btn btn-success" value="Turn debug on/off" />
-                        <br />
-                        <br />
-                        <br />
 
-                        <input type="button" id="debuggingAndTracing" class="btn btn-success" value="View log" onclick="location.href='@Url.Action("LogsDownload", "Admin")'" />
 
-                    </div>
-                </div>
-                
 
 
             </div>
@@ -282,35 +366,102 @@
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
-   
-   
+
+
 
 </body>
 </html>
 <script type="text/javascript">
-   
+
     $("#table tr").click(function () {
 
-            $(this).addClass('selectedindex').siblings().removeClass('selectedindex');
-            var SiteId_Value = $(this).find('td:first').html();
-            var Site_name = $(this).closest('tr').find('td:eq(3)').text();
-            //localStorage.setItem("SiteId", SiteId_Value);
-            var SiteId = localStorage.getItem("SiteId");
-            localStorage.setItem("SiteId", SiteId_Value);
-            localStorage.setItem("SiteName", Site_name);
-            
-           // SiteId = document.getElementById("SiteDdl").value;
-            //localStorage.setItem("SiteId", SiteId)
-            if (SiteId != localStorage.getItem("SiteId")) {
-                SiteId = SiteId_Value;
-                localStorage.setItem("SiteId", SiteId)
-                window.localStorage.setItem("SiteId", SiteId);
-                
+        $(this).addClass('selectedindex').siblings().removeClass('selectedindex');
+        var SiteId_Value = $(this).find('td:first').html();
+        var Site_name = $(this).closest('tr').find('td:eq(1)').text();
+        document.getElementById('site_name').innerHTML = Site_name;
+        //localStorage.setItem("SiteId", SiteId_Value);
+        var SiteId = localStorage.getItem("SiteId");
+        localStorage.setItem("SiteId", SiteId_Value);
+        localStorage.setItem("SiteName", Site_name);
 
+        // SiteId = document.getElementById("SiteDdl").value;
+        //localStorage.setItem("SiteId", SiteId)
+        if (SiteId != localStorage.getItem("SiteId")) {
+            SiteId = SiteId_Value;
+            localStorage.setItem("SiteId", SiteId)
+            window.localStorage.setItem("SiteId", SiteId);
+
+
+
+        }
+
+        
+        var sitedata = { SiteId : SiteId };
+            $.ajax(
+          {
+             type: "POST",
+             data: sitedata,
+             url: "/api/a8Captiveportal/V1/SiteOperationalStatus",
+            
+             success: function (data)
+             {
+                 var controllerdata = data[0];
+                 var Radiusdata = data[1];
+                 var RtlsApidata = data[2];
+                 var wifiApidata = data[3];
+                 if (data[0] == "TimedOut")
+                 {
+                     $('#Controller').css('background-color', 'Red');
+                     $('#Controller').val('Failed');
+                 }
+                 if (data[0] == "Success")
+                 {
+                     $('#Controller').css('background-color', 'Green');
+                     $('#Controller').val('Operational');
+                 }
+                 if (data[1] == "TimedOut")
+                 {
+                     $('#Radius').css('background-color', 'Red');
+                     $('#Radius').val('Failed');
+                 }
+                 if (data[1] == "Success")
+                 {
+                     $('#Radius').css('background-color', 'Green');
+                     $('#Radius').val('Operational');
+                 }
+                 if (data[2] == "TimedOut")
+                 {
+                     $('#RTLSAPI').css('background-color', 'Red');
+                     $('#RTLSAPI').val('Failed');
+                 }
+                 if (data[2] == "Success")
+                 {
+                     $('#RTLSAPI').css('background-color', 'Green');
+                     $('#RTLSAPI').val('Operational');
+                 }
+                 if (data[3] == "TimedOut")
+                 {
+                     $('#WIFIAPI').css('background-color', 'Red');
+                     $('#WIFIAPI').val('Failed');
+                 }
+                 if (data[3] == "Success")
+                 {
+                     $('#WIFIAPI').css('background-color', 'Green');
+                     $('#WIFIAPI').val('Operational');
+                 }
                 
-            }
-        });
-  
+             },
+             failure: function (response)
+             {
+                 alert(response);
+             },
+             error: function (xhr, textStatus, errorThrown)
+             {
+                 alert(textStatus);
+             }
+         })
+    });
+
 
 
 </script>

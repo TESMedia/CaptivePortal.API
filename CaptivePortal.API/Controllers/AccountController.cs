@@ -22,6 +22,7 @@ using System.Web.Http.Cors;
 using System.Web.SessionState;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity;
+using System.Net.NetworkInformation;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -998,6 +999,78 @@ namespace CaptivePortal.API.Controllers
             return new HttpResponseMessage()
             {
                 Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
+            };
+        }
+
+
+
+        ///<summary>
+        ///Check operational status for Site
+        ///</summary>
+        [HttpPost]
+        [Route("a8Captiveportal/V1/SiteOperationalStatus")]
+        public HttpResponseMessage OperationalStatus(LoginWIthNewMacAddressModel model)
+        {
+            var siteDetails = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+            var replyMessage = "";
+            List<string> pingList = new List<string>();
+            string[] data = new string[4];
+            data[0] = siteDetails.ControllerIpAddress;
+            data[1] = siteDetails.MySqlIpAddress;
+            data[2] =siteDetails.RtlsUrl ;
+            for (int i = 0; i < 4; i++)
+            {
+             try
+                {
+                    Ping myPing = new Ping();
+                    if(data[i]!=null)
+                    {
+                      PingReply reply = myPing.Send(data[i], 1000);
+                      if (reply != null)
+                      {
+                          replyMessage = reply.Status.ToString();
+                      }
+                    }
+                     else
+                    {
+                        replyMessage = "NotDeployed";
+                       
+                    }
+                  
+
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
+                }
+
+                pingList.Add(replyMessage);
+
+            }
+
+           
+
+               
+            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+                return new HttpResponseMessage()
+                {
+                    Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
+                };
+            }
+           
+         
+
+        ///<summary>
+        ///Get no of wifi users that logged in within the past hour
+        ///Get no of site users that have logged in within the past hour
+        /// </summary>
+        public HttpResponseMessage GetSessions()
+        {
+
+            JavaScriptSerializer objSerialize = new JavaScriptSerializer();
+            return new HttpResponseMessage()
+            {
+                Content=new StringContent(objSerialize.Serialize(),Encoding.UTF8,"application/json")
             };
         }
 
