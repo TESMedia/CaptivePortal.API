@@ -53,8 +53,8 @@
                 </div>
                 <br /><br />
                 <div class="auth-form p-3" id="login">
-                    @*@using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))*@
-                    @*{*@
+                    @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
+                    {
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
@@ -73,9 +73,9 @@
                                 @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
                             </div>
                             <br />
-                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="button" value="Sign in" id="SignIn" />
+                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
                         </div>
-                    @*}*@
+                    }
                 </div>
             </div>
         </div>
@@ -91,23 +91,23 @@
 
 <script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>
 <script type="text/javascript">
-    jQuery(function ($) {
-        //OnClick testButton do a POST to a login.php with user and pasword
-        //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
-        $("#SignIn").click(function (e) {
-            $.post("/Admin/GALogin", { UserName: $("#login_field").val(), PasswordHash: $("#password").val() }, function () {
-                if ($("#login_field").val() == "admin@airloc8.com")
-                {
-                    $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
-                    ;
-                }
-                else
-                {
-                    window.location.href = "/Admin/Home";
-                }
-            });
-        });
-    });
+    //jQuery(function ($) {
+    //    //OnClick testButton do a POST to a login.php with user and pasword
+    //    //alert(document.getElementById("LocationDashUrl").value + "/Account/ExternalLoginNew")
+    //    $("#SignIn").click(function (e) {
+    //        $.post("/Admin/GALogin", { UserName: $("#login_field").val(), PasswordHash: $("#password").val() }, function () {
+    //            if ($("#login_field").val() == "admin@airloc8.com")
+    //            {
+    //                $.redirect("http://localhost:62527/Account/ExternalLoginNew", { Email: "admin@airloc8.com", Password: "Tes@123" })
+    //                ;
+    //            }
+    //            else
+    //            {
+    //                window.location.href = "/Admin/Home";
+    //            }
+    //        });
+    //    });
+    //});
 
     $("#login_field").keyup(function () {
        

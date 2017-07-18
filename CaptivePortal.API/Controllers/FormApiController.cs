@@ -57,6 +57,7 @@ namespace CaptivePortal.API.Controllers
 
             string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
             string BannerIcon = jsonFormData.BannerIcon;
+            string RegisterPageTitle = jsonFormData.RegistrationPageTitle;
 
             ReturnRegisterFormListData objReturnRegisterFormListData = new ReturnRegisterFormListData();
             objReturnRegisterFormListData.ReteurnRegisterFormList = new List<ReturnRegisterFormData>();
@@ -77,7 +78,7 @@ namespace CaptivePortal.API.Controllers
             Request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration());
             Request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             var formJsonResult = JsonConvert.DeserializeObject(json);
-            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire, BannerIcon }, JsonMediaTypeFormatter.DefaultMediaType);
+            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire, BannerIcon, RegisterPageTitle }, JsonMediaTypeFormatter.DefaultMediaType);
 
         }
 

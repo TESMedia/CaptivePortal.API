@@ -1037,25 +1037,7 @@ namespace CaptivePortal.API.Controllers
                     Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
                 };
             }
-           
-         
-
-        ///<summary>
-        ///Get no of wifi users that logged in within the past hour
-        ///Get no of site users that have logged in within the past hour
-        /// </summary>
-        public HttpResponseMessage GetSessions()
-        {
-
-            JavaScriptSerializer objSerialize = new JavaScriptSerializer();
-            return new HttpResponseMessage()
-            {
-                Content=new StringContent(objSerialize.Serialize(),Encoding.UTF8,"application/json")
-            };
-        }
-
-
-        /// <summary>
+         /// <summary>
         /// Check the session Authorize to allow the particular User or not
         /// </summary>
         /// <returns></returns>
@@ -1228,6 +1210,11 @@ namespace CaptivePortal.API.Controllers
 
     public class UserMacAddressDetails
     {
+        public UserMacAddressDetails()
+        {
+            objMacAddress = new MacAddress();
+            objAddress = new UsersAddress();
+        }
         public WifiUser objUser { get; set; }
         public MacAddress objMacAddress { get; set; }
 

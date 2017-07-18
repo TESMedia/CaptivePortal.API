@@ -159,7 +159,9 @@ namespace CaptivePortal.API.Controllers
                 {
                     case SignInStatus.Success:
                         //return RedirectToAction("Home", "Admin", new { SiteId = existUser.SiteId, UserName = existUser.UserName });
-                        return Json("success", JsonRequestBehavior.AllowGet);
+                        //return Json("success", JsonRequestBehavior.AllowGet);
+                        return RedirectToAction("Home", "Admin");
+
                     case SignInStatus.Failure:
                     default:
                         // ModelState.AddModelError("", "Invalid login attempt.");
