@@ -159,6 +159,16 @@
                                             <div class="form-group">
                                                 <label for="text">Search:</label>
                                                 <input type="text" class="form-control" id="myInput" />
+
+                                                <label for="text">Show:</label>
+                                                <select class="form-control" style="float:right" name="NumberOfLines" id="NumberOfLines" onchange="showNumberOfLines()">
+                                                    <option value=@ViewBag.selectedNumber>@ViewBag.selectedNumber</option>
+                                                    <option value="3">3</option>
+                                                    <option value="5">5</option>
+                                                    <option value="7">7</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
                                             </div>
                                         </form>
 
@@ -323,8 +333,15 @@
 
     //paging click
     $("#div1 a").click(function () {
-        $(location).attr('href', '/Admin/ManageUser?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val());
+        var lineNumber = document.getElementById("NumberOfLines").value;
+        $(location).attr('href', '/Admin/ManageUser?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber);
     });
+    //dropdown click to show number of lines 
+    function showNumberOfLines() {
+        var lineNumber = document.getElementById("NumberOfLines").value;
+        $(location).attr('href', '/Admin/ManageUser?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber);
+    };
+
 
     //filter any matched string
     var $rows = $('#cpLocalAdminUserTable tr');

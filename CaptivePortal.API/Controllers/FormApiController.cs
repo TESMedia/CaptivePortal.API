@@ -36,6 +36,7 @@ namespace CaptivePortal.API.Controllers
                 objLoginFormData.IsPasswordRequire = jsonFormData.IsPasswordRequire;
                 objLoginFormData.LoginWindowColor = jsonFormData.LoginWindowColor;
                 objLoginFormData.LoginPageTitle = jsonFormData.LoginPageTitle;
+                objLoginFormData.ControllerIP = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).ControllerIpAddress;
             }
             catch (Exception ex)
             {
@@ -58,6 +59,7 @@ namespace CaptivePortal.API.Controllers
             string TandD = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).TermsAndCondDoc;
             string BannerIcon = jsonFormData.BannerIcon;
             string RegisterPageTitle = jsonFormData.RegistrationPageTitle;
+            string ControllerIP = db.Site.FirstOrDefault(m => m.SiteId == formdata.SiteId).ControllerIpAddress;
 
             ReturnRegisterFormListData objReturnRegisterFormListData = new ReturnRegisterFormListData();
             objReturnRegisterFormListData.ReteurnRegisterFormList = new List<ReturnRegisterFormData>();
@@ -78,7 +80,7 @@ namespace CaptivePortal.API.Controllers
             Request.Properties.Add(HttpPropertyKeys.HttpConfigurationKey, new HttpConfiguration());
             Request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             var formJsonResult = JsonConvert.DeserializeObject(json);
-            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire, BannerIcon, RegisterPageTitle }, JsonMediaTypeFormatter.DefaultMediaType);
+            return Request.CreateResponse(HttpStatusCode.OK, new { formJsonResult, IsPasswordRequire, BannerIcon, RegisterPageTitle, ControllerIP }, JsonMediaTypeFormatter.DefaultMediaType);
 
         }
 

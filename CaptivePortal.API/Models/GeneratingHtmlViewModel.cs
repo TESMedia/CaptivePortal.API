@@ -24,6 +24,8 @@ namespace CaptivePortal.API.Models
         public string LoginWindowColor { get; set; }
         public bool IsPasswordRequire { get; set; }
         public string LoginPageTitle { get; set; }
+        public string ControllerIP { get; set; }
+
         //public string HtmlCodeForRegister { get; set; }
     }
 
