@@ -23,15 +23,20 @@ using System.Web.SessionState;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity;
 using System.Net.NetworkInformation;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using CaptivePortal.API.ViewModels;
+using CaptivePortal.API.Enums;
+using Newtonsoft.Json;
 
-namespace CaptivePortal.API.Controllers
+namespace CaptivePortal.API.ApiControls
 {
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api")]
-    public class AccountController : ApiController
+    public class MemberApiController : ApiController
     {
         private static ILog Log { get; set; }
-        ILog log = LogManager.GetLogger(typeof(AccountController));
+        ILog log = LogManager.GetLogger(typeof(MemberApiController));
         private RegisterDB objRegisterDB = new RegisterDB();
         private ReturnModel ObjReturnModel = new ReturnModel();
         Context.DbContext db = new Context.DbContext();
@@ -42,7 +47,58 @@ namespace CaptivePortal.API.Controllers
         private int retVal = 0;
         private UpdateDb objUpdateDb = new UpdateDb();
 
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
+
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
+
+        public MemberApiController()
+        {
+
+        }
+        public MemberApiController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, ApplicationRoleManager roleManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
+
 
         /// <summary>
         /// 
@@ -51,7 +107,7 @@ namespace CaptivePortal.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("a8Captiveportal/V1/Login")]
-        public HttpResponseMessage Login(Users objUser)
+        public HttpResponseMessage Login(ApplicationUser objUser)
         {
             //log.Info("Enter in a8Captiveportal/V1/Login");
             string logInfoLogin = "Enter in a8Captiveportal/V1/Login";
@@ -64,8 +120,8 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (db.Users.Any(m => m.UserName.ToLower() == objUser.UserName.ToLower() && m.PasswordHash == objUser.PasswordHash))
                     {
-                         var UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).Id;
-                        log.Info(UserId+ "inside a8Captiveportal/V1/Login");
+                        var UserId = db.Users.FirstOrDefault(m => m.UserName == objUser.UserName).Id;
+                        log.Info(UserId + "inside a8Captiveportal/V1/Login");
                         SessionIDManager manager = new SessionIDManager();
                         sessionId = manager.CreateSessionID(HttpContext.Current);
                         //Insert the UserSession data with SessionId
@@ -153,6 +209,7 @@ namespace CaptivePortal.API.Controllers
                     //First check the Manadatory validation and show the Error Messages
                     if (string.IsNullOrEmpty(objUser.UserName))
                     {
+                        retStr = "Username missing";
                         retVal = Convert.ToInt32(ErrorCodeWarning.UserNameRequired);
                     }
                     else if (string.IsNullOrEmpty(objUser.Password))
@@ -161,8 +218,7 @@ namespace CaptivePortal.API.Controllers
                         retVal = Convert.ToInt32(ErrorCodeWarning.PasswordRequired);
                     }
                     else if (objUser.SiteId == 0)
-                    {                        retStr = "Username missing";
-
+                    {
                         retStr = "SiteId missing";
                         retVal = Convert.ToInt32(ErrorCodeWarning.SiteIDRequired);
                     }
@@ -181,7 +237,7 @@ namespace CaptivePortal.API.Controllers
                         retStr = "SessionId missing";
                         retVal = Convert.ToInt32(ErrorCodeWarning.SessionIdRequired);
                     }
-                    else if (db.WifiUsers.Any(m => m.UniqueUserId == objUser.UserId))
+                    else if (db.Users.Any(m => m.UniqueUserId == objUser.UserId))
                     {
                         retStr = "UserId already exists";
                         retVal = Convert.ToInt32(ErrorCodeWarning.UserUniqueIdAlreadyExist);
@@ -199,38 +255,36 @@ namespace CaptivePortal.API.Controllers
 
                             if (IsAuthorize(objUser.SessionId))
                             {
+
+                                CustomPasswordHasher objCustomPasswordHasher = new CustomPasswordHasher();
                                 //log.Info("Checked User is authorized.");
                                 logInfoIsSessionId = "Checked User is authorized.";
-                                WifiUser objUsers = new WifiUser();
+                                ApplicationUser objUsers = new ApplicationUser();
                                 objUsers.CreationDate = DateTime.Now;
                                 objUsers.UpdateDate = DateTime.Now;
                                 objUsers.UserName = objUser.UserName;
+                                objUsers.Email = objUser.Email;
                                 objUsers.FirstName = objUser.FirstName;
                                 objUsers.LastName = objUser.LastName;
-                                objUsers.Password= objUser.Password;
+                                objUsers.PasswordHash = objCustomPasswordHasher.HashPassword(objUser.Password);
                                 objUsers.SiteId = objUser.SiteId;
                                 objUsers.UniqueUserId = objUser.UserId;
                                 objUsers.BirthDate = objUser.BirthDate;
                                 objUsers.AgeId = objUser.AgeId;
                                 objUsers.GenderId = objUser.GenderId;
                                 objUsers.MobileNumer = objUser.MobileNumber;
+                              
 
+                                var result = UserManager.CreateAsync(objUsers);
+                               
+                                if(result.Result.Succeeded)
+                                {
+                                    UserManager.AddToRole(objUsers.Id, "WiFiUser");
 
-                                db.WifiUsers.Add(objUsers);
-
-                                //MacAddress objMacAddress = new MacAddress();
-                                //objMacAddress.UserId = objUsers.UserId;
-                                ////objMacAddress.MacAddressValue=objUser.ma
-                                //db.MacAddress.Add(objMacAddress);
-
-                                db.SaveChanges();
-
-                                //log.Info("User Data saved in user Table");
-                                retStr = "User Data saved in user Table";
-
-                                //Save all the Users data in MySql DataBase
-                                objRegisterDB.CreateNewUser(objUser.UserName, objUser.Password, objUser.Email, objUser.FirstName, objUser.LastName);
-
+                                    //Save all the Users data in MySql DataBase
+                                    objRegisterDB.CreateNewUser(objUsers.UserName, objUsers.PasswordHash, objUsers.Email, objUsers.FirstName, objUsers.LastName);
+                                }
+                                
                                 retVal = Convert.ToInt32(ReturnCode.CreateUserSuccess);
                                 retType = ReturnCode.Success.ToString();
                                 retStr = "User created";
@@ -286,123 +340,7 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("a8Captiveportal/V1/CreateUserWifi")]
-        public HttpResponseMessage CreateUserWifi(UserMacAddressDetails objUserMac)
-        {
-            //log.Info("Inside in a8Captiveportal/V1/CreateUserWifi");
-            string logInfoCreateUserWifi = "Inside in a8Captiveportal/V1/CreateUserWifi";
-            string logInfoCreateWifiUserSuccess = null;
-            string logInfoCreateUserWifiToMySql = null;
-            //Site objSite = null;
-            using (var dbContextTransaction = db.Database.BeginTransaction(System.Data.IsolationLevel.ReadUncommitted))
-            {
-                try
-                {
-                    log.Info(objUserMac.objUser.SiteId);
-                    log.Info(objUserMac.objUser.UserName);
-                    log.Info(objUserMac.objUser.Password);
 
-                    if (string.IsNullOrEmpty(objUserMac.objUser.UserName))
-                    {
-                        retStr = "Need UserName for Registration";
-                    }
-                    else if (string.IsNullOrEmpty(objUserMac.objUser.Password))
-                    {
-                        retStr = "Need Password for Registration";
-                    }
-                    else if (objUserMac.objUser.SiteId == 0)
-                    {
-                        retStr = "Please send the SiteId for Registrartion";
-                    }
-                    else if(string.IsNullOrEmpty(objUserMac.objMacAddress.MacAddressValue))
-                    {
-                        retStr = "MacAddress not able to detect please contact Admin";
-                    }
-                    else if(db.WifiUsers.Any(m=>m.UserName== objUserMac.objUser.UserName && m.SiteId== objUserMac.objUser.SiteId))
-                    {
-                        retStr = "Same UserName already exist with particular Site";
-                    }
-                    else if(db.MacAddress.Any(m=>m.MacAddressValue== objUserMac.objMacAddress.MacAddressValue && m.WifiUsers.SiteId== objUserMac.objUser.SiteId))
-                    {
-                        retStr = "Same MacAddress already exist so directly Login";
-                    }
-
-                    if (string.IsNullOrEmpty(retStr))
-                    {
-
-                       // objSite = db.Site.FirstOrDefault(m => m.SiteId == objUserMac.objUser.SiteId);
-
-                        //Save the Users data into Users table
-                        objUserMac.objUser.CreationDate = DateTime.Now;
-                        objUserMac.objUser.UpdateDate = DateTime.Now;
-                        objUserMac.objUser.AutoLogin = false;
-                        var users = db.WifiUsers.Add(objUserMac.objUser);
-                        log.Info("Auto Login"+users.AutoLogin);
-                        db.SaveChanges();
-                        log.Info(objUserMac.objUser.UserId);
-                        log.Info(users.UserId);
-                        objUserMac.objMacAddress.UserId = objUserMac.objUser.UserId;
-                        db.MacAddress.Add(objUserMac.objMacAddress);
-                        log.Info(objUserMac.objMacAddress);
-                        objUserMac.objAddress.UserId = objUserMac.objUser.UserId;
-                        db.UsersAddress.Add(objUserMac.objAddress);
-
-                        db.SaveChanges();
-
-                        log.Info("User Data saved in user Table");
-                        logInfoCreateWifiUserSuccess = "User Data saved in user Table";
-
-                        //Save all the Users data in MySql DataBase
-                        objRegisterDB.CreateNewUser(objUserMac.objUser.UserName, objUserMac.objUser.Password, objUserMac.objUser.Email, objUserMac.objUser.FirstName, objUserMac.objUser.LastName);
-
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-                        retType = ReturnCode.Success.ToString();
-                        retStr = "Successfully Creted the User";
-                        dbContextTransaction.Commit();
-                        log.Info("user data saved and commited successfully");
-                        logInfoCreateUserWifiToMySql = "user data saved and commited successfully";
-
-                    }
-                    else
-                    {
-                        retType = ReturnCode.Warning.ToString();
-                        retVal = Convert.ToInt32(ReturnCode.Warning);
-                    }
-                    if (debugStatus == DebugMode.on.ToString())
-                    {
-                        string logMsg = string.Concat(logInfoCreateUserWifi, logInfoCreateWifiUserSuccess, logInfoCreateUserWifiToMySql, retStr);
-                        log.Info(logMsg);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //log.Error(ex.Message);
-                    dbContextTransaction.Rollback();
-                    retVal = Convert.ToInt32(ReturnCode.Failure);
-                    retType = ReturnCode.Failure.ToString();
-                    retStr = ex.InnerException.ToString();
-                    if (debugStatus == DebugMode.off.ToString())
-                    {
-                        log.Info(retStr);
-                    }
-                }
-
-                objReturn.returncode = retVal;
-                objReturn.msg = retStr;
-                objReturn.type = retType;
-
-                JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-                return new HttpResponseMessage()
-                {
-                    Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
-                };
-            }
-        }
         /// <summary>
         /// it will add or delete one or more mac adddress of a user.
         /// </summary>
@@ -443,7 +381,7 @@ namespace CaptivePortal.API.Controllers
                         retStr = "UserId Missing";
                         retVal = Convert.ToInt32(ErrorCodeWarning.UserIdRequired);
                     }
-                    else if (!(db.WifiUsers.Any(m => m.UniqueUserId == objUserMac.UserId)))
+                    else if (!(db.Users.Any(m => m.UniqueUserId == objUserMac.UserId)))
                     {
                         retStr = "Incorrect UserId";
                         retVal = Convert.ToInt32(ErrorCodeWarning.IncorrectUserId);
@@ -458,10 +396,10 @@ namespace CaptivePortal.API.Controllers
                     {
                         if (IsAuthorize(objUserMac.SessionId))
                         {
-                            userId = db.WifiUsers.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).UserId;
-                            foreach (var macaddress in objUserMac.MacAddressList)
+                            userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUserMac.UserId).Id;
+                            foreach (var item in objUserMac.MacAddressList)
                             {
-                                if (db.MacAddress.Any(m => m.MacAddressValue == macaddress.MacAddress))
+                                if (db.MacAddress.Any(m => m.MacAddressValue == item.MacAddress))
                                 {
                                     retStr = "mac address already exist";
                                     retVal = Convert.ToInt32(ErrorCodeWarning.MacAddressorUserNameExist);
@@ -469,11 +407,27 @@ namespace CaptivePortal.API.Controllers
                                 }
                                 else
                                 {
-                                    objMac.MacAddressValue = macaddress.MacAddress;
+                                    objMac.MacAddressValue = item.MacAddress;
                                     objMac.UserId = userId;
                                     db.MacAddress.Add(objMac);
                                     db.SaveChanges();
-                                    retStr = "mac address added ";
+
+                                    if(!db.MacAddress.First(m=>m.MacAddressValue==objMac.MacAddressValue).IsRegisterInRtls)
+                                    {
+                                        using (CommunicateRTLS objCommunicateRtls = new CommunicateRTLS())
+                                        {
+                                            string retResult= objCommunicateRtls.RegisterInRealTimeLocationService(new[] { item.MacAddress }).Result;
+                                            Notification objServiceReturn = JsonConvert.DeserializeObject<Notification>(retResult);
+                                            if(objServiceReturn.result.returncode== Convert.ToInt32(RTLSResult.Success))
+                                            {
+                                                objMac.IsRegisterInRtls = true;
+                                                db.Entry(objMac).State = EntityState.Modified;
+                                                db.SaveChanges();
+                                            }
+                                        }
+                                    }
+                                    
+                                    retStr = "mac address added";
                                     logInfoMacAddressAdded = "mac address added";
                                     retType = ReturnCode.Success.ToString();
                                     retVal = Convert.ToInt32(ReturnCode.UpdateMacAddressuccess);
@@ -585,9 +539,9 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (IsAuthorize(model.SessionId))
                     {
-                        if (db.WifiUsers.Any(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId))
+                        if (db.Users.Any(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId))
                         {
-                            int UserId = db.WifiUsers.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).UserId;
+                            int UserId = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId && m.SiteId == model.SiteId).Id;
                             foreach (var item in db.MacAddress.Where(m => m.UserId == UserId))
                             {
                                 MacAddesses objMacAddress = new MacAddesses();
@@ -676,7 +630,7 @@ namespace CaptivePortal.API.Controllers
                 retStr = "Incorrect SiteId";
                 retVal = Convert.ToInt32(ErrorCodeWarning.SiteIdNotExist);
             }
-            else if (!(db.WifiUsers.Any(m => m.UniqueUserId == model.UserId)))
+            else if (!(db.Users.Any(m => m.UniqueUserId == model.UserId)))
             {
                 retStr = "Incorrect UserId";
                 retVal = Convert.ToInt32(ErrorCodeWarning.IncorrectUserId);
@@ -693,15 +647,27 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (IsAuthorize(model.SessionId))
                     {
-                        var user = db.WifiUsers.FirstOrDefault(m => m.UniqueUserId == model.UserId);
+                        var user = db.Users.FirstOrDefault(m => m.UniqueUserId == model.UserId);
                         if (user != null)
                         {
-                            db.WifiUsers.Remove(user);
-                            db.SaveChanges();
-                            retStr = "User deleted ";
-                            logIfoUserDeleteSuccess = "User deleted";
-                            retVal = Convert.ToInt32(ReturnCode.DeleteUserSuccess);
-                            retType = ReturnCode.Success.ToString();
+                            if (db.MacAddress.First(m => m.UserId == user.Id).IsRegisterInRtls)
+                            {
+                                using (CommunicateRTLS objCommunicateRtls = new CommunicateRTLS())
+                                {
+                                    var lstMacAddress = db.MacAddress.Where(m => m.UserId == user.Id).Select(m => m.MacAddressValue).ToArray();
+                                    string retResult = objCommunicateRtls.RegisterInRealTimeLocationService(lstMacAddress).Result;
+                                    Notification objServiceReturn = JsonConvert.DeserializeObject<Notification>(retResult);
+                                    if (objServiceReturn.result.returncode == Convert.ToInt32(RTLSResult.Success))
+                                    {
+                                        db.Users.Remove(user);
+                                        db.SaveChanges();
+                                        retStr = "User deleted ";
+                                        logIfoUserDeleteSuccess = "User deleted";
+                                        retVal = Convert.ToInt32(ReturnCode.DeleteUserSuccess);
+                                        retType = ReturnCode.Success.ToString();
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -752,6 +718,11 @@ namespace CaptivePortal.API.Controllers
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objUser"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("a8Captiveportal/V1/UpdateUser")]
         public HttpResponseMessage UpdateUser(CreateUserViewModel objUser)
@@ -765,7 +736,7 @@ namespace CaptivePortal.API.Controllers
                 {
                     if (IsAuthorize(objUser.SessionId))
                     {
-                        Users user = new Users();
+                        ApplicationUser user = new ApplicationUser();
 
                         //check mandatory request.
                         if (objUser.SiteId == 0)
@@ -788,7 +759,7 @@ namespace CaptivePortal.API.Controllers
                             retStr = "Username missing";
                             retVal = Convert.ToInt32(ErrorCodeWarning.UserNameRequired);
                         }
-                        else if (!(db.WifiUsers.Any(m => m.UniqueUserId == objUser.UserId)))
+                        else if (!(db.Users.Any(m => m.UniqueUserId == objUser.UserId)))
                         {
                             retStr = "Incorrect UserId";
                             retVal = Convert.ToInt32(ErrorCodeWarning.IncorrectUserId);
@@ -800,7 +771,7 @@ namespace CaptivePortal.API.Controllers
                         }
                         if (string.IsNullOrEmpty(retStr))
                         {
-                            int userId = db.WifiUsers.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).UserId;
+                            int userId = db.Users.FirstOrDefault(m => m.UniqueUserId == objUser.UserId).Id;
                             user = db.Users.Find(userId);
                             if (!string.IsNullOrEmpty(objUser.UserName))
                             {
@@ -894,96 +865,6 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("a8Captiveportal/V1/LoginWithNewMacAddress")]
-        public HttpResponseMessage Login(LoginWIthNewMacAddressModel model)
-        {
-            log.Info("Inside Login");
-           // string logInfoLoginWithNewMac = "a8Captiveportal/V1/LoginWithNewMacAddress";
-            try
-            {
-                log.Info(model.SiteId);
-                log.Info(model.UserName);
-                log.Info(model.Password);
-                log.Info(model.MacAddress);
-
-                if (string.IsNullOrEmpty(model.UserName))
-                {
-                    retStr = "Need UserName for Registration";
-                }
-                else if (string.IsNullOrEmpty(model.Password))
-                {
-                    retStr = "Need Password for Registration";
-                }
-                else if (model.SiteId == 0)
-                {
-                    retStr = "Please send the SiteId for Registrartion";
-                }
-                else if (string.IsNullOrEmpty(model.MacAddress))
-                {
-                    retStr = "MacAddress not able to detect please contact Admin";
-                }
-                //else if(!(db.MacAddress.Any(m=>m.MacAddressValue==model.MacAddress && m.WifiUsers.SiteId==model.SiteId)))
-                //{
-                //    retStr = "Please Register before Login";
-                //}
-                else if (!(db.WifiUsers.Any(m => m.UserName == model.UserName && m.Password == model.Password && m.SiteId == model.SiteId)))
-                {
-                    retStr = "Please Register before Login ";
-                }
-
-
-                if (string.IsNullOrEmpty(retStr))
-                {
-                    var objWifiUsers = db.WifiUsers.FirstOrDefault(m => m.UserName == model.UserName && m.SiteId == model.SiteId);
-                    if (!(db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.UserId == objWifiUsers.UserId)))
-                    {
-                        //log.Info("Check that the particular MacAddress exist or Not for particualr User with Different Site";
-                        MacAddress objMac = new MacAddress();
-                        objMac.MacAddressValue = model.MacAddress;
-                        objMac.UserId = objWifiUsers.UserId;
-                        objMac.BrowserName = model.BrowserName;
-                        objMac.UserAgentName = model.UserAgentName;
-                        objMac.OperatingSystem = model.OperatingSystem;
-                        objMac.IsMobile = model.IsMobile;
-                        db.MacAddress.Add(objMac);
-                        db.SaveChanges();
-
-                        retStr = "Successfully add the new Maccadress with Authorize to connect to wifi";
-                        retVal = Convert.ToInt32(ReturnCode.Success);
-                        retType = ReturnCode.Success.ToString();
-                    }
-                    retVal = Convert.ToInt32(ReturnCode.Success);
-                    retType = ReturnCode.Success.ToString();
-                    retStr = "Successfully Authorize to connect wifi with Exist MacAddress";
-                }
-                else
-                {
-                    retVal = Convert.ToInt32(ReturnCode.Warning);
-                    retType = ReturnCode.Warning.ToString();
-                }
-            }
-            
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-                retType = ReturnCode.Success.ToString();
-                retVal = Convert.ToInt32(ReturnCode.Failure);
-                retStr = ex.Message.ToString();
-            }
-            objReturn.returncode = retVal;
-            objReturn.msg = retStr;
-            objReturn.type = retType;
-            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(objSerialization.Serialize(objReturn), Encoding.UTF8, "application/json")
-            };
-        }
-
-        
-
-
         ///<summary>
         ///Check operational status for Site
         ///</summary>
@@ -997,26 +878,26 @@ namespace CaptivePortal.API.Controllers
             string[] data = new string[4];
             data[0] = siteDetails.ControllerIpAddress;
             data[1] = siteDetails.MySqlIpAddress;
-            data[2] =siteDetails.RtlsUrl ;
+            data[2] = siteDetails.RtlsUrl;
             for (int i = 0; i < 4; i++)
             {
-             try
+                try
                 {
                     Ping myPing = new Ping();
-                    if(data[i]!=null)
+                    if (data[i] != null)
                     {
-                      PingReply reply = myPing.Send(data[i], 1000);
-                      if (reply != null)
-                      {
-                          replyMessage = reply.Status.ToString();
-                      }
+                        PingReply reply = myPing.Send(data[i], 1000);
+                        if (reply != null)
+                        {
+                            replyMessage = reply.Status.ToString();
+                        }
                     }
-                     else
+                    else
                     {
                         replyMessage = "NotDeployed";
-                       
+
                     }
-                  
+
 
                 }
                 catch (Exception ex)
@@ -1028,16 +909,15 @@ namespace CaptivePortal.API.Controllers
 
             }
 
-           
-
-               
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-                return new HttpResponseMessage()
-                {
-                    Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
-                };
-            }
-         /// <summary>
+            return new HttpResponseMessage()
+            {
+                Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
+            };
+        }
+
+
+        /// <summary>
         /// Check the session Authorize to allow the particular User or not
         /// </summary>
         /// <returns></returns>
@@ -1063,209 +943,5 @@ namespace CaptivePortal.API.Controllers
             }
             return retval;
         }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="model"></param>
-        ///// <returns></returns>
-        [HttpPost]
-        [Route("GetStatusOfUserForSite")]
-        public HttpResponseMessage GetStatusOfUserForSite(LoginWIthNewMacAddressModel model)
-        {
-            try
-            {
-                var objSite = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
-                log.Info(objSite.SiteId);
-
-                //Need to check the MacAddress exist for the particular Site with Autologin true
-                if (db.MacAddress.Any(m => m.MacAddressValue == model.MacAddress && m.WifiUsers.SiteId == model.SiteId))
-                {
-                    log.Info("inside Is Any MacAddressExist For Particular Site");
-                    var objMac = db.MacAddress.FirstOrDefault(m => m.MacAddressValue == model.MacAddress && m.WifiUsers.SiteId == model.SiteId);
-
-                   
-                    var objUserAsPerUserId = db.WifiUsers.FirstOrDefault(m => m.UserId == objMac.UserId);
-                    log.Info(objUserAsPerUserId.AutoLogin);
-                    if (objUserAsPerUserId.AutoLogin == true)
-                    {
-                        log.Info("Check the AutoLogin of Site or User");
-                        //objReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-                        returnStatus.UserName = db.WifiUsers.FirstOrDefault(m => m.UserId == objMac.UserId).UserName;
-                        returnStatus.Password = db.WifiUsers.FirstOrDefault(m => m.UserId == objMac.UserId).Password;
-                        returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Success);
-
-
-                    }
-                }
-                else
-                {
-                    returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Warning);
-                }
-                if (debugStatus == DebugMode.on.ToString())
-                {
-                    log.Info(retStr);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex.Message);
-                returnStatus.StatusReturn.returncode = Convert.ToInt32(ReturnCode.Failure);
-                if (debugStatus == DebugMode.off.ToString())
-                {
-                    log.Info(retStr);
-                }
-            }
-            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(objSerialization.Serialize(returnStatus), Encoding.UTF8, "application/json")
-            };
-        }
-
-    }
-
-
-    public class StatusReturn
-    {
-        public int returncode { get; set; }
-        public string msg { get; set; }
-        public string type { get; set; }
-    }
-    public class AutoLoginStatus
-    {
-        public AutoLoginStatus()
-        {
-            StatusReturn = new StatusReturn();
-        }
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        public StatusReturn StatusReturn { get; set; }
-    }
-
-    public class MacAddesses
-    {
-        public string MacAddress { get; set; }
-    }
-
-    public class ReturnMacAesddress
-    {
-        public ReturnMacAesddress()
-        {
-            MacAddressList = new List<MacAddesses>();
-        }
-
-        public List<MacAddesses> MacAddressList { get; set; }
-        public int returncode { get; set; }
-        public string type { get; set; }
-        public string msg { get; set; }
-    }
-
-    public class CreateUserViewModel
-    {
-        public int SiteId { get; set; }
-
-        public string UserId { get; set; }
-
-        public string UserName { get; set; }
-
-        public string Password { get; set; }
-        public string Email { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        public bool AutoLogin { get; set; }
-
-        public int MobileNumber { get; set; }
-
-        public int? GenderId { get; set; }
-
-        public int? AgeId { get; set; }
-
-        public DateTime BirthDate { get; set; }
-
-        public string SessionId { get; set; }
-
-
-    }
-    public class LoginWIthNewMacAddressModel
-    {
-        public string UserName { get; set; }
-
-        public string MacAddress { get; set; }
-
-        public string Password { get; set; }
-
-        public string BrowserName { get; set; }
-        public string UserAgentName { get; set; }
-        public int SiteId { get; set; }
-        public string OperatingSystem { get; set; }
-
-        public bool IsMobile { get; set; }
-
-    }
-
-    public class UserMacAddressDetails
-    {
-        public UserMacAddressDetails()
-        {
-            objMacAddress = new MacAddress();
-            objAddress = new UsersAddress();
-        }
-        public WifiUser objUser { get; set; }
-        public MacAddress objMacAddress { get; set; }
-
-        public UsersAddress objAddress { get; set; }
-    }
-
-    public enum ReturnCode
-    {
-        Success = 1,
-        LoginSuccess = 202,
-        CreateUserSuccess = 204,
-        GetMacAddressSuccess = 206,
-        DeleteUserSuccess = 208,
-        UpdateMacAddressuccess = 210,
-        UpdateUserSuccess = 212,
-        Failure = 511,
-        Warning = HttpStatusCode.Found
-    }
-
-
-    public enum ErrorCodeWarning
-    {
-        IncorrectPassword = 310,
-        usernameisnotexist = 311,
-        UserNameRequired = 312,
-        PasswordRequired = 313,
-        SiteIDRequired = 314,
-        SiteIdNotExist = 315,
-        UserIdRequired = 316,
-        SessionIdRequired = 317,
-        UserUniqueIdAlreadyExist = 318,
-        MacAddressorUserNameExist = 319,
-        NonAuthorize = 320,
-        OperationTypeMissing = 321,
-        IncorrectOperationtype = 322,
-        IncorrectUserId = 323,
-        MacAddressNotExist = 324
-    }
-    public class AddMacModel
-    {
-        public string UserId { get; set; }
-        public int SiteId { get; set; }
-        public string SessionId { get; set; }
-        public OperationType OperationType { get; set; }
-        public List<MacAddesses> MacAddressList { get; set; }
-    }
-    public enum OperationType
-    {
-        Add = 1,
-        Delete = 2
     }
 }
-
-

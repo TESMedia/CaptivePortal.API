@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class Merge_All_Migrations : IMigrationMetadata
+    public sealed partial class Added_Rename_Migraiono : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Merge_All_Migrations));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Added_Rename_Migraiono));
         
         string IMigrationMetadata.Id
         {
-            get { return "201707100244182_Merge_All_Migrations"; }
+            get { return "201707260401508_Added_Rename_Migraiono"; }
         }
         
         string IMigrationMetadata.Source

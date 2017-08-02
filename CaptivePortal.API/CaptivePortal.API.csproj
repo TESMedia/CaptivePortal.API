@@ -203,6 +203,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiControls\AccountController.cs" />
+    <Compile Include="ApiControls\FormApiController.cs" />
+    <Compile Include="ApiControls\GetFormDataController.cs" />
+    <Compile Include="ApiControls\MemberApiController.cs" />
+    <Compile Include="ApiControls\RealTimeDataApiController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -238,23 +243,29 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Context\DbContext.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\FormApiController.cs" />
-    <Compile Include="Controllers\GetFormDataController.cs" />
+    <Compile Include="Controllers\ExternalLoginController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\RealTimeDataApiController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Enums\Enum.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201707100244182_Merge_All_Migrations.cs" />
-    <Compile Include="Migrations\201707100244182_Merge_All_Migrations.Designer.cs">
-      <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
+    <Compile Include="Migrations\201707260339106_Added_InitialMigration.cs" />
+    <Compile Include="Migrations\201707260339106_Added_InitialMigration.Designer.cs">
+      <DependentUpon>201707260339106_Added_InitialMigration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201707110617329_allow_null_to_organistaion.cs" />
-    <Compile Include="Migrations\201707110617329_allow_null_to_organistaion.Designer.cs">
-      <DependentUpon>201707110617329_allow_null_to_organistaion.cs</DependentUpon>
+    <Compile Include="Migrations\201707260401508_Added_Rename_Migraiono.cs" />
+    <Compile Include="Migrations\201707260401508_Added_Rename_Migraiono.Designer.cs">
+      <DependentUpon>201707260401508_Added_Rename_Migraiono.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707260448235_Remove_WifiUsers_tbl.cs" />
+    <Compile Include="Migrations\201707260448235_Remove_WifiUsers_tbl.Designer.cs">
+      <DependentUpon>201707260448235_Remove_WifiUsers_tbl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201707310644135_Change_MacAddress_tbl.cs" />
+    <Compile Include="Migrations\201707310644135_Change_MacAddress_tbl.Designer.cs">
+      <DependentUpon>201707310644135_Change_MacAddress_tbl.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -263,6 +274,12 @@
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\Age.cs" />
     <Compile Include="Models\ApiAccessUserSession.cs" />
+    <Compile Include="Models\ApplicationRole.cs" />
+    <Compile Include="Models\ApplicationRoleStore.cs" />
+    <Compile Include="Models\ApplicationUserClaim.cs" />
+    <Compile Include="Models\ApplicationUserLogin.cs" />
+    <Compile Include="Models\ApplicationUserRole.cs" />
+    <Compile Include="Models\ApplicationUserStore.cs" />
     <Compile Include="Models\Browser.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\CreateUserWithRoleViewModel.cs" />
@@ -274,6 +291,7 @@
     <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\GeneratingHtmlViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\CustomPasswordHasher.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MacAddress.cs" />
     <Compile Include="Models\ManagePromotion.cs" />
@@ -290,7 +308,7 @@
     <Compile Include="Models\Site.cs" />
     <Compile Include="Models\SiteViewModel.cs" />
     <Compile Include="Models\UserRole.cs" />
-    <Compile Include="Models\Users.cs" />
+    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\UsersAddress.cs" />
     <Compile Include="Models\UsersDeviceData.cs" />
     <Compile Include="Models\UserSite.cs" />
@@ -300,6 +318,16 @@
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\AddMacModel.cs" />
+    <Compile Include="ViewModels\AutoLoginStatus.cs" />
+    <Compile Include="ViewModels\CreateUserViewModel.cs" />
+    <Compile Include="ViewModels\LoginWIthNewMacAddressModel.cs" />
+    <Compile Include="ViewModels\MacAddesses.cs" />
+    <Compile Include="ViewModels\RequestRtlsModel.cs" />
+    <Compile Include="ViewModels\ReturnMacAesddress.cs" />
+    <Compile Include="ViewModels\Notification.cs" />
+    <Compile Include="ViewModels\StatusReturn.cs" />
+    <Compile Include="ViewModels\UserMacAddressDetails.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -4601,11 +4629,17 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201707100244182_Merge_All_Migrations.resx">
-      <DependentUpon>201707100244182_Merge_All_Migrations.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201707260339106_Added_InitialMigration.resx">
+      <DependentUpon>201707260339106_Added_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201707110617329_allow_null_to_organistaion.resx">
-      <DependentUpon>201707110617329_allow_null_to_organistaion.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201707260401508_Added_Rename_Migraiono.resx">
+      <DependentUpon>201707260401508_Added_Rename_Migraiono.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707260448235_Remove_WifiUsers_tbl.resx">
+      <DependentUpon>201707260448235_Remove_WifiUsers_tbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201707310644135_Change_MacAddress_tbl.resx">
+      <DependentUpon>201707310644135_Change_MacAddress_tbl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -19,7 +19,7 @@ namespace CaptivePortal.API.Models
         public int UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public WifiUser WifiUsers { get; set; }
+        public ApplicationUser Users { get; set; }
 
         public string BrowserName { get; set; }
 
@@ -29,5 +29,9 @@ namespace CaptivePortal.API.Models
 
         public string UserAgentName { get; set; }
 
+        public bool IsRegisterInRtls { get; set; }
+
     }
+
+    
 }

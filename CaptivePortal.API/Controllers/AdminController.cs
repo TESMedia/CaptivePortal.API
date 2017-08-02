@@ -32,7 +32,7 @@ namespace CaptivePortal.API.Controllers
     {
         Context.DbContext db = new Context.DbContext();
         // DbContext db = new DbContext();
-        string ConnectionString = ConfigurationManager.ConnectionStrings["DbContext"].ConnectionString;
+        string ConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
 
         StringBuilder sb = new StringBuilder(String.Empty);
@@ -46,7 +46,6 @@ namespace CaptivePortal.API.Controllers
 
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private bool _userHasPermission = false;
         private ApplicationRoleManager _roleManager;
 
         public AdminController()
@@ -146,7 +145,7 @@ namespace CaptivePortal.API.Controllers
         {
             try
             {
-                Users existUser = db.Users.Where(u => u.Email == model.UserName).FirstOrDefault();
+                ApplicationUser existUser = db.Users.Where(u => u.Email == model.UserName).FirstOrDefault();
                 if (!ModelState.IsValid)
                 {
                     return View(model);
@@ -201,14 +200,14 @@ namespace CaptivePortal.API.Controllers
         }
 
 
-        public ActionResult ResetPassword(string userId, string code)
+        public ActionResult ResetPassword(int userId, string code)
         {
             ResetPasswordViewModel objResetPassword = new ResetPasswordViewModel();
             try
             {
                 using (var db = new Context.DbContext())
                 {
-                    if (userId != null)
+                    if (userId != 0)
                     {
                         objResetPassword.Email = db.Users.Where(m => m.Id == userId).FirstOrDefault().Email;
                         var Code = code.Replace(" ", "+");
@@ -287,7 +286,7 @@ namespace CaptivePortal.API.Controllers
                                              select new UserViewModel()
                                              {
                                                  SiteId = siteId.Value,
-                                                 UserId = item.Id,
+                                                 UserId = item.Id.ToString(),
                                                  UserName = item.UserName,
                                                  CreationDate = item.CreationDate,
                                                  Lastlogin=item.UpdateDate,
@@ -1096,7 +1095,7 @@ namespace CaptivePortal.API.Controllers
             AdminlistViewModel list = new AdminlistViewModel();
             list.AdminViewlist = new List<AdminViewModel>();
 
-            string userId = User.Identity.GetUserId();
+            int userId = User.Identity.GetUserId<int>();
             string role = UserManager.GetRoles(userId).FirstOrDefault();
             ViewBag.roleOfUser = role;
             int siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == userId).SiteId);
@@ -1106,7 +1105,7 @@ namespace CaptivePortal.API.Controllers
             //int orgId = Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId) == 0 ? 0 : Convert.ToInt32(db.Company.FirstOrDefault(m => m.CompanyId == compId).Organisation.OrganisationId);
             try
             {
-                if (siteId != 0 && siteId != null)
+                if (siteId != 0)
                 {
                     if (role == "CompanyAdmin")
                     {
@@ -1252,7 +1251,7 @@ namespace CaptivePortal.API.Controllers
             try
             {
 
-                var user = new Users
+                var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
@@ -1279,17 +1278,17 @@ namespace CaptivePortal.API.Controllers
                     db.SaveChanges();
 
                     //sites which are selected by admin to give access to company admin ,store in AdminSiteAccessTable
-                    foreach (var item in RestrictedSites)
-                    {
-                        AdminSiteAccess objAdminSite = new AdminSiteAccess();
-                        int x = 0;
-                        Int32.TryParse(item, out x);
-                        objAdminSite.UserId = user.Id;
-                        objAdminSite.SiteId = model.SiteDdl;
-                        objAdminSite.SiteName = db.Site.FirstOrDefault(m => m.SiteId == x).SiteName;
-                        db.AdminSiteAccess.Add(objAdminSite);
-                        db.SaveChanges();
-                    }
+                    //foreach (var item in RestrictedSites)
+                    //{
+                    //    AdminSiteAccess objAdminSite = new AdminSiteAccess();
+                    //    int x = 0;
+                    //    Int32.TryParse(item, out x);
+                    //    objAdminSite.UserId = user.Id;
+                    //    objAdminSite.SiteId = model.SiteDdl;
+                    //    objAdminSite.SiteName = db.Site.FirstOrDefault(m => m.SiteId == x).SiteName;
+                    //    db.AdminSiteAccess.Add(objAdminSite);
+                    //    db.SaveChanges();
+                    //}
                 }
                 else
                 {
@@ -1348,7 +1347,7 @@ namespace CaptivePortal.API.Controllers
             {
                 siteId = 1;
             }
-            var userList = db.WifiUsers.Where(m => m.SiteId == siteId).ToList();
+            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
             if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
             {
@@ -1357,7 +1356,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only foreName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.WifiUsers.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1367,7 +1366,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only surName  for searching or filter
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(foreName))
                     {
-                        userList = db.WifiUsers.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1377,7 +1376,7 @@ namespace CaptivePortal.API.Controllers
                     //For the parameter contain only username  for searching or filter
                     if (string.IsNullOrEmpty(foreName) && string.IsNullOrEmpty(surName))
                     {
-                        userList = db.WifiUsers.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
+                        userList = db.Users.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
                         TotalPages = Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
                     }
                 }
@@ -1392,7 +1391,7 @@ namespace CaptivePortal.API.Controllers
                                      select new WifiUserViewModel()
                                      {
                                          SiteId = siteId.Value,
-                                         UserId = item.UserId,
+                                         UserId = item.Id,
                                          UserName = item.UserName,
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
@@ -1430,14 +1429,14 @@ namespace CaptivePortal.API.Controllers
         public ActionResult UserWithProfile(int SiteId, string userId)
         {
             //var userid = User.Identity.GetUserId();
-            var userDetail = db.WifiUsers.FirstOrDefault(m => m.SiteId == SiteId);
+            var userDetail = db.Users.FirstOrDefault(m => m.SiteId == SiteId);
             var termConditionVersion = db.Site.FirstOrDefault(m => m.SiteId == SiteId).Term_conditions;
             var siteName = db.Site.FirstOrDefault(m => m.SiteId == SiteId).SiteName;
             var model = new MacAddressViewModel();
             WifiUserViewModel objUserViewModel = new WifiUserViewModel();
             if (userDetail != null)
             {
-                objUserViewModel.Password = userDetail.Password;
+                objUserViewModel.Password = userDetail.PasswordHash;
                 objUserViewModel.UserName = userDetail.UserName;
                 objUserViewModel.Gender = db.Gender.FirstOrDefault(m => m.GenderId == userDetail.GenderId).Value;
                 objUserViewModel.AgeRange = db.Age.FirstOrDefault(m => m.AgeId == userDetail.AgeId).Value;
@@ -1447,7 +1446,7 @@ namespace CaptivePortal.API.Controllers
                 objUserViewModel.ThirdPartyOptIn = Convert.ToBoolean(userDetail.ThirdPartyOptIn);
                 objUserViewModel.UserOfDataOptIn = Convert.ToBoolean(userDetail.UserOfDataOptIn);
                 //objUserViewModel.Status = (Status)Enum.Parse(typeof(Status), userDetail.Status);
-                var mac = db.MacAddress.Where(m => m.WifiUsers.SiteId == SiteId).ToList();
+                var mac = db.MacAddress.Where(m => m.Users.SiteId == SiteId).ToList();
                 //var lastEntry = db.MacAddress.LastOrDefault(m => m.UserId == UserId).MacAddressValue;
                 //objUserViewModel.MacAddress = lastEntry;
                 objUserViewModel.MacAddressList = mac;
@@ -1506,7 +1505,7 @@ namespace CaptivePortal.API.Controllers
         [HttpPost]
         public void DeleteUser(int UserId)
         {
-            Users user = db.Users.Find(UserId);
+            ApplicationUser user = db.Users.Find(UserId);
             db.Users.Remove(user);
             db.SaveChanges();
         }

@@ -64,7 +64,7 @@ namespace FP.Radius
 			return packet;
 		}
 
-		public async Task<RadiusPacket> SendAndReceivePacket(RadiusPacket packet, int retries = DEFAULT_RETRIES)
+		public RadiusPacket SendAndReceivePacket(RadiusPacket packet, int retries = DEFAULT_RETRIES)
 		{
 			using (UdpClient udpClient = new UdpClient())
 			{
@@ -143,7 +143,7 @@ namespace FP.Radius
 			// Add the Message-Authenticator as a last step.  Note: Server-Status packets don't require any other attributes
 			authPacket.SetMessageAuthenticator(_SharedSecret);
 			// We MUST NOT retransmit Server-Status packets according to https://tools.ietf.org/html/rfc5997
-			return await SendAndReceivePacket(authPacket, 0);
+			return SendAndReceivePacket(authPacket, 0);
 		}
 		#endregion
 
