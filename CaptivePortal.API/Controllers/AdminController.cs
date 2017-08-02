@@ -267,9 +267,22 @@ namespace CaptivePortal.API.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ManageUser(int? siteId, int? page, string userName)
+        public ActionResult ManageUser(int? siteId, int? page, string userName, int? NumberOfLines)
         {
             UserlistViewModel list = new UserlistViewModel();
+            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+            int PageSize = Convert.ToInt32(NumberOfLines);
+            if (NumberOfLines != null)
+            {
+                PageSize = Convert.ToInt32(NumberOfLines);
+                ViewBag.selectedNumber = NumberOfLines;
+            }
+            else
+            {
+                PageSize = 20;
+            }
+
+            var TotalPages = (int)Math.Ceiling((decimal)userList.Count / (decimal)PageSize);
             try
             {
                 if (siteId != null)
@@ -277,11 +290,25 @@ namespace CaptivePortal.API.Controllers
                     var userId = User.Identity.GetUserId();
                     list.UserViewlist = new List<UserViewModel>();
                     int currentPageIndex = page.HasValue ? page.Value : 1;
-                    int PageSize = 20;
-                    double TotalPages = 0;
-                    var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+                    var startPage = currentPageIndex - 5;
+                    int endPage = currentPageIndex + 4;
+                    if (startPage <= 0)
+                    {
+                        endPage -= (startPage - 1);
+                        startPage = 1;
+                    }
+                    if (endPage > TotalPages)
+                    {
+                        endPage = TotalPages;
+                        if (endPage > 10)
+                        {
+                            startPage = endPage - 9;
+                        }
+                    }
+
                     userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-                    TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
+                    // TotalPages = (int)Math.Ceiling((decimal)userList.Count / PageSize);
+
                     var userViewModelList = (from item in userList
                                              select new UserViewModel()
                                              {
@@ -289,7 +316,7 @@ namespace CaptivePortal.API.Controllers
                                                  UserId = item.Id.ToString(),
                                                  UserName = item.UserName,
                                                  CreationDate = item.CreationDate,
-                                                 Lastlogin=item.UpdateDate,
+                                                 Lastlogin = item.UpdateDate,
                                                  //Status = item.Status
                                                  Role = UserManager.GetRoles(item.Id).FirstOrDefault()
 
@@ -297,14 +324,14 @@ namespace CaptivePortal.API.Controllers
                                              }).ToList();
                     list.UserViewlist.AddRange(userViewModelList);
 
-                    if (userId != null)
-                    {
-                        list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
-                    }
-                    else
-                    {
-                        list.UserView = userViewModelList.FirstOrDefault();
-                    }
+                    //if (userId != null)
+                    //{
+                    //    list.UserView = userViewModelList.FirstOrDefault(m => m.UserId == userId);
+                    //}
+                    //else
+                    //{
+                    //list.UserView = userViewModelList.FirstOrDefault();
+                    //}
                     ViewBag.CurrentPage = currentPageIndex;
                     ViewBag.PageSize = PageSize;
                     ViewBag.TotalPages = TotalPages;
@@ -402,32 +429,67 @@ namespace CaptivePortal.API.Controllers
         {
             string optionalPicturePath = null;
             string OptionalPictureForSuccessPage = null;
-            
-            //image path
-            if (Request.Files["OptionalPicture"].ContentLength > 0)
-            {
-                var httpPostedFile = Request.Files["OptionalPicture"];
-                string savedPath = HostingEnvironment.MapPath("/Images/" + model.SiteId);
-                optionalPicturePath = "/Images/" + model.SiteId + "/" + httpPostedFile.FileName;
-                string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
-
-                if (!System.IO.Directory.Exists(savedPath))
-                {
-                    Directory.CreateDirectory(savedPath);
-                }
-                httpPostedFile.SaveAs(completePath);
-                string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
-                OptionalPictureForSuccessPage = baseUrl + optionalPicturePath;
-            }
-
             ManagePromotion objManagePromotion = new ManagePromotion();
-            objManagePromotion.SiteId = model.SiteId;
-            objManagePromotion.SuccessPageOption = model.SuccessPageOption;
-            objManagePromotion.WebPageURL = model.WebPageURL;
-            objManagePromotion.OptionalPictureForSuccessPage = OptionalPictureForSuccessPage;
-            db.ManagePromotion.Add(objManagePromotion);
-            db.SaveChanges();
+            var promo = db.ManagePromotion.ToList();
+            if (promo.Count != 0)
+            {
+                var pro = db.ManagePromotion.Where(m => m.SiteId == model.SiteId).FirstOrDefault();
+                if (pro != null)
+                {
+                    db.ManagePromotion.Remove(pro);
+                    db.SaveChanges();
+                }
 
+                //image path
+                if (Request.Files["OptionalPicture"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["OptionalPicture"];
+                    string savedPath = HostingEnvironment.MapPath("/Images/" + model.SiteId);
+                    optionalPicturePath = "/Images/" + model.SiteId + "/" + httpPostedFile.FileName;
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                    OptionalPictureForSuccessPage = baseUrl + optionalPicturePath;
+                }
+
+                objManagePromotion.SiteId = model.SiteId;
+                objManagePromotion.SuccessPageOption = model.SuccessPageOption;
+                objManagePromotion.WebPageURL = model.WebPageURL;
+                objManagePromotion.OptionalPictureForSuccessPage = OptionalPictureForSuccessPage;
+                db.ManagePromotion.Add(objManagePromotion);
+                db.SaveChanges();
+            }
+            else
+            {
+                //image path
+                if (Request.Files["OptionalPicture"].ContentLength > 0)
+                {
+                    var httpPostedFile = Request.Files["OptionalPicture"];
+                    string savedPath = HostingEnvironment.MapPath("/Images/" + model.SiteId);
+                    optionalPicturePath = "/Images/" + model.SiteId + "/" + httpPostedFile.FileName;
+                    string completePath = System.IO.Path.Combine(savedPath, httpPostedFile.FileName);
+
+                    if (!System.IO.Directory.Exists(savedPath))
+                    {
+                        Directory.CreateDirectory(savedPath);
+                    }
+                    httpPostedFile.SaveAs(completePath);
+                    string baseUrl = Request.Url.Scheme + "://" + Request.Url.Authority + Request.ApplicationPath.TrimEnd('/') + "/";
+                    OptionalPictureForSuccessPage = baseUrl + optionalPicturePath;
+                }
+
+                objManagePromotion.SiteId = model.SiteId;
+                objManagePromotion.SuccessPageOption = model.SuccessPageOption;
+                objManagePromotion.WebPageURL = model.WebPageURL;
+                objManagePromotion.OptionalPictureForSuccessPage = OptionalPictureForSuccessPage;
+                db.ManagePromotion.Add(objManagePromotion);
+                db.SaveChanges();
+            }
             return RedirectToAction("Home", "Admin");
         }
 
@@ -1335,17 +1397,41 @@ namespace CaptivePortal.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName)
+        public ActionResult UserDetails(int? siteId, int? userId, int? page, string userName, string foreName, string surName, int? NumberOfLines)
         {
             //userId = User.Identity.GetUserId();
             WifiUserlistViewModel list = new WifiUserlistViewModel();
             list.WifiUserViewlist = new List<WifiUserViewModel>();
             int currentPageIndex = page.HasValue ? page.Value : 1;
-            int PageSize = 5;
-            double TotalPages = 0;
-            if (siteId == null)
+            int PageSize = Convert.ToInt32(NumberOfLines);
+
+            var userList = db.WifiUsers.Where(m => m.SiteId == siteId).ToList();
+            if (NumberOfLines != null)
             {
-                siteId = 1;
+                PageSize = Convert.ToInt32(NumberOfLines);
+                ViewBag.selectedNumber = NumberOfLines;
+            }
+            else
+            {
+                PageSize = 20;
+            }
+
+            var TotalPages = (int)Math.Ceiling((decimal)userList.Count / (decimal)PageSize);
+
+            var startPage = currentPageIndex - 5;
+            int endPage = currentPageIndex + 4;
+            if (startPage <= 0)
+            {
+                endPage -= (startPage - 1);
+                startPage = 1;
+            }
+            if (endPage > TotalPages)
+            {
+                endPage = TotalPages;
+                if (endPage > 10)
+                {
+                    startPage = endPage - 9;
+                }
             }
             var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
@@ -1385,7 +1471,7 @@ namespace CaptivePortal.API.Controllers
             else
             {
                 userList = userList.Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-                TotalPages = Math.Ceiling((double)db.Users.Count() / PageSize);
+                //TotalPages = (int)Math.Ceiling((decimal)db.Users.Count() / PageSize);
             }
             var userViewModelList = (from item in userList
                                      select new WifiUserViewModel()
@@ -1589,6 +1675,21 @@ namespace CaptivePortal.API.Controllers
                 }
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+
+        public ActionResult TestSetUpRtls()
+        {
+            return View();
+        }
+
+        public ActionResult ViewRtlsData()
+        {
+            return View();
+        }
+
+        public ActionResult ViewErrorLogRtls()
+        {
+            return View();
         }
 
 

@@ -4601,6 +4601,9 @@
     <Content Include="Views\Admin\CreateUser.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\CreatePromotionalMaterial.cshtml" />
+    <Content Include="Views\Admin\TestSetUpRtls.cshtml" />
+    <Content Include="Views\Admin\ViewErrorLogRtls.cshtml" />
+    <Content Include="Views\Admin\ViewRtlsData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

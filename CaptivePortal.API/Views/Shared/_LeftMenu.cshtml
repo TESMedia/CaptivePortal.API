@@ -50,10 +50,19 @@
                         </ul>
                     </li>
                     <li>
-                        <a><i class="fa fa-signal"></i>Manage DashBoard <span class="fa fa-chevron-down"></span></a>
+                        <a><i class="fa fa-desktop"></i>Manage DashBoard <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
                             <li><a href="UploadFile" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Upload File</a></li>
                             <li><a href="Locations" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Location Mapping</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a><img src="~/Images/geo.png" style="height:20px;width:20px" />&nbsp;&nbsp;Manage RTLS <span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                            <li><a href="TestSetUpRtls" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Test Set-up</a></li>
+                            <li><a href="ViewRtlsData" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View RTLS data</a></li>
+                            <li><a href="ViewErrorLogRtls" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View Error log</a></li>
                         </ul>
                     </li>
 

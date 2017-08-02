@@ -101,6 +101,18 @@
                                                 <label for="surName">Surname:</label>
                                                 <input type="text" class="form-control" autofocus="autofocus" id="txtSurName" name="LastName" value="@ViewBag.surName" placeholder="Enter surname" />
                                             </div>
+
+                                            <div class="form-group">
+                                                <label for="text">Show:</label>
+                                                <select class="form-control" style="float:right" name="NumberOfLines" id="NumberOfLines" onchange="showNumberOfLines()">
+                                                    <option value=@ViewBag.selectedNumber>@ViewBag.selectedNumber</option>
+                                                    <option value="3">3</option>
+                                                    <option value="5">5</option>
+                                                    <option value="7">7</option>
+                                                    <option value="50">50</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </div>
                                         </form>
 
                                     </div>
@@ -296,10 +308,17 @@
     var siteName = localStorage.getItem("SiteName");
     document.getElementsByTagName('form')[0].innerHTML = siteName;
 
-
+    //page link click
     $("#div1 a").click(function () {
-        $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
+        var lineNumber = document.getElementById("NumberOfLines").value;
+        $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val() + '&NumberOfLines=' + lineNumber);
     });
+    //dropdown click to show number of lines 
+    function showNumberOfLines() {
+        var lineNumber = document.getElementById("NumberOfLines").value;
+        $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber);
+    };
+
 
     $("#btnSearch").on("click", function () {
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
