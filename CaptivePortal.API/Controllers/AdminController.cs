@@ -31,16 +31,11 @@ namespace CaptivePortal.API.Controllers
     public class AdminController : Controller
     {
         Context.DbContext db = new Context.DbContext();
-        // DbContext db = new DbContext();
-        string ConnectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-
-
         StringBuilder sb = new StringBuilder(String.Empty);
         FormControl objFormControl = new FormControl();
         string debugStatus = ConfigurationManager.AppSettings["DebugStatus"];
         private static ILog Log { get; set; }
         ILog log = LogManager.GetLogger(typeof(AdminController));
-
         private string retStr = "";
 
 
@@ -1405,7 +1400,7 @@ namespace CaptivePortal.API.Controllers
             int currentPageIndex = page.HasValue ? page.Value : 1;
             int PageSize = Convert.ToInt32(NumberOfLines);
 
-            var userList = db.WifiUsers.Where(m => m.SiteId == siteId).ToList();
+            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             if (NumberOfLines != null)
             {
                 PageSize = Convert.ToInt32(NumberOfLines);
@@ -1433,7 +1428,7 @@ namespace CaptivePortal.API.Controllers
                     startPage = endPage - 9;
                 }
             }
-            var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
+            //var userList = db.Users.Where(m => m.SiteId == siteId).ToList();
             //If Searching on the basis of the single parameter
             if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(foreName) || !string.IsNullOrEmpty(surName))
             {
@@ -1443,7 +1438,7 @@ namespace CaptivePortal.API.Controllers
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(surName))
                     {
                         userList = db.Users.Where(p => p.FirstName.ToLower().Contains(foreName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
+                        TotalPages =(int) Math.Ceiling((double)db.Users.Where(p => p.FirstName.ToLower() == foreName.ToLower()).Count() / PageSize);
                     }
                 }
 
@@ -1453,7 +1448,7 @@ namespace CaptivePortal.API.Controllers
                     if (string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(foreName))
                     {
                         userList = db.Users.Where(p => p.LastName.ToLower().Contains(surName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
+                        TotalPages = (int)Math.Ceiling((double)db.Users.Where(p => p.LastName.ToLower() == surName.ToLower()).Count() / PageSize);
                     }
                 }
 
@@ -1463,7 +1458,7 @@ namespace CaptivePortal.API.Controllers
                     if (string.IsNullOrEmpty(foreName) && string.IsNullOrEmpty(surName))
                     {
                         userList = db.Users.Where(p => p.UserName.ToLower().Contains(userName.ToLower())).ToList().Skip(((int)currentPageIndex - 1) * PageSize).Take(PageSize).ToList();
-                        TotalPages = Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
+                        TotalPages = (int)Math.Ceiling((double)db.Users.Where(p => p.UserName.ToLower() == userName.ToLower()).Count() / PageSize);
                     }
                 }
             }

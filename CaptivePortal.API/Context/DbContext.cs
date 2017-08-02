@@ -14,7 +14,7 @@ namespace CaptivePortal.API.Context
         ApplicationUserLogin, ApplicationUserRole, ApplicationUserClaim>
     {
         public DbContext()
-            : base("DefaultConnection")
+            : base("DbContext")
         {
         }
 
