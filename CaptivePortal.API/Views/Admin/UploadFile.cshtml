@@ -5,7 +5,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="a8DashboardModule">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -41,7 +41,7 @@
 </head>
 
 
-<body class="nav-md">
+<body class="nav-md" ng-controller="UploadFileController">
     <div class="container body">
         <div class="main_container">
             @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
@@ -124,9 +124,216 @@
             <!-- /top navigation -->
             <!-- page content -->
              <div class="right_col" role="main">
-                 <iframe id="FrameUploadFile" src="#" style="display:block;height:1000px;width:1000px;">
+                 <div class="row">
+                     <div class="panel-group" id="accordion">
+                         <div class="panel panel-primary">
+                             <div class="panel-heading">
+                                 <h4 class="panel-title">
+                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Select the Site</a>
+                                 </h4>
+                             </div>
+                             <div id="collapse4" class="panel-collapse collapse">
+                                 <div class="panel-body">
+                                     <div class="form-group">
+                                         <div>
+                                             <a href="@Url.Action("uploadfilename","Dashboard",new {SiteName="Discovery1"})">Discovery1</a>
+                                             <a href="@Url.Action("uploadfilename","Dashboard",new {SiteName="Discovery2"})">Discovery2</a>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="panel panel-primary">
+                             <div class="panel-heading">
+                                 <h4 class="panel-title">
+                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Set the Parameters</a>
+                                 </h4>
+                             </div>
+                             <div id="collapse3" class="panel-collapse collapse">
+                                 <div class="panel-body">
+                                     <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                         <label>Update Window Dwelll Time</label>
+                                         <input type="text" class="form-control" id="txtWindowDwellTime" value="@ViewBag.WindowCovCalcDwellTime" />
+                                         <button type="submit" class="ui-spinner-button" ng-disabled="exporting" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" required ng-init="button=true" id="btnSave" ng-click="UpdateParameters('WindowConvDwellTime')">Save</button>
+                                     </div>
+                                     <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                         <label>SFTP File Path</label>
+                                         <div>
+                                             <input type="text" class="form-control" id="txtSftpPath" value="@ViewBag.RemotePath" />
+                                             <button type="submit" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" ng-click="UpdateParameters('RemotePath')">Save</button>
+                                         </div>
+                                     </div>
+                                     <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                         <label>Update DeltaTime</label>
+                                         <div>
+                                             <input type="text" class="form-control" id="txtDeltaTime" value="@ViewBag.DeltaTime" />
+                                             <button type="submit" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" ng-click="UpdateParameters('DeltaTime')">Save</button>
+                                         </div>
+                                     </div>
+                                     <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                         <label>Update Window Length Time</label>
+                                         <div>
+                                             <input type="text" class="form-control" id="txtWindowLength" value="@ViewBag.WindowConvLengthTime" />
+                                             <button type="submit" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" ng-click="UpdateParameters('WindowConvLengthTime')">Save</button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="panel panel-primary">
+                             <div class="panel-heading">
+                                 <h4 class="panel-title">
+                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Import TUI Discovery</a>
+                                 </h4>
+                             </div>
+                             <div id="collapse2" class="panel-collapse collapse">
+                                 <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                     <label>Update Location Mapping:</label>
+                                     <br />
+                                     <button type="submit" onclick="location.href='@Url.Action("Index", "LocationIndicators",new {SiteName=ViewBag.SiteName })'" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" id="Updatemapping">Update Mapping</button>
+                                     <br>
+                                 </div>
+                                 <div class="panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                     <label>Import TUI Discovery Itineraries</label>
+                                     <div>
+                                         <input id="file" type="file" class="form-control" multiple ng-files="getTheFiles($files)" />
+                                         <button type="submit" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" ng-click="Submit()">Save</button>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="panel panel-primary">
+                             <div class="panel-heading">
+                                 <h4 class="panel-title">
+                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Import SFTP File</a>
+                                 </h4>
+                             </div>
+                             <div id="collapse1" class="panel-collapse collapse in">
+                                 <div class="panel-body panel panel-primary col-md-4 col-lg-4 col-sm-4">
+                                     <div class="form-group">
+                                         <input type="month" ng-model="myMonthData" />
+                                     </div>
+                                     <button type="submit" class="ui-spinner-button" ng-disabled="exporting" style="background-color:rgb(224,242,224);background-image:none;border-color:white;margin-right: 81px;margin-top: 18px;margin-left: 0px;padding-top: 4px;padding-bottom: 8px;padding-right: 21px;padding-left: 22px;border-right-width: 1px;border-right-style: solid;border-left-width: 2px;border-left-style: solid;" ng-click="getFileUpload()" required ng-init="button=true">Fetch SFTP FILES</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 <div>
+                     <span us-spinner="{radius:30, width:8, length: 16}"></span>
+                 </div>
+                 <br />
+                 <div class="center">
+                     <table class="table table-striped table-bordered" style="width:100%" ng-init="getFileNames()">
+                         <tr>
+                             <td>
+                                 <table class="table table-striped table-bordered" style="width:50%">
+                                     <thead>
+                                         <tr>
+                                             <td width="5%"></td>
+                                             <td width="20%">
+                                                 Files In SFTP
+                                             </td>
+                                             <td width="30%">
+                                                 <input type="button" value="Clear" class="btn btn-danger col-lg-12" ng-click="Clear(x.Id)" />
+                                             </td>
+                                             <td width="30%">
+                                                 <input type="button" value="Save" class="btn btn-success col-lg-12" ng-click="ImportFile(x.FileName)" />
+                                             </td>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         <tr ng-repeat="x in SftpFileList | pagination: curPage * pageSize | limitTo: pageSize">
+                                             <td>
+                                                 <input type="checkbox" value="{{x.Id}}" id="chk" class="chk" name="chk" />
+                                             </td>
+                                             <td width="20%">
+                                                 {{x.FileName}}
+                                             </td>
+                                             <td width="30%"></td>
+                                         </tr>
+                                     </tbody>
+                                     <tfoot>
+                                         <tr>
+                                             <td></td>
+                                             <td>
+                                                 <div class="pagination pagination-centered" ng-show="SftpFileList.length">
+                                                     <ul class="pagination-controle pagination">
+                                                         <li>
+                                                             <button type="button" class="btn btn-primary" ng-disabled="curPage == 0"
+                                                                     ng-click="curPage=curPage-1">
+                                                                 &lt; PREV
+                                                             </button>
+                                                         </li>
+                                                         <li>
+                                                             <span>Page {{curPage + 1}} of {{ numberOfPages() }}</span>
+                                                         </li>
+                                                         <li>
+                                                             <button type="button" class="btn btn-primary"
+                                                                     ng-disabled="curPage >= SftpFileList.length/pageSize - 1"
+                                                                     ng-click="curPage = curPage+1">
+                                                                 NEXT &gt;
+                                                             </button>
+                                                         </li>
+                                                     </ul>
+                                                 </div>
+                                             </td>
+                                             <td></td>
+                                         </tr>
+                                     </tfoot>
+                                 </table>
+                             </td>
+                             <td>
+                                 <table class="table table-striped table-bordered" style="width:50%">
+                                     <thead>
+                                         <tr>
+                                             <td width="20%">Files in DB</td>
+                                             <td width="30%">Delete Files</td>
+                                         </tr>
+                                     </thead>
+                                     <tbody>
+                                         <tr ng-repeat="y in DbFileList | pagination: curPage1 * pageSize1 | limitTo: pageSize1">
+                                             <td width="30%">
+                                                 {{y.FileName}}
+                                             </td>
+                                             <td width="20%">
+                                                 <input type="button" value="Delete" class="btn btn-danger col-lg-12" ng-click="DeleteAll(y.Id)" />
+                                             </td>
+                                         </tr>
+                                     </tbody>
+                                     <tfoot>
+                                         <tr>
+                                             <td>
+                                                 <div class="pagination pagination-centered" ng-show="DbFileList.length">
+                                                     <ul class="pagination-controle pagination">
+                                                         <li>
+                                                             <button type="button" class="btn btn-primary" ng-disabled="curPage1 == 0"
+                                                                     ng-click="curPage1=curPage1-1">
+                                                                 &lt; PREV
+                                                             </button>
+                                                         </li>
+                                                         <li>
+                                                             <span>Page {{curPage1 + 1}} of {{ numberOfPages1() }}</span>
+                                                         </li>
+                                                         <li>
+                                                             <button type="button" class="btn btn-primary"
+                                                                     ng-disabled="curPage1 >= DbFileList.length/pageSize1 - 1"
+                                                                     ng-click="curPage1 = curPage1+1">
+                                                                 NEXT &gt;
+                                                             </button>
+                                                         </li>
+                                                     </ul>
+                                                 </div>
+                                             </td>
+                                             <td></td>
+                                         </tr>
+                                     </tfoot>
 
-                 </iframe>
+                                 </table>
+                             </td>
+                         </tr>
+                     </table>
+                 </div>
              </div>
            
             <!-- /page content -->
@@ -176,10 +383,11 @@
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
+
+    <script src="~/a8Dashboard_Angular/Controllers/UploadFileController.js"></script>
+    <script src="~/a8Dashboard_Angular/Services/UploadFileService.js"></script>
     <!-- Google Analytics -->
    <script type="text/javascript">
-       var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()"+"/DashBoard/UploadFileName?SiteName=" + localStorage.getItem("SiteName");
-       $('#FrameUploadFile').attr('src', completeUrl)
    </script>
 
 </body>

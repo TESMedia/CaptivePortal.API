@@ -124,7 +124,78 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div class="right_col" role="main">
-                <iframe id="TestSetUpRtls" src="#" style="display:block;height:1000px;width:1200px;"></iframe>
+                @*<iframe id="TestSetUpRtls" src="#" style="display:block;height:1000px;width:1200px;"></iframe>*@
+
+
+                <div class="row col-lg-12 col-sm-12 col-md-12">
+
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <h4>Real Time Location Services-API administrator</h4>
+                    </div>
+                    <div class="pull-right col-lg-6 col-md-6 col-sm-6">
+
+                    </div>
+                </div>
+                <br />
+
+                <br /><br />
+                <div class="col-sm-12 col-lg-12 col-md-12">
+                    @*@using (Html.BeginForm("Index", "Admin", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                        {*@
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Enter the Devices</label>
+                        <div class="btn pull-left form-horizontal" id="txtDiv">
+                            <input type="text" id="txtMacDevices" name="MacAddresses" class="form-control">
+                        </div>
+                        <input type="button" class="btn-info" value="Save" name="Command" title="Save" id="btnSave" style="margin-top:10px;height:30px;width:60px" onclick="saveDevice()">
+
+                    </div>
+                    @*}*@
+                </div>
+                <br /><br />
+                <div class="col-sm-12 col-lg-12 col-sm-12">
+                    <div class="form-group row">
+                        <!--call the api for register as per the selection-->
+                        <input type="button" class="btn btn-info BtnChkSelect" value="Register" id="btnRegister" title="Register" disabled>
+                        <input type="button" class="btn btn-info BtnChkSelect" value="De-Register" id="btnDeRegister" title="De-Registe" disabled>
+                        <input type="button" class="btn btn-info BtnChkSelect" value="Delete Mac Address" id="btnDeleteMac" title="Delete Mac Address" disabled />
+                        <input type="button" class="btn btn-info BtnChkSelect" value="Get Latest Position" id="btnLatestVersion" title="Postion" disabled>
+
+                    </div>
+                </div>
+                <br />
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <div class="body-content">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+
+                                    </th>
+                                    <th>
+                                        Mac
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th>
+                                        IsCreatedByAdmin
+                                    </th>
+                                    <th>
+                                        IsDisplay
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="macDetails"></tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+
+
+  
             </div>
 
             <!-- /page content -->
@@ -176,8 +247,121 @@
     <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
     <script type="text/javascript">
-       var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["RTLSUrl"].ToString()";
-       $('#TestSetUpRtls').attr('src', completeUrl)
+
+
+
+                    function saveDevice() {
+                        //alert("savemac");
+                        var macValue = document.getElementById('txtMacDevices').value;
+                        var data = { MacAddresses: macValue };
+                        $.post("http://localhost:58203/Device/Save", data, function (response) {
+                            if (response == "") {
+                                alert(macValue + " " + "Register successfully");
+                            }
+                            else {
+                                alert(response.result.errmsg);
+                            }
+                            location.reload();
+                        });
+
+                    }
+
+                    $(document).ready(function () {
+
+                        var uri = 'http://localhost:58203/UIData/ListOfMacAddress';
+                        $(document).ready(function () {
+                            $.getJSON(uri)
+                            .done(function (data) {
+                                $.each(data, function (key, item) {
+                                    $('#macDetails').append("<tr>" + "<td> <input type='checkbox' class='chkMacDevices' name='chkMacDevices' id='chkMacDevices'/>  </td>" + "<td class='tdMac' > " + item.Mac + "</td>" + "<td>" + item.Intstatus + "</td>" + "<td>" + item.IsCreatedByAdmin + "</td>" + "<td> <input type='checkbox' class='IsDisplay' name='IsDisplay' id='IsDisplay'/>  </td>" + "<td>" + + "</td></tr>");
+                                });
+                            });
+                        });
+
+
+
+                        $(document).on('click', '#chkMacDevices', function () {
+
+
+                            if ($(this).is(":checked")) {
+
+                                // stop the bubbling to prevent firing the row's click event
+                                $(".BtnChkSelect").removeAttr("disabled");
+                            } else {
+                                $(".BtnChkSelect").attr("disabled", "disabled");
+                            }
+
+                        });
+
+
+                        $("#btnDeleteMac").on("click", function () {
+                            var arrData = [];
+                            var uri = 'http://localhost:58203/Device/Delete/';
+                            $.each($("input[name='chkMacDevices']:checked"), function () {
+                                arrData.push($(this).parents("tr").find(".tdMac").text().trim());
+                            });
+                            var data = { MacAddresses: arrData }
+                            $.post(uri, data, function (e) {
+                                location.reload();
+                            });
+                        });
+
+
+
+
+                        $("#btnRegister").on("click", function () {
+                            var arrData = [];
+                            $.each($("input[name='chkMacDevices']:checked"), function () {
+                                arrData.push($(this).parents("tr").find(".tdMac").text().trim());
+                            });
+                            var data = { MacAddresses: arrData, IscreatedByAdmin: true }
+                            $.post("/RealTimeLocation/AddDevices/", data, function (response) {
+                                if (response) {
+                                    alert(arrData + " " + "Register successfully");
+                                }
+                                else {
+                                    alert(response.result.errmsg);
+                                }
+                                location.reload();
+                            });
+                        });
+
+
+                        //$("#btnViewMac").on("click", function () {
+                        //    $.post("/Admin/SaveMacAddressInDb/", $("#txtMacDevices").val(), function (e) {
+
+                        //    });
+                        //});
+
+                        ////$("#GetRegistred").on("click", function () {
+                        ////    $.get("/Admin/ViewMonitorDevices", function (e) {
+                        ////        window.location.htref = "/Admin/ViewMonitorDevices";
+                        ////    });
+                        ////});
+
+                        $("#btnDeRegister").on("click", function () {
+                            var arrData = [];
+                            $.each($("input[name='chkMacDevices']:checked"), function () {
+                                arrData.push($(this).parents("tr").find(".tdMac").text().trim());
+                            });
+                            var data = { MacAddresses: arrData }
+                            $.post("/RealTimeLocation/DeRegisterDevices/", data, function (response) {
+                                if (response.result.returncode == 0) {
+                                    alert(arrData + " " + "DeRigisterd successfully");
+                                }
+                                else {
+                                    alert(response.result.errmsg);
+                                }
+                                location.reload();
+                            });
+                        });
+
+
+
+                    });
+  
+        @*var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["RTLSUrl"].ToString()";
+        $('#TestSetUpRtls').attr('src', completeUrl)*@
     </script>
 
 </body>

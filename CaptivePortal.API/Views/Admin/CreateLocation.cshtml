@@ -1,4 +1,6 @@
-﻿@using Newtonsoft.Json.Linq;
+﻿@model CaptivePortal.API.Models.LocationIndicatorViewModel
+
+@using Newtonsoft.Json.Linq;
 @{
 
     Layout = null;
@@ -33,12 +35,15 @@
     <!-- bootstrap-daterangepicker -->
     <link href="~/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <!-- Custom Theme Style -->
     <link href="~/build/css/custom.min.css" rel="stylesheet">
+    <link href="~/Style/Site.css" rel="stylesheet" />
+    <link href="~/Style/sb-admin-2.css" rel="stylesheet" />
     <link href="~/Style/DropDown.css" rel="stylesheet" />
     <link href="~/build/css/custom.css" rel="stylesheet" />
     <script src="~/build/js/index.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/ju-1.11.4/jqc-1.11.3,dt-1.10.8/datatables.min.css">
 </head>
 
 
@@ -125,24 +130,61 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div class="right_col" role="main">
-                <br /><br /><br />
-                <table id="myDataTable" class="display" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Date</th>
-                            <th>Thread</th>
-                            <th>Level</th>
-                            <th>Logger</th>
-                            <th>Message</th>
-                            <th>Exceptions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr></tr>
-                    </tbody>
-                </table>
-                @*<iframe id="viewErrorLog" src="#" style="display:block;height:1000px;width:1200px;"></iframe>*@
+
+                @*@using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()*@
+
+                    <div class="form-horizontal">
+                        <h4> Create LocationIndicator</h4>
+                        <hr />
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.HiddenFor(model => model.AreaOfInterestId)
+                        <input type="hidden" value="" name="SiteName" id="siteName" />
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+
+
+                                 @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control",@id="name" } })
+
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.LoctionIndicator, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="txtDiv">
+                                @Html.EditorFor(model => model.LoctionIndicator, new { htmlAttributes = new { @class = "form-control",@id="locationIndicator" } })
+                                @Html.ValidationMessageFor(model => model.LoctionIndicator, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.NeighBourName, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10" id="txtDiv">
+                                @Html.EditorFor(model => model.NeighBourName, new { htmlAttributes = new { @class = "form-control",@id="neighBourName" } })
+                                @Html.ValidationMessageFor(model => model.NeighBourName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        @*<div class="form-group">
+                    <div class="col-md-10 col-sm-10 pull-right">
+                        <input type="button" class="btn btn-success" name="plus" id="plus" value="+"> <input type="button" class="btn btn-danger" name="minus" id="minus" value="-">
+                    </div>
+                </div>*@
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="button" value="Save" class="btn btn-success" id="btnsubmit" onclick="create()"/>
+                                <a href="Locations" class="btn btn-success" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;" role="button" style="cursor:pointer">Back</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                @*}*@
+
+              
             </div>
 
             <!-- /page content -->
@@ -154,9 +196,6 @@
 
     <!-- jQuery -->
     <script src="../vendors/jquery/dist/jquery.min.js"></script>
-
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.15/datatables.min.js"></script>
-
     <!-- Bootstrap -->
     <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- FastClick -->
@@ -193,33 +232,47 @@
     <script src="../vendors/moment/min/moment.min.js"></script>
     <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
+    <script src="~/a8Dashboard_Angular/A8DashBoardApp.js"></script>
+    <script src="~/a8Dashboard_Angular/Controllers/LocationController.js"></script>
+    <script src="~/a8Dashboard_Angular/Services/LocationService.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#myDataTable').DataTable({
-                "processing": true,
-                "serverSide": true,
-                "ajax": {
-                    "url": "@string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"))/Base/AjaxHandlerToGetLogs",
-            "type": "POST"
-        },
-            "columns": [
-                { "data": "Id" },
-                { "data": "Date" },
-                { "data": "Thread" },
-                { "data": "Level" },
-                { "data": "Logger" },
-                { "data": "Message" },
-                { "data": "Exception" }
-            ]
-        });
-        });
 
-        @*var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["RTLSUrl"].ToString()" + "Admin/GetRTLSLogs";
-       $('#viewErrorLog').attr('src', completeUrl)*@
-    </script>
-
+  
 </body>
 </html>
+
+<script type="text/javascript">
+
+    var siteName=localStorage.getItem('SiteName');
+    
+    function create()
+    {
+        var objlocationIndicator = { SiteName: siteName, Name: document.getElementById('name').value, LoctionIndicator: document.getElementById('locationIndicator').value, NeighBourName: document.getElementById('neighBourName').value }
+       
+        $.ajax({
+            type: "POST",
+            data: JSON.stringify(objlocationIndicator),
+            contentType: "application/json",
+            url: "http://localhost:62527/api/locationIndicators/Create",
+            success: function (data) {
+                alert(data);
+            },
+            failure: function (response) {
+                alert(response);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert(textStatus);
+            }
+        })
+    }
+
+
+     
+</script>
+
+
+
+
+

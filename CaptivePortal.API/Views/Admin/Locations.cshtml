@@ -5,7 +5,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="a8DashboardModule">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -41,7 +41,7 @@
 </head>
 
 
-<body class="nav-md">
+<body class="nav-md" ng-controller="LocationIndicatorController">
     <div class="container body">
         <div class="main_container">
             @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
@@ -123,9 +123,73 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            <div class="right_col" role="main" id="content">
+            <div class="right_col" role="main" id="content"  ng-init="getIndex()">
+                <p style="text-align: right; width: 100%;">
+                    @*<input type="button" class="btn btn-info" value="Back" onclick="location.href='@Url.Action("UploadFileName", "DashBoard")'" />
+                    <input type="button" class="btn btn-info" value="Add New" onclick="location.href='@Url.Action("Create", "LocationIndicators",new {SiteName=Request.QueryString["SiteName"].ToString()})'" />*@
+                    <input type="button" class="btn btn-success" value="Add new"  onclick="location.href='@Url.Action("CreateLocation", "Admin")'">
+                </p>
+                <table class="table">
+                    <tr>
+                        <th>
+                           @* @Html.DisplayNameFor(model => model.AreaOfInterestId)*@
+                            AreaOfInterestId
+                        </th>
+                        <th>
+                           @* @Html.DisplayNameFor(model => model.Name)*@
+                            Name
+                        </th>
+                        <th>
+                           @* @Html.DisplayNameFor(model => model.LoctionIndicator)*@
+                            LocationIndicator
+                        </th>
+                        <th>
+                           @* @Html.DisplayNameFor(model => model.NeighBourName)*@
+                            NeighBourName
+                        </th>
+                        <th></th>
+                    </tr>
 
-                <iframe id="FrameLocations" height="1000" width="1150" src="#"></iframe>
+                    @*@foreach (var item in Model)
+                    {*@
+                        <tr ng-repeat="item in locationIndiCatorDetails">
+                            <td id="AreaOfInterestId">
+                               @* @Html.DisplayFor(modelItem => item.AreaOfInterestId)*@
+                                {{item.AreaOfInterestId}}
+                            </td>
+
+                            <td>
+                               @* @Html.DisplayFor(modelItem => item.Name)*@
+                                {{item.Name}}
+                            </td>
+                            <td>
+                             @*   @Html.DisplayFor(modelItem => item.LoctionIndicator)*@
+                                {{item.LoctionIndicator}}
+                            </td>
+                            <td>
+                              @*  @Html.DisplayFor(modelItem => item.NeighBourName)*@
+                                {{item.NeighBourName}}
+                            </td>
+                            <td>
+                                <input type="button" class="btn btn-success" value="Edit" ng-click="edit(item.AreaOfInterestId)">
+
+                                <input type="button" class="btn btn-danger" value="Delete" />
+                               @* @Html.ActionLink("Edit", "Edit", new { id = item.AreaOfInterestId, SiteName = Request.QueryString["SiteName"].ToString() }, new { @class = "btn btn-primary", @style = "color:white" })*@
+
+                                @*@Html.ActionLink("Delete", "Delete", new { id = item.AreaOfInterestId, SiteName = Request.QueryString["SiteName"].ToString() }, new { @class = "btn btn-primary", @style = "color:white" })*@
+                                @*<form action="/LocationIndicators/Delete" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" value="@item.AreaOfInterestId" name="AreaOfInterestId" />
+                                    <input type="hidden" value="@Request.QueryString["SiteName"]" name="SiteName" />
+                                    <input type="submit" value="Delete" class="btn btn-primary" />
+                                </form>*@
+                            </td>
+
+                        </tr>
+                    @*}*@
+
+                </table>
+
 
             </div>
 
@@ -177,10 +241,14 @@
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
+    <script src="~/a8Dashboard_Angular/Controllers/LocationIndicatorController.js"></script>
+    <script src="~/a8Dashboard_Angular/Services/LocationIndicatorService.js"></script>
     <script type="text/javascript">
-        var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()" + "/LocationIndicators/Index?SiteName=" + localStorage.getItem("SiteName");
-        $('#FrameLocations').attr('src', completeUrl)
+        @*var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()" + "/LocationIndicators/Index?SiteName=" + localStorage.getItem("SiteName");
+        $('#FrameLocations').attr('src', completeUrl)*@
     </script>
 
 </body>
 </html>
+
+

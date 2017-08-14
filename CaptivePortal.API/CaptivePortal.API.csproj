@@ -54,6 +54,10 @@
       <HintPath>..\packages\iTextSharp.5.5.11\lib\itextsharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="JsMd5, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JsMd5.1.0.0\lib\net40\JsMd5.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -274,6 +278,7 @@
     <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\GeneratingHtmlViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\LocationIndicatorViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\MacAddress.cs" />
     <Compile Include="Models\ManagePromotion.cs" />
@@ -302,7 +307,23 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="a8Dashboard_Angular\A8DashBoardApp.js" />
+    <Content Include="a8Dashboard_Angular\Controllers\LocationController.js" />
+    <Content Include="a8Dashboard_Angular\Controllers\LocationIndicatorController.js" />
+    <Content Include="a8Dashboard_Angular\Controllers\UploadFileController.js" />
+    <Content Include="a8Dashboard_Angular\Scripts\angular.js" />
+    <Content Include="a8Dashboard_Angular\Scripts\angular.min.js" />
+    <Content Include="a8Dashboard_Angular\Scripts\Angular_Notification\angular-ui-notification.css" />
+    <Content Include="a8Dashboard_Angular\Scripts\Angular_Notification\angular-ui-notification.js" />
+    <Content Include="a8Dashboard_Angular\Scripts\Spinner\angular-loading-spinner.js" />
+    <Content Include="a8Dashboard_Angular\Scripts\Spinner\angular-spinner.min.js" />
+    <Content Include="a8Dashboard_Angular\Services\LocationIndicatorService.js" />
+    <Content Include="a8Dashboard_Angular\Services\LocationService.js" />
+    <Content Include="a8Dashboard_Angular\Services\UploadFileService.js" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="Bootstrap 3.3.7\bootstrap.min.css" />
+    <Content Include="Bootstrap 3.3.7\bootstrap.min.js" />
+    <Content Include="Bootstrap 3.3.7\bootstrap.tpls.js" />
     <Content Include="build\css\custom.css" />
     <Content Include="build\css\custom.min.css" />
     <Content Include="build\images\back_disabled.png" />
@@ -321,7 +342,11 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\airloc8_logo.svg" />
+    <Content Include="Images\geo.png" />
     <Content Include="Images\images.png" />
+    <Content Include="Images\Thomson Logo.png" />
+    <Content Include="Images\thomson_logo.png" />
     <Content Include="Images\wifi-297697_1280.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -372,9 +397,12 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Spin.js" />
     <Content Include="Style\CheckBox.css" />
     <Content Include="Style\DropDown.css" />
     <Content Include="Style\RequiredField.css" />
+    <Content Include="Style\sb-admin-2.css" />
+    <Content Include="Style\Site.css" />
     <Content Include="Vendors\animate.css\animate.css" />
     <Content Include="Vendors\animate.css\animate.min.css" />
     <Content Include="Vendors\animate.css\gulpfile.js" />
@@ -4576,6 +4604,8 @@
     <Content Include="Views\Admin\TestSetUpRtls.cshtml" />
     <Content Include="Views\Admin\ViewErrorLogRtls.cshtml" />
     <Content Include="Views\Admin\ViewRtlsData.cshtml" />
+    <Content Include="Views\Admin\CreateLocation.cshtml" />
+    <Content Include="Views\Admin\EditLocation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

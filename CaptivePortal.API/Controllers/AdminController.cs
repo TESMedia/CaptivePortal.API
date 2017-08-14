@@ -1256,7 +1256,7 @@ namespace CaptivePortal.API.Controllers
             }
         }
 
-        public ActionResult Locations(int? siteId)
+        public ActionResult Locations(int? siteId) 
         {
             if (siteId != 0 && siteId != null)
             {
@@ -1267,6 +1267,16 @@ namespace CaptivePortal.API.Controllers
                 TempData["SiteIdCheck"] = "Please select any of the site and then got location mapping";
                 return RedirectToAction("Home", "Admin");
             }
+        }
+
+        public ActionResult CreateLocation()
+        {
+            return View();
+        }
+
+        public ActionResult EditLocation(int id, string SiteName)
+        {
+            return View();
         }
 
         public ActionResult Locationdashboard()
@@ -1487,9 +1497,10 @@ namespace CaptivePortal.API.Controllers
                                          FirstName = item.FirstName,
                                          LastName = item.LastName,
                                          CreationDate = item.CreationDate,
+                                        Lastlogin=item.UpdateDate,
                                          //SiteName= SiteName
                                          // Password = item.Password,
-                                         // MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
+                                          MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
 
                                      }).ToList();
             list.WifiUserViewlist.AddRange(userViewModelList);

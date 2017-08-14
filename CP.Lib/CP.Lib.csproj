@@ -34,6 +34,10 @@
       <HintPath>..\packages\iTextSharp.5.5.11\lib\itextsharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="JsMd5, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JsMd5.1.0.0\lib\net40\JsMd5.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -76,11 +80,15 @@
     <None Include="bin\Debug\CP.Lib.dll.config" />
     <None Include="obj\Debug\CP.Lib.csprojResolveAssemblyReference.cache" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Radius\.vs\Radius\v14\.suo" />
     <None Include="Radius\obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="Radius\obj\Debug\Radius.csprojResolveAssemblyReference.cache" />
-    <None Include="Radius\Radius.nuspec" />
+    <None Include="Radius\Radius.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-3.1.1.min.map" />
     <None Include="Scripts\jquery-3.1.1.slim.min.map" />
   </ItemGroup>

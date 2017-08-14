@@ -5,7 +5,7 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="a8DashboardModule">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -33,15 +33,19 @@
     <!-- bootstrap-daterangepicker -->
     <link href="~/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <!-- Custom Theme Style -->
     <link href="~/build/css/custom.min.css" rel="stylesheet">
+    <link href="~/Style/Site.css" rel="stylesheet" />
+    <link href="~/Style/sb-admin-2.css" rel="stylesheet" />
     <link href="~/Style/DropDown.css" rel="stylesheet" />
     <link href="~/build/css/custom.css" rel="stylesheet" />
     <script src="~/build/js/index.js"></script>
 </head>
 
 
-<body class="nav-md">
+<body class="nav-md" ng-controller="LocationController">
     <div class="container body">
         <div class="main_container">
             @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
@@ -124,9 +128,460 @@
             <!-- /top navigation -->
             <!-- page content -->
             <div class="right_col" role="main">
-                <iframe id="FrameDashBoard" src="#" style="height:1000px;width:1200px;">
+                @*<div id="wrapper">*@
+                    <!-- Navigation -->
+                    @*<nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="horzNavBar">*@
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <div style="width:100%">
+                                <a class="navbar-brand" href="index.html"><img src="~/Images/airloc8_logo.svg" /></a>
+                            </div>
+                        </div>
+                        <!-- /.navbar-header -->
+                        <ul class="nav navbar-top-links navbar-left">
+                            <li style="top:10px;left:20px;">
+                                <h4 id="FontHeader">Location Dashboard</h4>
+                            </li>
+                            <li class="pull-right" style="text-align:center;top:10px;left:100px;">
+                                <h4>{{LabelDiscovery}}</h4>
+                            </li>
+                            <li class="pull-right" style="left:680px;top:10px;">
+                                <img src="~/Images/Thomson Logo.png" style="height:30px;width:120px;" />
+                            </li>
+                        </ul>
 
-                </iframe>
+                        <!-- /.navbar-top-links -->
+                        <div class="navbar-default sidebar" role="navigation" id="vertNavBar">
+                            <div class="sidebar-nav navbar-collapse">
+                                <ul class="nav" id="side-menu">
+                                    <li class="sidebar-search">
+                                        <select class="form-control" ng-model="selectdiscovery" ng-change="LoadDate()">
+                                            <option value="" ng-selected="true">
+                                                Select the Site
+                                            </option>
+                                            <option value="Discovery1">
+                                                Discovery1
+                                            </option>
+                                            <option value="Discovery2">
+                                                Discovery2
+                                            </option>
+                                        </select>
+                                        <div class="input-group custom-search-form" ng-init="getAreaOfInterest()">
+                                            <h3><span class="label label-primary">Locations</span></h3>
+                                        </div>
+                                    </li>
+                                    @*<li class="sidebar-search">
+
+                            </li>*@
+                                    <li ng-repeat="location in userslocation">
+                                        <div style="float:left;margin-right:20px;margin-left:20px;">
+                                            <input type="checkbox" class="LocationCheckbox" ng-model="location.checked" ng-click="updateSelection($index, userslocation)" value="{{location.AreaOfInterestId}}">
+                                        </div>
+                                        <label id="chkLocationName" class="chkLocationName" ng-model="LocationName">{{location.Name}}</label>
+                                    </li>
+
+                                </ul>
+                            </div>
+                            <!-- /.sidebar-collapse -->
+                        </div>
+                        <!-- /.navbar-static-side -->
+                    @*</nav>*@
+                @*</div>*@
+                <div id="page-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12 col-md-12">
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <div>
+                                    <h4><span class="label label-primary">Date</span></h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <div>
+                                    <h4><span class="label label-primary" th 0px;border-left-style solid;margin-top 0px;margin-left:70px;">Hour From</span></h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <div>
+                                    <h4><span class="label label-primary" th 0px;border-left-style solid;margin-top 0px;margin-left:70px;">Hour To</span></h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <div>
+                                    <h4><span class="label label-primary">Dwell Time</span></h4>
+                                </div>
+                            </div>
+                            <div class="col-lg-1 col-sm-1 col-md-1">
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-primary" id="logoutBtn">Exit</a>
+                                }
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-lg-2">
+                                <input type="button" class="btn-primary btn" onclick="window.print();" value="Print" />
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-sm-12 col-md-12 form-group">
+                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Select Date
+                                        <span class="caret"></span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <datepicker ng-model="SelectDate" class="well well-sm" custom-class="getDayClass(date, mode)" date-disabled="disabledDates(date,mode)"></datepicker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <select class="form-control" ng-model="FromHour">
+                                    <option ng-selected="true">
+                                        HourFrom
+                                    </option>
+                                    <option value="0:00">
+                                        0:00
+                                    </option>
+                                    <option value="1:00">
+                                        1:00
+                                    </option>
+                                    <option value="2:00">
+                                        2:00
+                                    </option>
+                                    <option value="3:00">
+                                        3:00
+                                    </option>
+                                    <option value="4:00">
+                                        4:00
+                                    </option>
+                                    <option value="5:00">
+                                        5:00
+                                    </option>
+                                    <option value="6:00">
+                                        6:00
+                                    </option>
+                                    <option value="7:00">
+                                        7:00
+                                    </option>
+                                    <option value="8:00">
+                                        8:00
+                                    </option>
+                                    <option value="9:00">
+                                        9:00
+                                    </option>
+                                    <option value="10:00">
+                                        10:00
+                                    </option>
+                                    <option value="11:00">
+                                        11:00
+                                    </option>
+                                    <option value="12:00">
+                                        12:00
+                                    </option>
+                                    <option value="13:00">
+                                        13:00
+                                    </option>
+                                    <option value="14:00">
+                                        14:00
+                                    </option>
+                                    <option value="15:00">
+                                        15:00
+                                    </option>
+                                    <option value="16:00">
+                                        16:00
+                                    </option>
+                                    <option value="17:00">
+                                        17:00
+                                    </option>
+                                    <option value="18:00">
+                                        18:00
+                                    </option>
+                                    <option value="19:00">
+                                        19:00
+                                    </option>
+                                    <option value="20:00">
+                                        20:00
+                                    </option>
+                                    <option value="21:00">
+                                        21:00
+                                    </option>
+                                    <option value="22:00">
+                                        22:00
+                                    </option>
+                                    <option value="23:00">
+                                        23:00
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <select class="form-control" ng-model="ToHour">
+                                    <option ng-selected="true">
+                                        HourTo
+                                    </option>
+                                    <option value="1:00">
+                                        1:00
+                                    </option>
+                                    <option value="2:00">
+                                        2:00
+                                    </option>
+                                    <option value="3:00">
+                                        3:00
+                                    </option>
+                                    <option value="4:00">
+                                        4:00
+                                    </option>
+                                    <option value="5:00">
+                                        5:00
+                                    </option>
+                                    <option value="6:00">
+                                        6:00
+                                    </option>
+                                    <option value="7:00">
+                                        7:00
+                                    </option>
+                                    <option value="8:00">
+                                        8:00
+                                    </option>
+                                    <option value="9:00">
+                                        9:00
+                                    </option>
+                                    <option value="10:00">
+                                        10:00
+                                    </option>
+                                    <option value="11:00">
+                                        11:00
+                                    </option>
+                                    <option value="12:00">
+                                        12:00
+                                    </option>
+                                    <option value="13:00">
+                                        13:00
+                                    </option>
+                                    <option value="14:00">
+                                        14:00
+                                    </option>
+                                    <option value="15:00">
+                                        15:00
+                                    </option>
+                                    <option value="16:00">
+                                        16:00
+                                    </option>
+                                    <option value="17:00">
+                                        17:00
+                                    </option>
+                                    <option value="18:00">
+                                        18:00
+                                    </option>
+                                    <option value="19:00">
+                                        19:00
+                                    </option>
+                                    <option value="20:00">
+                                        20:00
+                                    </option>
+                                    <option value="21:00">
+                                        21:00
+                                    </option>
+                                    <option value="22:00">
+                                        22:00
+                                    </option>
+                                    <option value="23:00">
+                                        23:00
+                                    </option>
+                                    <option value="23:59">
+                                        24:00
+                                    </option>
+
+                                </select>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-md-2">
+                                <select class="form-control" ng-model="DwellTime">
+                                    <option ng-selected="true">
+                                        --Select--
+                                    </option>
+                                    <option value="1">
+                                        1
+                                    </option>
+                                    <option value="2">
+                                        2
+                                    </option>
+                                    <option value="5">
+                                        5
+                                    </option>
+                                    <option value="10">
+                                        10
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                <input type="button" class="btn-primary btn pull-left ui-spinner-button" value="Update" ng-disabled="exporting" required ng-init="button=true" ng-click="GenerateReport()" />
+                            </div>
+                        </div>
+                        <label>{{lblReport}}</label>
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Connections</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float: left;margin-right:30px;">speaker_phone</i>
+                                                <h4>Total</h4>
+                                                <h4>{{Report.Content.NoOfConnection}}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel  panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Dwell Time (Minutes)</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float: left;margin-right:30px;">query_builder</i>
+                                                <h4>Average</h4>
+                                                <div>
+                                                    <h4>{{Report.Content.AvgDwelltime}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel  panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Visits</h3>
+
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float: left;margin-right:30px;">directions_walk</i>
+                                                <div>
+                                                    <div>
+                                                        <div>
+                                                            <h4>New</h4>
+                                                            <div>
+                                                                <h4>{{Report.Content.NoOfNewVisits}}</h4>
+                                                            </div>
+                                                        </div>
+                                                        <div style="margin-left:80px;">
+                                                            <h4>Return</h4>
+                                                            <div>
+                                                                <h4>{{Report.Content.NoOfReturns}}</h4>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Busiest (Visits)</h3>
+
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float: left;margin-right:30px;">query_builder</i>
+                                                <h4>Hour</h4>
+                                                <div>
+                                                    <h4>{{Report.Content.BusiestVisitHour}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Visit Frequency</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;float: left;margin-right:30px;">directions_walk</i>
+                                                <h4>Average</h4>
+                                                <div>
+                                                    <h4>{{Report.Content.AvgFrequency}}</h4>
+                                                </div>
+                                                <span us-spinner="{radius:30, width:8, length: 16}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Visit Bounce</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;float: left;margin-right:30px;">query_builder</i>
+                                                <div>
+                                                    <h4>Dwell+2mins</h4>
+                                                    <div>
+                                                        <h4>{{Report.Content.VisitBounseForTwoMin}}%</h4>
+                                                    </div>
+                                                </div>
+                                                <div style="margin-left:80px;">
+                                                    <h4>Dwell+5mins</h4>
+                                                    <div>
+                                                        <h4>{{Report.Content.VisitBounseForFiveMin}}%</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Busiest Passers By</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;float: left;margin-right:30px;">query_builder</i>
+                                                <h4>Hour</h4>
+                                                <div>
+                                                    <h4>{{Report.Content.BusiestVisitPassersBy}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Window Conversion</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float:left">assessment</i>
+                                                <div>
+                                                    <h4>
+                                                        {{Report.Content.WindowConversion}}
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="panel panel-default" id="panelTes">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Passers By</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <i class="material-icons" style="font-size:50px;font-size:50px;float: left;margin-right:30px;">directions_walk</i>
+                                                <h4>Total</h4>
+                                                <div>
+                                                    <h4>{{Report.Content.NoOfPassersBy}}</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- /page content -->
@@ -174,13 +629,23 @@
     <script src="../vendors/moment/min/moment.min.js"></script>
     <script src="../vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
+    <script src="~/a8Dashboard_Angular/A8DashBoardApp.js"></script>
+    <script src="~/a8Dashboard_Angular/Controllers/LocationController.js"></script>
+    <script src="~/a8Dashboard_Angular/Services/LocationService.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
     <!-- Google Analytics -->
 
     <script type="text/javascript">
-        var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()"+"/Dashboard/Index";
-        $('#FrameDashBoard').attr('src', completeUrl)
+
+        $(document).ready(function () {
+            $('.LocationCheckbox').click(function () {
+                $('.LocationCheckbox').not(this).prop('checked', false);
+            });
+            $('.btn-sm').click(function (e) {
+                e.stopPropagation();
+            });
+        });
     </script>
 </body>
 </html>
