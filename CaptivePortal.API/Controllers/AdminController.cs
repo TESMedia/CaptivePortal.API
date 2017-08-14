@@ -1490,7 +1490,7 @@ namespace CaptivePortal.API.Controllers
                                         Lastlogin=item.UpdateDate,
                                          //SiteName= SiteName
                                          // Password = item.Password,
-                                          MacAddress = db.MacAddress.Where(x => x.UserId == item.UserId).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
+                                          MacAddress = db.MacAddress.Where(x => x.UserId == item.Id).OrderByDescending(x => x.MacId).Take(1).Select(x => x.MacAddressValue).ToList().FirstOrDefault()
 
                                      }).ToList();
             list.WifiUserViewlist.AddRange(userViewModelList);
