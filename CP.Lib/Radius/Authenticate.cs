@@ -24,7 +24,7 @@ namespace FP.Radius
                 authPacket.SetAttribute(new VendorSpecificAttribute(10135, 1, UTF8Encoding.UTF8.GetBytes("Testing")));
                 authPacket.SetAttribute(new VendorSpecificAttribute(10135, 2, new[] { (byte)7 }));
 
-                RadiusPacket receivedPacket = await rc.SendAndReceivePacket(authPacket);
+                RadiusPacket receivedPacket = rc.SendAndReceivePacket(authPacket);
                 if (receivedPacket == null) throw new Exception("Can't contact remote radius server !");
 
                 switch (receivedPacket.PacketType)

@@ -11,20 +11,16 @@ using System.Web;
 
 namespace CaptivePortal.API.Models
 {
-    public class Users : IdentityUser
+    public class ApplicationUser : IdentityUser<int, ApplicationUserLogin, ApplicationUserRole, ApplicationUserClaim>, IUser<int>
     {
-        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<Users> manager)
+        public async Task<ClaimsIdentity>
+            GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
-            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-            var userIdentity = await manager.CreateIdentityAsync(this,DefaultAuthenticationTypes.ApplicationCookie);
-            // Add custom user claims here
+            var userIdentity = await manager
+                .CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             return userIdentity;
         }
-        [MaxLength(50)]
-
         public string FirstName { get; set; }
-
-
 
         [MaxLength(50)]
 
@@ -32,60 +28,61 @@ namespace CaptivePortal.API.Models
 
         public DateTime CreationDate { get; set; }
 
-
-
         public DateTime UpdateDate { get; set; }
+        //  [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 
-
-
-      //  [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-
-        public DateTime ? BirthDate { get; set; }
-
-       
+        public DateTime? BirthDate { get; set; }
 
         public int? MobileNumer { get; set; }
 
-
-
         public int? GenderId { get; set; }
 
-
-
         public int? AgeId { get; set; }
-
-
 
         public int? SiteId { get; set; }
 
         public bool? promotional_email { get; set; }
 
-
-
         public bool? ThirdPartyOptIn { get; set; }
-
-
 
         public bool? UserOfDataOptIn { get; set; }
 
-
+        public bool? AutoLogin { get; set; }
 
         [MaxLength(50)]
-
         public string Status { get; set; }
 
+        [MaxLength(50)]
+        public string Custom1 { get; set; }
 
+        [MaxLength(50)]
+        public string Custom2 { get; set; }
+
+        [MaxLength(50)]
+        public string Custom3 { get; set; }
+
+        [MaxLength(50)]
+        public string Custom4 { get; set; }
+
+        [MaxLength(50)]
+        public string Custom5 { get; set; }
+
+        [MaxLength(50)]
+        public string Custom6 { get; set; }
+
+        public string UniqueUserId { get; set; }
 
         [ForeignKey("AgeId")]
 
         public virtual Age Ages { get; set; }
-
-
 
         [ForeignKey("GenderId")]
 
         public virtual Gender Genders { get; set; }
 
         public virtual Site Sites { get; set; }
+
+       
+
     }
 }

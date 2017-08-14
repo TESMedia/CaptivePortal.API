@@ -12,11 +12,11 @@ namespace CaptivePortal.API.Models
         [Key]
         public int AdminSiteAccessId { get; set; }
         //foreign key
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public int SiteId { get; set; }
         public string SiteName { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual Users User { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

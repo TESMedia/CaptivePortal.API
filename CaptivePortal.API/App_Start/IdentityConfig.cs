@@ -10,12 +10,19 @@ using System.Security.Claims;
 using System.Net.Mail;
 using System.Configuration;
 using System;
+using System.Data.Entity;
+using System.Web;
+
 
 namespace CaptivePortal.API
 {
+    // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
 
+    // *** PASS IN TYPE ARGUMENT TO BASE CLASS:
 
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class EmailService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)
@@ -38,6 +45,9 @@ namespace CaptivePortal.API
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class SmsService : IIdentityMessageService
     {
         public Task SendAsync(IdentityMessage message)
@@ -47,32 +57,39 @@ namespace CaptivePortal.API
         }
     }
 
-    // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
-    public class ApplicationUserManager : UserManager<Users>
+    public class ApplicationUserManager : UserManager<ApplicationUser, int>
     {
-        public ApplicationUserManager(IUserStore<Users> store)
+        //CustomPasswordHasher objHasspassword;
+        //// *** ADD INT TYPE ARGUMENT TO CONSTRUCTOR CALL:
+        public ApplicationUserManager(IUserStore<ApplicationUser, int> store)
             : base(store)
         {
+            //objHasspassword = new CustomPasswordHasher();
         }
 
-        public static ApplicationUserManager Create(IdentityFactoryOptions<ApplicationUserManager> options, IOwinContext context)
+        //public override async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+        //{
+        //    user.PasswordHash = objHasspassword.HashPassword(password);
+        //    return await base.CreateAsync(user);
+        //}
+
+
+        public static ApplicationUserManager Create(
+            IdentityFactoryOptions<ApplicationUserManager> options,
+            IOwinContext context)
         {
-            var manager = new ApplicationUserManager(new UserStore<Users>(context.Get<DbContext>()));
+            // *** PASS CUSTOM APPLICATION USER STORE AS CONSTRUCTOR ARGUMENT:
+            var manager = new ApplicationUserManager(
+                new ApplicationUserStore(context.Get<Context.DbContext>()));
+
+           
             // Configure validation logic for usernames
-            manager.UserValidator = new UserValidator<Users>(manager)
+
+            // *** ADD INT TYPE ARGUMENT TO METHOD CALL:
+            manager.UserValidator = new UserValidator<ApplicationUser, int>(manager)
             {
                 AllowOnlyAlphanumericUserNames = false,
                 RequireUniqueEmail = true
-            };
-
-            // Configure validation logic for passwords
-            manager.PasswordValidator = new PasswordValidator
-            {
-                RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true,
             };
 
             // Configure user lockout defaults
@@ -80,52 +97,127 @@ namespace CaptivePortal.API
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
 
-            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
-            // You can write your own provider and plug it in here.
-            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<Users>
-            {
-                MessageFormat = "Your security code is {0}"
-            });
-            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<Users>
-            {
-                Subject = "Security Code",
-                BodyFormat = "Your security code is {0}"
-            });
+            // Register two factor authentication providers. 
+            // This application uses Phone and Emails as a step of receiving a 
+            // code for verifying the user You can write your own provider and plug in here.
+
+            // *** ADD INT TYPE ARGUMENT TO METHOD CALL:
+            manager.RegisterTwoFactorProvider("PhoneCode",
+                new PhoneNumberTokenProvider<ApplicationUser, int>
+                {
+                    MessageFormat = "Your security code is: {0}"
+                });
+
+            // *** ADD INT TYPE ARGUMENT TO METHOD CALL:
+            manager.RegisterTwoFactorProvider("EmailCode",
+                new EmailTokenProvider<ApplicationUser, int>
+                {
+                    Subject = "SecurityCode",
+                    BodyFormat = "Your security code is {0}"
+                });
+
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
+                // *** ADD INT TYPE ARGUMENT TO METHOD CALL:
                 manager.UserTokenProvider =
-                    new DataProtectorTokenProvider<Users>(dataProtectionProvider.Create("ASP.NET Identity"));
+                    new DataProtectorTokenProvider<ApplicationUser, int>(
+                        dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
         }
     }
-    // Configure the RoleManager used in the application. RoleManager is defined in the ASP.NET Identity core assembly
-    public class ApplicationRoleManager : RoleManager<IdentityRole>
+
+
+    // PASS CUSTOM APPLICATION ROLE AND INT AS TYPE ARGUMENTS TO BASE:
+    public class ApplicationRoleManager : RoleManager<ApplicationRole, int>
     {
-        public ApplicationRoleManager(IRoleStore<IdentityRole, string> roleStore)
+        // PASS CUSTOM APPLICATION ROLE AND INT AS TYPE ARGUMENTS TO CONSTRUCTOR:
+        public ApplicationRoleManager(IRoleStore<ApplicationRole, int> roleStore)
             : base(roleStore)
         {
         }
 
-        public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
+        // PASS CUSTOM APPLICATION ROLE AS TYPE ARGUMENT:
+        public static ApplicationRoleManager Create(
+            IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
         {
-            return new ApplicationRoleManager(new RoleStore<IdentityRole>(context.Get<DbContext>()));
+            return new ApplicationRoleManager(
+                new ApplicationRoleStore(context.Get<CaptivePortal.API.Context.DbContext>()));
         }
-
-
     }
-    // Configure the application sign-in manager which is used in this application.
-    public class ApplicationSignInManager : SignInManager<Users, string>
+
+
+    //// This is useful if you do not want to tear down the database each time you run the application.
+    //// public class ApplicationDbInitializer : DropCreateDatabaseAlways<ApplicationDbContext>
+    //// This example shows you how to create a new database if the Model changes
+    //public class ApplicationDbInitializer : CreateDatabaseIfNotExists<Context.DbContext>
+    //{
+    //    //protected override void Seed(Context.DbContext context)
+    //    //{
+    //    //    InitializeIdentityForEF(context);
+    //    //    base.Seed(context);
+    //    //}
+
+    //    //Create User=Admin@Admin.com with password=Admin@123456 in the Admin role        
+    //    public static void InitializeIdentityForEF(Context.DbContext db)
+    //    {
+    //        var userManager = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
+    //        var roleManager = HttpContext.Current.GetOwinContext().Get<ApplicationRoleManager>();
+    //        const string name = "admin@airloc8.com";
+    //        const string password = "Tes@123";
+    //        const string roleName = "GlobalAdmin";
+
+    //        var user = new ApplicationUser();
+    //        user.UserName = "admin@airloc8.com";
+    //        user.Email = "admin@airloc8.com";
+    //        user.CreationDate = DateTime.Now;
+    //        user.UpdateDate = DateTime.Now;
+    //        user.EmailConfirmed = true;
+    //        user.AccessFailedCount = 0;
+    //        user.LockoutEnabled = false;
+    //        user.TwoFactorEnabled = false;
+    //        user.PhoneNumberConfirmed = true;
+
+
+    //        //Create Role Admin if it does not exist
+    //        var role = roleManager.FindByName(roleName);
+    //        if (role == null)
+    //        {
+    //            role = new ApplicationRole(roleName);
+    //            var roleresult = roleManager.Create(role);
+    //        }
+
+    //        var User = userManager.FindByName(name);
+    //        if (User == null)
+    //        {
+    //            //user = new ApplicationUser { UserName = name, Email = name };
+    //            var result = userManager.Create(user, password);
+    //            result = userManager.SetLockoutEnabled(user.Id, false);
+    //        }
+
+    //        // Add user admin to Role Admin if not already added
+    //        var rolesForUser = userManager.GetRoles(user.Id);
+    //        if (!rolesForUser.Contains(role.Name))
+    //        {
+    //            var result = userManager.AddToRole(user.Id, role.Name);
+    //        }
+    //    }
+    //}
+
+
+    public class ApplicationSignInManager : SignInManager<ApplicationUser, int>
     {
-        public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
-            : base(userManager, authenticationManager)
+        //CustomPasswordHasher objHasspassword;
+        public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager) :
+            base(userManager, authenticationManager)
         {
+            //objHasspassword = new CustomPasswordHasher(); 
         }
 
-        public override Task<ClaimsIdentity> CreateUserIdentityAsync(Users user)
+        public override Task<ClaimsIdentity> CreateUserIdentityAsync(ApplicationUser user)
         {
             return user.GenerateUserIdentityAsync((ApplicationUserManager)UserManager);
         }

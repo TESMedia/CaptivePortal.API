@@ -24,8 +24,8 @@ namespace CaptivePortal.API.Models
             // Foreign key 
             public int UserId { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual WifiUser WifiUsers { get; set; }
+            [ForeignKey("UserId")]
+            public virtual ApplicationUser Users { get; set; }
 
     }
 }

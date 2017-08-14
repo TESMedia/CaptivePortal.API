@@ -7,13 +7,13 @@ namespace CaptivePortal.API.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class allow_null_to_organistaion : IMigrationMetadata
+    public sealed partial class Change_MacAddress_tbl : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(allow_null_to_organistaion));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Change_MacAddress_tbl));
         
         string IMigrationMetadata.Id
         {
-            get { return "201707110617329_allow_null_to_organistaion"; }
+            get { return "201707310644135_Change_MacAddress_tbl"; }
         }
         
         string IMigrationMetadata.Source

@@ -3,7 +3,7 @@ namespace CaptivePortal.API.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class Merge_All_Migrations : DbMigration
+    public partial class Added_InitialMigration : DbMigration
     {
         public override void Up()
         {
@@ -12,20 +12,20 @@ namespace CaptivePortal.API.Migrations
                 c => new
                     {
                         AdminSiteAccessId = c.Int(nullable: false, identity: true),
-                        UserId = c.String(maxLength: 128),
+                        UserId = c.Int(nullable: false),
                         SiteId = c.Int(nullable: false),
                         SiteName = c.String(),
                     })
                 .PrimaryKey(t => t.AdminSiteAccessId)
-                .ForeignKey("dbo.Users", t => t.UserId)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.Users",
+                "dbo.AspNetUsers",
                 c => new
                     {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        FirstName = c.String(maxLength: 50),
+                        Id = c.Int(nullable: false, identity: true),
+                        FirstName = c.String(),
                         LastName = c.String(maxLength: 50),
                         CreationDate = c.DateTime(nullable: false),
                         UpdateDate = c.DateTime(nullable: false),
@@ -42,7 +42,7 @@ namespace CaptivePortal.API.Migrations
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
                         SecurityStamp = c.String(),
-                        DefaultSite = c.String(),
+                        PhoneNumber = c.String(),
                         PhoneNumberConfirmed = c.Boolean(nullable: false),
                         TwoFactorEnabled = c.Boolean(nullable: false),
                         LockoutEndDateUtc = c.DateTime(),
@@ -50,7 +50,7 @@ namespace CaptivePortal.API.Migrations
                         AccessFailedCount = c.Int(nullable: false),
                         UserName = c.String(nullable: false, maxLength: 256),
                     })
-                .PrimaryKey(t => t.UserId)
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Ages", t => t.AgeId)
                 .ForeignKey("dbo.Genders", t => t.GenderId)
                 .ForeignKey("dbo.Sites", t => t.SiteId)
@@ -69,16 +69,16 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.AgeId);
             
             CreateTable(
-                "dbo.UserClaims",
+                "dbo.AspNetUserClaims",
                 c => new
                     {
-                        UserClaimId = c.Int(nullable: false, identity: true),
-                        UserId = c.String(nullable: false, maxLength: 128),
+                        Id = c.Int(nullable: false, identity: true),
+                        UserId = c.Int(nullable: false),
                         ClaimType = c.String(),
                         ClaimValue = c.String(),
                     })
-                .PrimaryKey(t => t.UserClaimId)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
@@ -91,27 +91,27 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.GenderId);
             
             CreateTable(
-                "dbo.UserLogins",
+                "dbo.AspNetUserLogins",
                 c => new
                     {
                         LoginProvider = c.String(nullable: false, maxLength: 128),
                         ProviderKey = c.String(nullable: false, maxLength: 128),
-                        UserId = c.String(nullable: false, maxLength: 128),
+                        UserId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.LoginProvider, t.ProviderKey, t.UserId })
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
             CreateTable(
-                "dbo.UserRoles",
+                "dbo.AspNetUserRoles",
                 c => new
                     {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        RoleId = c.String(nullable: false, maxLength: 128),
+                        UserId = c.Int(nullable: false),
+                        RoleId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
-                .ForeignKey("dbo.Roles", t => t.RoleId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
                 .Index(t => t.UserId)
                 .Index(t => t.RoleId);
             
@@ -318,13 +318,14 @@ namespace CaptivePortal.API.Migrations
                 .PrimaryKey(t => t.GroupId);
             
             CreateTable(
-                "dbo.Roles",
+                "dbo.AspNetRoles",
                 c => new
                     {
-                        RoleId = c.String(nullable: false, maxLength: 128),
+                        Id = c.Int(nullable: false, identity: true),
+                        Description = c.String(),
                         Name = c.String(nullable: false, maxLength: 256),
                     })
-                .PrimaryKey(t => t.RoleId)
+                .PrimaryKey(t => t.Id)
                 .Index(t => t.Name, unique: true, name: "RoleNameIndex");
             
             CreateTable(
@@ -351,20 +352,20 @@ namespace CaptivePortal.API.Migrations
                 c => new
                     {
                         UserSessionId = c.Int(nullable: false, identity: true),
-                        UserId = c.String(maxLength: 128),
+                        UserId = c.Int(nullable: false),
                         SessionId = c.String(),
                     })
                 .PrimaryKey(t => t.UserSessionId)
-                .ForeignKey("dbo.Users", t => t.UserId)
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.ApiAccessUserSessions", "UserId", "dbo.Users");
+            DropForeignKey("dbo.ApiAccessUserSessions", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.UsersAddresses", "UserId", "dbo.WifiUsers");
-            DropForeignKey("dbo.UserRoles", "RoleId", "dbo.Roles");
+            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.ManagePromotions", "SiteId", "dbo.Sites");
             DropForeignKey("dbo.MacAddresses", "UserId", "dbo.WifiUsers");
             DropForeignKey("dbo.WifiUsers", "SiteId", "dbo.Sites");
@@ -372,18 +373,18 @@ namespace CaptivePortal.API.Migrations
             DropForeignKey("dbo.WifiUsers", "AgeId", "dbo.Ages");
             DropForeignKey("dbo.FormControls", "FormId", "dbo.Forms");
             DropForeignKey("dbo.Forms", "SiteId", "dbo.Sites");
-            DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Users", "SiteId", "dbo.Sites");
+            DropForeignKey("dbo.AdminSiteAccesses", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUsers", "SiteId", "dbo.Sites");
             DropForeignKey("dbo.Sites", "CompanyId", "dbo.Companies");
             DropForeignKey("dbo.Companies", "OrganisationId", "dbo.Organisations");
-            DropForeignKey("dbo.UserRoles", "UserId", "dbo.Users");
-            DropForeignKey("dbo.UserLogins", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Users", "GenderId", "dbo.Genders");
-            DropForeignKey("dbo.UserClaims", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Users", "AgeId", "dbo.Ages");
+            DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUsers", "GenderId", "dbo.Genders");
+            DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
+            DropForeignKey("dbo.AspNetUsers", "AgeId", "dbo.Ages");
             DropIndex("dbo.ApiAccessUserSessions", new[] { "UserId" });
             DropIndex("dbo.UsersAddresses", new[] { "UserId" });
-            DropIndex("dbo.Roles", "RoleNameIndex");
+            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.ManagePromotions", new[] { "SiteId" });
             DropIndex("dbo.WifiUsers", new[] { "SiteId" });
             DropIndex("dbo.WifiUsers", new[] { "AgeId" });
@@ -393,18 +394,18 @@ namespace CaptivePortal.API.Migrations
             DropIndex("dbo.Forms", new[] { "SiteId" });
             DropIndex("dbo.Companies", new[] { "OrganisationId" });
             DropIndex("dbo.Sites", new[] { "CompanyId" });
-            DropIndex("dbo.UserRoles", new[] { "RoleId" });
-            DropIndex("dbo.UserRoles", new[] { "UserId" });
-            DropIndex("dbo.UserLogins", new[] { "UserId" });
-            DropIndex("dbo.UserClaims", new[] { "UserId" });
-            DropIndex("dbo.Users", "UserNameIndex");
-            DropIndex("dbo.Users", new[] { "SiteId" });
-            DropIndex("dbo.Users", new[] { "AgeId" });
-            DropIndex("dbo.Users", new[] { "GenderId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
+            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
+            DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
+            DropIndex("dbo.AspNetUsers", "UserNameIndex");
+            DropIndex("dbo.AspNetUsers", new[] { "SiteId" });
+            DropIndex("dbo.AspNetUsers", new[] { "AgeId" });
+            DropIndex("dbo.AspNetUsers", new[] { "GenderId" });
             DropIndex("dbo.AdminSiteAccesses", new[] { "UserId" });
             DropTable("dbo.ApiAccessUserSessions");
             DropTable("dbo.UsersAddresses");
-            DropTable("dbo.Roles");
+            DropTable("dbo.AspNetRoles");
             DropTable("dbo.RadGroupChecks");
             DropTable("dbo.Radaccts");
             DropTable("dbo.Nas");
@@ -416,12 +417,12 @@ namespace CaptivePortal.API.Migrations
             DropTable("dbo.Organisations");
             DropTable("dbo.Companies");
             DropTable("dbo.Sites");
-            DropTable("dbo.UserRoles");
-            DropTable("dbo.UserLogins");
+            DropTable("dbo.AspNetUserRoles");
+            DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.Genders");
-            DropTable("dbo.UserClaims");
+            DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Ages");
-            DropTable("dbo.Users");
+            DropTable("dbo.AspNetUsers");
             DropTable("dbo.AdminSiteAccesses");
         }
     }

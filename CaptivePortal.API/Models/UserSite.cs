@@ -15,7 +15,7 @@ namespace CaptivePortal.API.Models
         public int SiteId { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual Users Users { get; set; }
+        public virtual ApplicationUser Users { get; set; }
 
         [ForeignKey("SiteId")]
         public virtual Site Site { get; set; }

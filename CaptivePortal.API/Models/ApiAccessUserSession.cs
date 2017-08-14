@@ -12,10 +12,10 @@ namespace CaptivePortal.API.Models
 
         [Key]
         public int UserSessionId { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string SessionId { get; set; }
 
         [ForeignKey("UserId")]
-        public Users User { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }
