@@ -277,12 +277,12 @@
                                             <input type="text" class="form-control" id="Sessions" name="Sessions" readonly="readonly">
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    @*<div class="form-group">
                                         <label class="control-label col-sm-5" for="SiteUsers">Site Users:</label>
                                         <div class="col-sm-6">
                                             <input type="text" class="form-control" id="SiteUsers" name="SiteUsers" readonly="readonly">
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <div class="form-group">
                                         <label class="control-label col-sm-5" for="Loggederrors">Logged errors:</label>
                                         <div class="col-sm-6">
@@ -373,14 +373,15 @@
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
-
+    <script src="~/Scripts/Navigation.js"></script>
 
 
 </body>
 </html>
 <script type="text/javascript">
 
-    $("#table tr").click(function () {
+    $("#table tr").click(function ()
+    {
 
         $(this).addClass('selectedindex').siblings().removeClass('selectedindex');
         var SiteId_Value = $(this).find('td:first').html();
@@ -390,14 +391,14 @@
         var SiteId = localStorage.getItem("SiteId");
         localStorage.setItem("SiteId", SiteId_Value);
         localStorage.setItem("SiteName", Site_name);
-
+        
         // SiteId = document.getElementById("SiteDdl").value;
         //localStorage.setItem("SiteId", SiteId)
         if (SiteId != localStorage.getItem("SiteId")) {
             SiteId = SiteId_Value;
             localStorage.setItem("SiteId", SiteId)
             window.localStorage.setItem("SiteId", SiteId);
-
+            
 
 
         }
@@ -416,6 +417,13 @@
                  var Radiusdata = data[1];
                  var RtlsApidata = data[2];
                  var wifiApidata = data[3];
+                 var sessionData = data[4];
+                 //var LoggederrorsCount = data[5];
+                 localStorage.setItem("ManageSite", "True");
+                 localStorage.setItem("RTLS", data[5]);
+                 localStorage.setItem("ManageDashboard", data[6]);
+                 localStorage.setItem("ViewDashboard", data[7]);
+                 navigation();
                  if (data[0] == "TimedOut")
                  {
                      $('#Controller').css('background-color', 'Red');
@@ -456,6 +464,13 @@
                      $('#WIFIAPI').css('background-color', 'Green');
                      $('#WIFIAPI').val('Operational');
                  }
+                 if (sessionData != null) {
+                     $('#Sessions').val(data[4]);
+                 }
+
+                 //if (LoggederrorsCount != null) {
+                 //    $('#Loggederrors').val(data[5]);
+                 //}
                 
              },
              failure: function (response)

@@ -13,6 +13,7 @@ namespace CaptivePortal.API.Models
         public string Email { get; set; }
         public string MacAddress { get; set; }
         public int SiteId { get; set; }
+        public int Session { get; set; }
 
     }
     public class AdminLoginViewModel

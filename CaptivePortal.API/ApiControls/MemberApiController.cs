@@ -868,53 +868,53 @@ namespace CaptivePortal.API.ApiControls
         ///<summary>
         ///Check operational status for Site
         ///</summary>
-        [HttpPost]
-        [Route("a8Captiveportal/V1/SiteOperationalStatus")]
-        public HttpResponseMessage OperationalStatus(LoginWIthNewMacAddressModel model)
-        {
-            var siteDetails = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
-            var replyMessage = "";
-            List<string> pingList = new List<string>();
-            string[] data = new string[4];
-            data[0] = siteDetails.ControllerIpAddress;
-            data[1] = siteDetails.MySqlIpAddress;
-            data[2] = siteDetails.RtlsUrl;
-            for (int i = 0; i < 4; i++)
-            {
-                try
-                {
-                    Ping myPing = new Ping();
-                    if (data[i] != null)
-                    {
-                        PingReply reply = myPing.Send(data[i], 1000);
-                        if (reply != null)
-                        {
-                            replyMessage = reply.Status.ToString();
-                        }
-                    }
-                    else
-                    {
-                        replyMessage = "NotDeployed";
+        //[HttpPost]
+        //[Route("a8Captiveportal/V1/SiteOperationalStatus")]
+        //public HttpResponseMessage OperationalStatus(LoginWIthNewMacAddressModel model)
+        //{
+        //    var siteDetails = db.Site.FirstOrDefault(m => m.SiteId == model.SiteId);
+        //    var replyMessage = "";
+        //    List<string> pingList = new List<string>();
+        //    string[] data = new string[4];
+        //    data[0] = siteDetails.ControllerIpAddress;
+        //    data[1] = siteDetails.MySqlIpAddress;
+        //    data[2] = siteDetails.RtlsUrl;
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        try
+        //        {
+        //            Ping myPing = new Ping();
+        //            if (data[i] != null)
+        //            {
+        //                PingReply reply = myPing.Send(data[i], 1000);
+        //                if (reply != null)
+        //                {
+        //                    replyMessage = reply.Status.ToString();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                replyMessage = "NotDeployed";
 
-                    }
+        //            }
 
 
-                }
-                catch (Exception ex)
-                {
-                    log.Error(ex.Message);
-                }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            log.Error(ex.Message);
+        //        }
 
-                pingList.Add(replyMessage);
+        //        pingList.Add(replyMessage);
 
-            }
+        //    }
 
-            JavaScriptSerializer objSerialization = new JavaScriptSerializer();
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
-            };
-        }
+        //    JavaScriptSerializer objSerialization = new JavaScriptSerializer();
+        //    return new HttpResponseMessage()
+        //    {
+        //        Content = new StringContent(objSerialization.Serialize(pingList), Encoding.UTF8, "application/json")
+        //    };
+        //}
 
 
         /// <summary>

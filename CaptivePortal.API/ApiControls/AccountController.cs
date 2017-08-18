@@ -29,6 +29,8 @@ using CaptivePortal.API.ViewModels;
 using CaptivePortal.API.Enums;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace CaptivePortal.API.Controllers
 {
@@ -391,6 +393,18 @@ namespace CaptivePortal.API.Controllers
                 }
                 pingList.Add(replyMessage);
             }
+
+            SqlParameter parameter1 = new SqlParameter("@SiteId", model.SiteId);
+          // int result = db.Database.SqlQuery<int>("Exec GetSessionDataPerSite @siteId", parameter1).First();
+            string filepath = HttpContext.Current.Server.MapPath("~/Logs/log.txt");
+            var lineCount = File.ReadLines(filepath).Count();
+
+          //  pingList.Add(result.ToString());
+            pingList.Add(lineCount.ToString());
+            pingList.Add(siteDetails.RtlsUrl);
+            pingList.Add(siteDetails.DashboardUrl);
+            pingList.Add(siteDetails.MySqlIpAddress);
+
             JavaScriptSerializer objSerialization = new JavaScriptSerializer();
             return new HttpResponseMessage()
             {

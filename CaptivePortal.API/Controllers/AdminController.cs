@@ -1175,6 +1175,7 @@ namespace CaptivePortal.API.Controllers
                                                      // OrganisationName = db.Organisation.FirstOrDefault(m=>m.OrganisationId==orgId).OrganisationName,
                                                      CompanyName =db.Company.FirstOrDefault(m=>m.CompanyId==compId).CompanyName,
                                                      SiteName = site.SiteName,
+                                                     MySqlIpAddress=db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).MySqlIpAddress,
                                                      DashboardUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).DashboardUrl,
                                                      RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == site.SiteId).RtlsUrl,
                                                      DefaultSite = db.Users.FirstOrDefault(m => m.Id == userId).PhoneNumber,//default site to access
@@ -1216,6 +1217,7 @@ namespace CaptivePortal.API.Controllers
                                            OrganisationName = item.Company.Organisation == null ? null : item.Company.Organisation.OrganisationName,
                                            CompanyName = item.Company.CompanyName,
                                            SiteName = item.SiteName,
+                                           MySqlIpAddress=item.MySqlIpAddress,
                                            DashboardUrl = item.DashboardUrl,
                                            RtlsUrl = item.RtlsUrl,
                                            SiteId = item.SiteId
