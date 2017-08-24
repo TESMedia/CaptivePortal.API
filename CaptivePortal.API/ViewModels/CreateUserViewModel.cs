@@ -17,6 +17,7 @@ namespace CaptivePortal.API.ViewModels
         public string Email { get; set; }
 
         public string FirstName { get; set; }
+        public int GroupName { get; set; }
 
         public string LastName { get; set; }
 

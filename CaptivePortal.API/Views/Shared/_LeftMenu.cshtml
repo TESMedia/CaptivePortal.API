@@ -24,7 +24,8 @@
                 <h3>General</h3>
                 <ul class="nav side-menu">
                     <li>
-                        <a href="Home"><i class="fa fa-home"></i> Home </a>
+                        <a href="@Url.Action("Home","Admin")"><i class="fa fa-home"></i> Home </a>
+
                     </li>
                     <li>
                         <a id="viewdashboard" class="row margin hide"><i class="fa fa-desktop"></i>View Dashboard <span class="fa fa-chevron-down"></span></a>
@@ -36,17 +37,18 @@
                     <li>
                         <a id="managesite" class="row margin hide"><i class="fa fa-cog fa-fw"></i> Manage Site <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="ConfigureSite" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Configure site</a></li>
-                            <li><a href="ManageUser" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage User</a></li>
-                            <li><a href="CreatePromotionalMaterial" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage promotion</a></li>
+                            <li><a href="@Url.Action("ConfigureSite","Admin")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Configure site</a></li>
+                            <li><a href="@Url.Action("ManageUser","Admin")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage User</a></li>
+                            <li><a href="@Url.Action("CreatePromotionalMaterial","Admin")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Manage promotion</a></li>
                         </ul>
                     </li>
 
                     <li>
-                        <a id="managewifiuser" class="row margin hide"><i class="fa fa-users"></i> Manage Wi-fi User <span class="fa fa-chevron-down"></span></a>
+                        <a id="managewifiuser" class="row margin"><i class="fa fa-users"></i> Manage Wi-fi User <span class="fa fa-chevron-down"></span></a>
                         <ul class="nav child_menu">
-                            <li><a href="UserDetails" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View Wi-fi users</a></li>
-                            <li><a href="Register">Register Wi-fi user</a></li>
+                            <li><a href="@Url.Action("UserDetails","Admin")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">View Wi-fi users</a></li>
+                            <li><a href="@Url.Action("Register","Admin")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Register Wi-fi user</a></li>
+                            <li><a href="@Url.Action("Index","Group")" onclick="location.href = this.href + '?siteId=' + localStorage.getItem('SiteId'); return false;">Group & Usage</a></li>
                         </ul>
                     </li>
                     <li>

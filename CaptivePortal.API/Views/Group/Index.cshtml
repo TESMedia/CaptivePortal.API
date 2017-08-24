@@ -1,11 +1,12 @@
-﻿@using Newtonsoft.Json.Linq;
+﻿@using CaptivePortal.API.ViewModels
+@model GrouplistViewModel
 @{
 
     Layout = null;
 }
 
 <!DOCTYPE html>
-<html lang="en" ng-app="a8DashboardModule">
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -37,11 +38,35 @@
     <link href="~/build/css/custom.min.css" rel="stylesheet">
     <link href="~/Style/DropDown.css" rel="stylesheet" />
     <link href="~/build/css/custom.css" rel="stylesheet" />
-    <script src="~/build/js/index.js"></script>
+    @*<script src="~/build/js/index.js"></script>*@
+    <style>
+        td {
+            border: 1px #DDD solid;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .selected {
+            background-color: brown;
+            color: #FFF;
+        }
+    </style>
+    <style>
+        .highlight {
+            background-color: red;
+        }
+    </style>
+    <style>
+        /*    */
+        .cellContainer {
+            width: 25%;
+            float: left;
+        }
+    </style>
 </head>
 
 
-<body class="nav-md" ng-controller="LocationIndicatorController">
+<body class="nav-md">
     <div class="container body">
         <div class="main_container">
             @Html.Partial("~/Views/Shared/_LeftMenu.cshtml")
@@ -123,76 +148,102 @@
             </div>
             <!-- /top navigation -->
             <!-- page content -->
-            <div class="right_col" role="main" id="content"  ng-init="getIndex()">
-                <p style="text-align: right; width: 100%;">
-                    @*<input type="button" class="btn btn-info" value="Back" onclick="location.href='@Url.Action("UploadFileName", "DashBoard")'" />
-                    <input type="button" class="btn btn-info" value="Add New" onclick="location.href='@Url.Action("Create", "LocationIndicators",new {SiteName=Request.QueryString["SiteName"].ToString()})'" />*@
-                    <input type="button" class="btn btn-success" value="Add new"  onclick="location.href='@Url.Action("CreateLocation", "Admin")'">
-                </p>
-                <table class="table">
-                    <tr>
-                        <th>
-                           @* @Html.DisplayNameFor(model => model.AreaOfInterestId)*@
-                            AreaOfInterestId
-                        </th>
-                        <th>
-                           @* @Html.DisplayNameFor(model => model.Name)*@
-                            Name
-                        </th>
-                        <th>
-                           @* @Html.DisplayNameFor(model => model.LoctionIndicator)*@
-                            LocationIndicator
-                        </th>
-                        <th>
-                           @* @Html.DisplayNameFor(model => model.NeighBourName)*@
-                            NeighBourName
-                        </th>
-                        <th></th>
-                    </tr>
+            <div class="right_col" role="main">
+                @if (TempData["SiteIdCheck"] != null)
+                {
+                    <p class="alert alert-success" id="successMessage">@TempData["SiteIdCheck"]</p>
+                }
 
-                    @*@foreach (var item in Model)
-                    {*@
-                        <tr ng-repeat="item in locationIndiCatorDetails">
-                            <td id="AreaOfInterestId">
-                               @* @Html.DisplayFor(modelItem => item.AreaOfInterestId)*@
-                                {{item.AreaOfInterestId}}
-                            </td>
+                <h4> User Groups<button type="button" style="margin-left:40%" id="del" class="btn btn-danger delete">Delete Group</button></h4>
+                <div class="row container-fluid">
+                    <div class="col-lg-12">
 
-                            <td>
-                               @* @Html.DisplayFor(modelItem => item.Name)*@
-                                {{item.Name}}
-                            </td>
-                            <td>
-                             @*   @Html.DisplayFor(modelItem => item.LoctionIndicator)*@
-                                {{item.LoctionIndicator}}
-                            </td>
-                            <td>
-                              @*  @Html.DisplayFor(modelItem => item.NeighBourName)*@
-                                {{item.NeighBourName}}
-                            </td>
-                            <td>
-                                <input type="button" class="btn btn-success" value="Edit" ng-click="edit(item.AreaOfInterestId)">
+                        <div style="top:35px;width:700px; height:250px; overflow:auto;">
+                            <table class="table table-hover table-responsive" id="resultTable">
+                                <thead>
+                                    <tr style="background-color:#ccc;color:black">
+                                        <th style="display:none;">
+                                            GroupId
+                                        </th>
+                                        <th>
+                                            Name
+                                        </th>
+                                        <th>
+                                            Rule
+                                        </th>
 
-                                <input type="button" class="btn btn-danger" value="Delete" ng-click="delete(item.AreaOfInterestId)"/>
-                               @* @Html.ActionLink("Edit", "Edit", new { id = item.AreaOfInterestId, SiteName = Request.QueryString["SiteName"].ToString() }, new { @class = "btn btn-primary", @style = "color:white" })*@
+                                        <th>
+                                            # of Users
+                                        </th>
 
-                                @*@Html.ActionLink("Delete", "Delete", new { id = item.AreaOfInterestId, SiteName = Request.QueryString["SiteName"].ToString() }, new { @class = "btn btn-primary", @style = "color:white" })*@
-                                @*<form action="/LocationIndicators/Delete" method="post">
-                                    @Html.AntiForgeryToken()
-                                    <input type="hidden" value="@item.AreaOfInterestId" name="AreaOfInterestId" />
-                                    <input type="hidden" value="@Request.QueryString["SiteName"]" name="SiteName" />
-                                    <input type="submit" value="Delete" class="btn btn-primary" />
-                                </form>*@
-                            </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="pointer" style="width:320px; height:60px; overflow:auto;">
+                                    @foreach (var item in Model.GroupViewlist)
+                                    {
+                                        <tr>
 
-                        </tr>
-                    @*}*@
 
-                </table>
+                                            <td style="display:none;">
+                                                @Html.DisplayFor(modelItem => item.GroupId)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.GroupName)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Rule)
+                                            </td>
+
+                                            <td></td>
+                                        </tr>
+                                    }
+                                </tbody>
+
+
+
+                            </table>
+
+
+                        </div>
+
+
+
+                    </div>
+                    <br />
+                    <br />
+                    @using (Html.BeginForm("CreateGroup", "Group", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="form-horizontal form-label-right" style="margin-left:70%">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Name:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" id="name" placeholder="" name="GroupName" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">Rule:</label>
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" id="rule" name="Rule" placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div>
+                                    <button type="submit" class="btn btn-success" style="margin-left:20%">Create Group</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <br />
+                <br />
+                <br />
+
+
 
 
             </div>
-
             <!-- /page content -->
             <!-- footer content -->
             <footer></footer>
@@ -240,22 +291,47 @@
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
-    <!-- Google Analytics -->
-    <script src="~/a8Dashboard_Angular/Controllers/LocationIndicatorController.js"></script>
-    <script src="~/a8Dashboard_Angular/Services/LocationIndicatorService.js"></script>
-    <script type="text/javascript">
-        @*var completeUrl = "@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"].ToString()" + "/LocationIndicators/Index?SiteName=" + localStorage.getItem("SiteName");
-        $('#FrameLocations').attr('src', completeUrl)*@
-    </script>
+
+
 
 </body>
 </html>
+<script type="text/javascript">
 
-<script>
-    $(document).ready(function(){
+    $(document).ready(function () {
+        $("#resultTable tr").click(function () {
+            $(this).addClass('selected').siblings().removeClass('selected');
+            var value = $(this).find('td:first').html();
+        });
 
-        navigation();
+        $('.delete').on('click', function (e) {
+            //alert($("#resultTable tr.selected td:first").html());
+            //function deleteGroup() {
+            var id = $("#resultTable tr.selected td:first").html();
+                var uri = '@Html.Raw(Url.Action("DeleteGroup", "Group"))';
+                $.ajax({
+                    url: uri,
+                    type: 'POST',
+                    traditional: true,
+                    dataType: "HTML",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({ 'GroupId': id }),
+                    success: function (result) {
+                        location.reload();
+                    },
+                    error: function (objAjaxRequest, strError) {
+                        var respText = objAjaxRequest.responseText;
+                        console.log(respText);
+                    }
+                });
+            //}
 
-    })
+
+
+        });
+    });
+
+
+
 
 </script>

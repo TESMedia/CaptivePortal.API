@@ -34,6 +34,8 @@ namespace CaptivePortal.API.Context
         public DbSet<ApiAccessUserSession> UserSession { get; set; }
         public DbSet<AdminSiteAccess> AdminSiteAccess { get; set; }
         public DbSet<ManagePromotion> ManagePromotion { get; set; }
+        public DbSet<Group> Group { get; set; }
+
 
         //static DbContext()
         //{

@@ -15,6 +15,8 @@ namespace CaptivePortal.API.Models
 
         // Foreign key 
         public  int ? OrganisationId { get; set; }
+        public string CompanyIcon { get; set; }
+
 
         [ForeignKey("OrganisationId")]
         public virtual Organisation Organisation { get; set; }

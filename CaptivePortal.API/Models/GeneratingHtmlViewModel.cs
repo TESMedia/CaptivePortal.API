@@ -14,6 +14,7 @@ namespace CaptivePortal.API.Models
     public class FormData
     {
         public int SiteId { get; set; }
+        public int CompanyId { get; set; }
     }
 
     public class ReturnLoginFormData

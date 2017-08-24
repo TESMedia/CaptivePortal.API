@@ -74,30 +74,30 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="FirstName">Username:</label>
+                            <label class="control-label col-sm-2" for="Username">Username:</label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="userName" placeholder="">
                             </div>
-                            <label class="control-label col-sm-2" for="FirstName">Address Line 2:</label>
+                            <label class="control-label col-sm-2" for="Address2">Address Line 2:</label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="FirstName">Forename:</label>
+                            <label class="control-label col-sm-2" for="Forename">Forename:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="firstName" placeholder="" name="FirstName">
+                                <input type="text" class="form-control" id="Forename" placeholder="" name="FirstName">
                             </div>
-                            <label class="control-label col-sm-2" for="FirstName">County:</label>
+                            <label class="control-label col-sm-2" for="County">County:</label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="text" placeholder="">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="FirstName">Surname:</label>
+                            <label class="control-label col-sm-2" for="Surname">Surname:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="lastName" placeholder="">
+                                <input type="text" class="form-control" id="Surname" placeholder="">
                             </div>
                             <label class="control-label col-sm-2" for="pc">Postcode:</label>
                             <div class="col-md-3">
@@ -111,9 +111,9 @@
                             <div class="col-md-3">
                                 <input type="password" class="form-control" id="pwd" placeholder="" name="Password">
                             </div>
-                            <label class="control-label col-sm-2" for="mobileNumber">Country:</label>
+                            <label class="control-label col-sm-2" for="Country">Country:</label>
                             <div class="col-md-3">
-                                <input type="text" class="form-control" id="mobileNumber" placeholder="" name="MobileNumber">
+                                <input type="text" class="form-control" id="Country" placeholder="" name="MobileNumber">
                             </div>
                         </div>
 
@@ -133,7 +133,7 @@
                             <div class="col-md-3">
                                 <input type="email" class="form-control" id="email" placeholder="" name="UserName">
                             </div>
-                            <label class="control-label col-sm-2" for="Custom1">Custom field 2 : </label>
+                            <label class="control-label col-sm-2" for="Custom2">Custom field 2 : </label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="text" placeholder="">
                             </div>
@@ -148,7 +148,7 @@
                                     <option value="3">Not Answered</option>
                                 </select>
                             </div>
-                            <label class="control-label col-sm-2" for="Custom1">Custom field 3 : </label>
+                            <label class="control-label col-sm-2" for="Custom3">Custom field 3 : </label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="text" placeholder="">
                             </div>
@@ -167,7 +167,7 @@
                                     <option value="7">65+</option>
                                 </select>
                             </div>
-                            <label class="control-label col-sm-2" for="Custom1">Custom field 4 : </label>
+                            <label class="control-label col-sm-2" for="Custom4">Custom field 4 : </label>
                             <div class="col-md-3">
                                 <input type="text" class="form-control" id="text" placeholder="">
                             </div>
@@ -183,15 +183,25 @@
                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="Custom5" name="Custom5" style="width:30px;">
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="auto-login" class="control-label col-sm-2">Auto-login users:</label>
+                            <label class="control-label col-sm-2" for="Group">Group:</label>
                             <div class="col-md-3">
-                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                                @*<input type="text" class="form-control" id="Group" name="GroupName">*@
+                                @Html.DropDownList("GroupDdl", ViewBag.groups as IEnumerable<SelectListItem>, "--Select the Group--", new { @class = "form-control", @id = "GroupDdl", @name = "GroupName", @onchange = "selectGroup()" })
                             </div>
                             <label for="custom-6" class="control-label col-sm-2">Customer Field 6 :   </label>
                             <div class="col-md-3 ">
                                 <input class="form-control col-md-7 col-xs-12" type="checkbox" id="Custom6" name="Custom6" style="width:30px;">
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="auto-login" class="control-label col-sm-2">Auto-login users:</label>
+                            <div class="col-md-3">
+                                <input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="AutoLogin" style="width:30px;">
+                            </div>
+
                         </div>
 
 
@@ -290,6 +300,7 @@
 </html>
 
 <script type="text/javascript">
+    var strGroup;
     $(function () {
         $(document).on('click', '.btn-add', function (e) {
             e.preventDefault();
@@ -325,6 +336,10 @@
     var siteId = localStorage.getItem("SiteId");
     var siteName = localStorage.getItem("SiteName");
     document.getElementsByTagName('form')[0].innerHTML = siteName;
+    function selectGroup() {
+        var e = document.getElementById("GroupDdl");
+        strGroup = e.options[e.selectedIndex].value;
+    }
 
     function CreateUser() {
         var data = {
@@ -334,11 +349,13 @@
             FirstName: $('#firstName').val(),
             LastName:$('#lastName').val(),
             AutoLogin: $('#checkbox1').val(),
-            UserId: $('#UniqueId').val(),
+            BirthDate: $('#birthDate').val(),
             SiteId: siteId,
+            GroupName:strGroup,
             MacAddress: $('#macAdd').val()
+
         }
-        $.post("http://localhost:55205/api/a8Captiveportal/V1/CreateUser", data, function (e) {
+        $.post("http://localhost:55205/api/a8Captiveportal/V1/RegisterWifiUser", data, function (e) {
         });
     }
 

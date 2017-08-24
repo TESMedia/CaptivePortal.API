@@ -18,7 +18,7 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/LoginPage.css" rel="stylesheet" />
-    <title>Login In To  a8 Platform</title>
+    <title id="loginPageTitle">Admin Login</title>
 </head>
 
 
@@ -28,12 +28,13 @@
 
             <div class="header header-logged-out width-full" role="banner">
                 @*<center>
-                    <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,">
-                        <img src="~/Images/images.png" style="height:50px;width:50px;" id="imageLogo" />
-                    </a>
-                   
+                        <a class="header-logo" href="#" data-ga-click="(Logged out) Header, go to homepage,">
+                            <img src="~/Images/images.png" style="height:50px;width:50px;" id="imageLogo" />
+                        </a>
 
-                </center>*@
+
+                    </center>*@
+
 
                 <div class="auth-form-header" style="left:40%;">
                     @if (@TempData["SuccessReset"] != null)
@@ -47,10 +48,20 @@
 
             </div>
             <div role="main" class="main-content" style="margin-top:-40px;">
-                
-                <div class="row">
-                    <center><h2>Login to <img src="~/Images/images.png" style="height:50px;width:50px;" id="imageLogo" /> platform</h2></center>
+
+                <div class="row" id="adminDiv">
+                    <center><h2 style="color:rgb(128,0,0);font-size:18px;">Admin Login</h2></center>
+                    <center><h2 style="color:rgb(128,0,0);font-size:18px;"><img src="~/Images/images.png" style="height:30px;width:30px;" id="imageLogo" />&nbsp;&nbsp;&nbsp;Platform</h2></center>
                 </div>
+                <div class="row" id="businessUserDiv">
+                    <center>
+                        <h3><img src="~/Images/images.png" style="height:30px;width:120px;" id="compLogo" />  </h3>
+                        <h2 style="color:rgb(128,0,0);font-size:18px;">User Login</h2>
+                    </center>
+                </div>
+
+
+
                 <br /><br />
                 <div class="auth-form p-3" id="login">
                     @using (Html.BeginForm("GALogin", "Admin", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "formid" }))
@@ -58,23 +69,28 @@
                         @Html.AntiForgeryToken()
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                         <input id="LocationDashUrl" type="hidden" value="@System.Configuration.ConfigurationManager.AppSettings["LocationDashBoardUrl"]" />
-                        <div class="auth-form-body mt-4">
-                            <label for="login_field">
-                                Username or email address
-                            </label>
-                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
-                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
-                            <br />
-                            <div class="divPas" id="divPas">
-                                <label for="password" id="pwd">
-                                    Password       &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="label-link">Forgot password?</a>
+                            <input value="" hidden id="companyId" />
+                            <div class="auth-form-body mt-4">
+                                <label for="login_field" style="font-size:18px;">
+                                    Username or email address
                                 </label>
-                                @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "Password", @type = "password", @tabindex = "2", required = "required" })
-                                @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
+                                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control input-block", @id = "login_field", @name = "login", @autofocus = "autofocus", @autocapitalize = "off", @autocorrect = "off", @tabindex = "1", required = "required", @type = "Email" })
+                                @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                <br />
+                                <div class="divPas" id="divPas">
+                                    <label for="password" id="pwd" style="font-size:18px;">
+                                        Password&nbsp;&nbsp;&nbsp;<a href="#" class="label-link">Forgot password?</a>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.PasswordHash, new { @class = "form-control input-block", @id = "password", @name = "Password", @type = "password", @tabindex = "2", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.PasswordHash, "", new { @class = "text-danger" })
+                                </div>
+                                <br />
+                                <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
+                                <br />
+                                <div id="footer">
+                                    <center><h2 style="color:rgb(128,0,0);font-size:18px;"><img src="~/Images/images.png" style="height:30px;width:30px;" id="imageLogo" /> Platform</h2></center>
+                                </div>
                             </div>
-                            <br />
-                            <input class="btn btn-primary btn-block" data-disable-with="Signing in…" name="commit" tabindex="3" type="submit" value="Sign in" id="SignIn" />
-                        </div>
                     }
                 </div>
             </div>
@@ -110,7 +126,7 @@
     //});
 
     $("#login_field").keyup(function () {
-       
+
             var UserName = localStorage.getItem("UserName");
             localStorage.setItem("UserName", UserName)
             UserName = document.getElementById("login_field").value;
@@ -120,7 +136,43 @@
                 localStorage.setItem("UserName", UserName)
                 window.localStorage.setItem("UserName", UserName);
             }
-       
+
     });
 
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var parts = window.location.href.split('/');
+        var lastSegment = parts.pop() || parts.pop();  // handle potential trailing slash
+        document.getElementById('companyId').value = lastSegment;
+        var coId = document.getElementById('companyId').value;
+        var Defimage = document.getElementById('imageLogo').src;
+        var uri = "http://localhost:55205/api/form/GetCompanyIcon?CompanyId="+coId
+        $.ajax({
+            url: uri,
+            type: 'POST',
+            traditional: true,
+            dataType: "HTML",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (result !=null) {
+                    $("#compLogo").attr("src", result)
+                    document.title = "User Login"
+                    document.getElementById("adminDiv").style.display = 'none';
+                }
+                if(result=="") {
+                    $("#imageLogo").attr("src", Defimage)
+                }
+
+            },
+            error: function (objAjaxRequest, strError) {
+                var respText = objAjaxRequest.responseText;
+                document.getElementById("adminDiv").style.display = 'block';
+                document.getElementById("businessUserDiv").style.display = 'none';
+                document.getElementById("footer").style.display = 'none';
+                console.log(respText);
+            }
+        });
+    });
 </script>

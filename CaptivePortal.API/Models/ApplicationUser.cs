@@ -72,6 +72,8 @@ namespace CaptivePortal.API.Models
 
         public string UniqueUserId { get; set; }
 
+        public int? GroupId { get; set; }
+
         [ForeignKey("AgeId")]
 
         public virtual Age Ages { get; set; }
@@ -79,6 +81,9 @@ namespace CaptivePortal.API.Models
         [ForeignKey("GenderId")]
 
         public virtual Gender Genders { get; set; }
+
+        [ForeignKey("GroupId")]
+        public virtual Group Group { get; set; }
 
         public virtual Site Sites { get; set; }
 

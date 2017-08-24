@@ -208,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiControls\AccountController.cs" />
+    <Compile Include="ApiControls\AdminApiController.cs" />
     <Compile Include="ApiControls\FormApiController.cs" />
     <Compile Include="ApiControls\GetFormDataController.cs" />
     <Compile Include="ApiControls\MemberApiController.cs" />
@@ -249,6 +250,7 @@
     <Compile Include="Context\DbContext.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\ExternalLoginController.cs" />
+    <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Enums\Enum.cs" />
@@ -270,6 +272,10 @@
     <Compile Include="Migrations\201707310644135_Change_MacAddress_tbl.cs" />
     <Compile Include="Migrations\201707310644135_Change_MacAddress_tbl.Designer.cs">
       <DependentUpon>201707310644135_Change_MacAddress_tbl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201708241330232_added_GroupTable_And_GroupId_FK_in_UserTable.cs" />
+    <Compile Include="Migrations\201708241330232_added_GroupTable_And_GroupId_FK_in_UserTable.Designer.cs">
+      <DependentUpon>201708241330232_added_GroupTable_And_GroupId_FK_in_UserTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -294,6 +300,7 @@
     <Compile Include="Models\FormViewModel.cs" />
     <Compile Include="Models\Gender.cs" />
     <Compile Include="Models\GeneratingHtmlViewModel.cs" />
+    <Compile Include="Models\Group.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\LocationIndicatorViewModel.cs" />
     <Compile Include="Models\CustomPasswordHasher.cs" />
@@ -326,6 +333,7 @@
     <Compile Include="ViewModels\AddMacModel.cs" />
     <Compile Include="ViewModels\AutoLoginStatus.cs" />
     <Compile Include="ViewModels\CreateUserViewModel.cs" />
+    <Compile Include="ViewModels\GroupViewModel.cs" />
     <Compile Include="ViewModels\LoginWIthNewMacAddressModel.cs" />
     <Compile Include="ViewModels\MacAddesses.cs" />
     <Compile Include="ViewModels\RequestRtlsModel.cs" />
@@ -4634,6 +4642,7 @@
     <Content Include="Views\Admin\ViewRtlsData.cshtml" />
     <Content Include="Views\Admin\CreateLocation.cshtml" />
     <Content Include="Views\Admin\EditLocation.cshtml" />
+    <Content Include="Views\Group\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -4673,6 +4682,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201707310644135_Change_MacAddress_tbl.resx">
       <DependentUpon>201707310644135_Change_MacAddress_tbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201708241330232_added_GroupTable_And_GroupId_FK_in_UserTable.resx">
+      <DependentUpon>201708241330232_added_GroupTable_And_GroupId_FK_in_UserTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -71,17 +71,17 @@
                                     <form></form>
                                     <br />
                                     @*<div class="row">
-                                        <div class="col-md-6 col-sm-6 col-xs-12">
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                                    site
-                                                       <div class="dropdown">
-                                                            @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, new { @class = "form-control col-md-7 col-xs-12", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()", @Selected = true, @value = ViewBag.SiteName })
-                                                        </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                                        site
+                                                           <div class="dropdown">
+                                                                @Html.DropDownList("siteDdl", ViewBag.sites as IEnumerable<SelectListItem>, new { @class = "form-control col-md-7 col-xs-12", @id = "SiteDdl", @name = "SiteDdl", @onchange = "saveToLocalStorage()", @Selected = true, @value = ViewBag.SiteName })
+                                                            </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>*@
+                                        </div>*@
                                     <div class="col-md-12 text-center">
                                         <input type="button" class="btn btn-success" onclick="tableToExcel('cpTable')" value="Export Data" style="width:15%">
                                     </div>
@@ -90,17 +90,14 @@
                                         <form class="form-inline" id="searchForm">
                                             <input type="button" id="btnSearch" class="btn btn-success" value="Filter" style="width:10%" />
                                             <div class="form-group">
-                                                <label for="userName">Username:</label>
-                                                <input type="text" class="form-control" autofocus="autofocus" id="txtUserName" name="UserName" value="@ViewBag.userName" placeholder="Enter user name" />
+
+                                                <input type="text" class="form-control" autofocus="autofocus" id="txtUserName" name="UserName" value="@ViewBag.userName" placeholder="" />
                                             </div>
                                             <div class="form-group">
-                                                <label for="foreName">Forename:</label>
-                                                <input type="text" class="form-control" autofocus="autofocus" id="txtForeName" name="FirstName" value="@ViewBag.foreName" placeholder="Enter forename" />
+                                                <label for="Group">Group:</label>
+                                                @Html.DropDownList("GroupDdl", ViewBag.groups as IEnumerable<SelectListItem>, "--Select the Group--", new { @class = "form-control", @id = "GroupDdl", @name = "GroupName", @onchange = "FilterUserUnderGropu()" })
                                             </div>
-                                            <div class="form-group">
-                                                <label for="surName">Surname:</label>
-                                                <input type="text" class="form-control" autofocus="autofocus" id="txtSurName" name="LastName" value="@ViewBag.surName" placeholder="Enter surname" />
-                                            </div>
+
 
                                             <div class="form-group">
                                                 <label for="text">Show:</label>
@@ -118,6 +115,11 @@
                                     </div>
                                     <hr />
                                     <div class="row container-fluid">
+
+                                        @if (TempData["userSuc"] != null)
+                                        {
+                                            <p class="alert alert-success" id="successMessage">@TempData["userSuc"]</p>
+                                        }
 
                                         <div style="top:35px;">
                                             <table class="table table-hover table-striped table-responsive" id="cpTable">
@@ -152,9 +154,9 @@
                                                     </tr>
                                                 </thead>
                                                 @*@if (TempData["Success"] != null)
-                                                {
-                                                    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
-                                                }*@
+                                                    {
+                                                        <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+                                                    }*@
 
                                                 @if (Model.WifiUserViewlist != null)
                                                 {
@@ -166,10 +168,7 @@
                                                                     @Html.DisplayFor(modelItem => item.UserId)
                                                                 </td>
                                                                 <td>
-                                                                    @*<input class="form-control col-md-7 col-xs-12" type="checkbox" id="checkbox1" name="chkOptOrMand" style="width:30px;">*@
-                                                                    @*<a href="@Url.Action("UserWithProfile","Admin",new { UserId= item.UserId})" type="checkbox">Edit</a>*@
-                                                                    @*<input type="checkbox" onclick="location.href='@Url.Action("UserDetails","Admin",new { userId=item.UserId})'" />*@
-                                                                    <input type="checkbox" id="chkPassport" onclick="ShowHideDiv(this);UserWithProfile(@item.UserId,@item.SiteId)" value="@item.UserId" />
+                                                                    <input type="checkbox" id="chkPassport" onclick="ShowHideDiv(this);UserWithProfile(@item.UserId,@item.SiteId)" value="@item.UserId" name="type" />
 
                                                                 </td>
                                                                 <td>
@@ -181,7 +180,7 @@
                                                                 <td>
                                                                     @Html.DisplayFor(modelItem => item.LastName)
                                                                 </td>
-                                                                
+
                                                                 <td>
                                                                     @Html.DisplayFor(modelItem => item.CreationDate)
                                                                 </td>
@@ -247,6 +246,13 @@
                                             </div>
                                         }
                                     </div>
+                                    <div class="form-group" id="AddGroup" style="display:none">
+                                        <label for="Group" class="control-label col-md-3" style="padding-left:20%">Group:</label>
+                                        <div class="col-md-3">
+                                            @Html.DropDownList("GroupDdl", ViewBag.groups as IEnumerable<SelectListItem>, "--Select the Group--", new { @class = "form-control", @id = "GroupDdl", @name = "GroupDdl" })
+                                        </div>
+                                        <input type="button" id="btnAdd" class="btn btn-success" value="Add" onclick="addUserToGroup()" />
+                                    </div>
                                     <div>
                                     </div>
                                 </div>
@@ -254,7 +260,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
+
             <!-- /page content -->
             <!-- footer content -->
             <footer>
@@ -313,7 +321,7 @@
         var lineNumber = document.getElementById("NumberOfLines").value;
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val() + '&NumberOfLines=' + lineNumber);
     });
-    //dropdown click to show number of lines 
+    //dropdown click to show number of lines
     function showNumberOfLines() {
         var lineNumber = document.getElementById("NumberOfLines").value;
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber);
@@ -324,16 +332,57 @@
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&userName=' + $("#txtUserName").val() + '&foreName=' + $("#txtForeName").val() + '&surName=' + $("#txtSurName").val());
     });
 
-    //on checkmark show the selected user details, on uncheck mark show nothing.
+    function FilterUserUnderGropu() {
+        alert("Group");
+        var lineNumber = document.getElementById("NumberOfLines").value;
+        var e = document.getElementById("GroupDdl");
+        var strGroup = e.options[e.selectedIndex].value;
+        $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber + '&GroupName=' + strGroup);
+    };
+
+    var checkedItems = 0;
+    var checkBoxValueItme = [];
+
+
+
+    //on single checkmark show the selected user details, on uncheck mark show nothing.
+    //on multiple checkmark show another view to add them to a Particular Group.
     function ShowHideDiv(chkPassport) {
-        var dvPassport = document.getElementById("dvPassport");
-        dvPassport.style.display = chkPassport.checked ? "block" : "none";
+
+        debugger;
+        $("input:checkbox[name=type]:checked").each(function () {
+            checkBoxValueItme.push({UserId:$(this).val()});
+        });
+        var partialViewUserDetails = document.getElementById("dvPassport");
+        var partialViewAddGroup = document.getElementById("AddGroup");
+        if (chkPassport.checked) {
+            checkedItems++;
+        }
+        else {
+            checkedItems--;
+        }
+        if (checkedItems == 1) {
+            partialViewUserDetails.style.display = "block";
+            partialViewAddGroup.style.display = "none";
+
+        }
+        else if (checkedItems >= 2) {
+            partialViewUserDetails.style.display = "none";
+            partialViewAddGroup.style.display = "block";
+        }
+        else if (checkedItems == 0) {
+            partialViewUserDetails.style.display = "none";
+            partialViewAddGroup.style.display = "none";
+
+        }
     }
+
+
 
 
     //Viewdata for partial view of User details, password,devices, custom
     function UserWithProfile(id, siteId) {
-        debugger;
+
         var uri = '@Html.Raw(Url.Action("UserWithProfile", "Admin"))';
         $.ajax({
             url: uri,
@@ -354,8 +403,28 @@
         });
     }
 
+    //add users to particular  group
+    function addUserToGroup() {
+        var datas = checkBoxValueItme;
+        var uri = '@Html.Raw(Url.Action("UpdateUserGroup", "Group"))'
+        $.ajax({
+            url: uri,
+            type: 'POST',
+            traditional: true,
+            dataType: "HTML",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ UserIdList: checkBoxValueItme,GroupId:'2' }),
+            success: function (result) {
+            },
+            error: function (objAjaxRequest, strError) {
+                var respText = objAjaxRequest.responseText;
+                console.log(respText);
+            }
+        });
+    }
 
- 
+
+
 
     var tableToExcel = (function () {
         var uri = 'data:application/vnd.ms-excel;base64,'

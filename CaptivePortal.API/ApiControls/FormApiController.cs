@@ -125,5 +125,35 @@ namespace CaptivePortal.API.Controllers
             }
 
         }
+
+
+        [HttpPost]
+        [Route("GetCompanyIcon")]
+        public HttpResponseMessage CompanyIcon(int CompanyId)
+        {
+
+            if (CompanyId != 0)
+            {
+                var companyIcon = db.Company.FirstOrDefault(m => m.CompanyId == CompanyId).CompanyIcon;
+                if (companyIcon != null)
+                {
+                    return new HttpResponseMessage()
+                    {
+                        Content = new StringContent(companyIcon, Encoding.UTF8, "application/json")
+                    };
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK);
+
+                }
+            }
+            else
+            {
+                string err = "CompanyId required.";
+                return Request.CreateResponse(HttpStatusCode.OK, err);
+            }
+
+        }
     }
 }
