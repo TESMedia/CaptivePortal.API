@@ -249,7 +249,7 @@
                                     <div class="form-group" id="AddGroup" style="display:none">
                                         <label for="Group" class="control-label col-md-3" style="padding-left:20%">Group:</label>
                                         <div class="col-md-3">
-                                            @Html.DropDownList("GroupDdl", ViewBag.groups as IEnumerable<SelectListItem>, "--Select the Group--", new { @class = "form-control", @id = "GroupDdl", @name = "GroupDdl" })
+                                            @Html.DropDownList("GroupDdl", ViewBag.groups as IEnumerable<SelectListItem>, "--Select the Group--", new { @class = "form-control", @id = "selectedGroupDdl", @name = "GroupDdl",@onchange="alocateSelectedGroup()" })
                                         </div>
                                         <input type="button" id="btnAdd" class="btn btn-success" value="Add" onclick="addUserToGroup()" />
                                     </div>
@@ -311,7 +311,7 @@
 </body>
 </html>
 <script type="text/javascript">
-
+    var selectedGroup = 0;
     var siteId = localStorage.getItem("SiteId");
     var siteName = localStorage.getItem("SiteName");
     document.getElementsByTagName('form')[0].innerHTML = siteName;
@@ -333,12 +333,17 @@
     });
 
     function FilterUserUnderGropu() {
-        alert("Group");
         var lineNumber = document.getElementById("NumberOfLines").value;
         var e = document.getElementById("GroupDdl");
         var strGroup = e.options[e.selectedIndex].value;
         $(location).attr('href', '/Admin/UserDetails?siteId=' + siteId + '&page=' + $(this).text() + '&userName=' + $("#txtUserName").val() + '&NumberOfLines=' + lineNumber + '&GroupName=' + strGroup);
     };
+
+    function alocateSelectedGroup() {
+        var e = document.getElementById("selectedGroupDdl");
+        selectedGroup = e.options[e.selectedIndex].value;
+    };
+
 
     var checkedItems = 0;
     var checkBoxValueItme = [];
@@ -413,7 +418,7 @@
             traditional: true,
             dataType: "HTML",
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({ UserIdList: checkBoxValueItme,GroupId:'2' }),
+            data: JSON.stringify({ UserIdList: checkBoxValueItme, GroupId: selectedGroup }),
             success: function (result) {
             },
             error: function (objAjaxRequest, strError) {

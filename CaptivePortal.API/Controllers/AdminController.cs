@@ -92,49 +92,6 @@ namespace CaptivePortal.API.Controllers
         }
 
 
-
-
-
-
-        /// <summary>
-        /// login operation for global admin.
-        /// </summary>
-        /// <param name="admin"></param>
-        /// <returns></returns>
-        //[HttpPost]
-        //[Route("GAlogin")]
-        //public ActionResult GALogin(AdminLoginViewModel admin)
-        //{
-        //    int siteId = 0;
-        //    try
-        //    {
-        //        if (!string.IsNullOrEmpty(admin.UserName) && !string.IsNullOrEmpty(admin.Password))
-        //        {
-        //            Users user = db.Users.Where(m => m.UserName == admin.UserName).FirstOrDefault();
-        //            siteId = Convert.ToInt32(db.Users.FirstOrDefault(m => m.Id == user.Id).SiteId);
-        //            retStr = "logged in successfully" + admin.UserName;
-        //            retStr = "logged in successfully" + admin.UserName;
-        //        }
-        //        if (debugStatus == DebugMode.on.ToString())
-        //        {
-        //            log.Info(retStr);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        retStr = "some problem occured";
-        //        if (debugStatus == DebugMode.off.ToString())
-        //        {
-        //            log.Error(retStr);
-        //        }
-        //        throw ex;
-        //    }
-        //    return RedirectToAction("Home", "Admin", new { siteId = siteId });
-        //}
-
-
-
-
         [HttpPost]
         [Route("GAlogin")]
         public async Task<ActionResult> GALogin(AdminLoginViewModel model, string returnUrl)
@@ -531,7 +488,7 @@ namespace CaptivePortal.API.Controllers
                     string imagepath = null;
                     string bannerPath = null;
                     string companyIcon = null;
-                    int orgId = inputData.organisationDdl;
+                    int orgId = inputData.OrganisationDdl;
                     string compId = inputData.CompanyDdl;
                     string fileName = null;
                     string TandD = null;
@@ -766,7 +723,7 @@ namespace CaptivePortal.API.Controllers
                     objViewModel.RtlsUrl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).RtlsUrl;
 
                     objViewModel.TermsAndCondDoc = db.Site.FirstOrDefault(m => m.SiteId == SiteId).TermsAndCondDoc;
-                    objViewModel.fieldlabel = columnsList;
+                    objViewModel.Fieldlabel = columnsList;
                     if (db.Site.Any(m => m.SiteId == SiteId))
                     {
                         objViewModel.CompanyDdl = db.Site.FirstOrDefault(m => m.SiteId == SiteId).CompanyId.ToString();

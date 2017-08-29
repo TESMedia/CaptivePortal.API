@@ -10,6 +10,7 @@ namespace CaptivePortal.API.ViewModels
         public int GroupId { get; set; }
         public string GroupName { get; set; }
         public string Rule { get; set; }
+        public int NumberOfUser { get; set; }
     }
 
     public class GrouplistViewModel

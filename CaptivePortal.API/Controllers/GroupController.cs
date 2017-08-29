@@ -26,6 +26,7 @@ namespace CaptivePortal.API.Controllers
                                     GroupName = item.GroupName,
                                     Rule = item.Rule,
                                     GroupId = item.GroupId,
+                                    NumberOfUser= db.Users.Where(m => m.GroupId == item.GroupId).ToList().Count
                                 }
                              ).ToList();
             list.GroupViewlist.AddRange(groupDetails);

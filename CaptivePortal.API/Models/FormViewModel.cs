@@ -16,7 +16,7 @@ namespace CaptivePortal.API.Models
         public string SiteName { get; set; }
         public string CompanyName { get; set; }
         public string OrganisationName { get; set; }
-        public int organisationDdl { get; set; }
+        public int OrganisationDdl { get; set; }
         public string CompanyDdl { get; set; }
         public string BannerIcon { get; set; }
         public string CompanyIcon { get; set; }
@@ -35,9 +35,9 @@ namespace CaptivePortal.API.Models
         public string RtlsUrl { get; set; }
         public string DashboardUrl { get; set; }
 
-        public string[] dataType { get; }
-        public string[] controlType { get; }
-        public List<string> fieldlabel { get; set; }
+        public string[] DataType { get; }
+        public string[] ControlType { get; }
+        public List<string> Fieldlabel { get; set; }
 
         public List<FormControl> FormControls { get; set; }
     }

@@ -1,4 +1,5 @@
 ﻿//Angular Module
+var a8DashboardBaseUrl = 'http://localhost:62527/api';
 var a8DashboardModule = angular.module('a8DashboardModule', ['ui-notification', 'ngLoadingSpinner', 'angularSpinner', 'ui.bootstrap'])
 .directive('ngFiles', ['$parse', function ($parse) {
 

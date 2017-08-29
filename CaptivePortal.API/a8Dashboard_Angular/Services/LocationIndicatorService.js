@@ -24,12 +24,12 @@
         var retStr = "";
         var queries = {};
         queries = document.location.search.substr(1).split('?');
-        if (queries!=null) {
+        if (queries != null) {
             var i = queries.toString().split('=');
             key = i[0].toString();
             value = i[1].toString();
         }
-        if (key =="id") {
+        if (key == "id") {
             retStr = value;
         }
         return retStr;
@@ -38,44 +38,61 @@
     this.Index = function () {
         return $http({
             method: "GET",
-            url: "http://localhost:62527/api/locationIndicators/Index?SiteName=" + GetSiteNameFromQueryString(),
+            url: a8DashboardBaseUrl + "/locationIndicators/Index?SiteName=" + GetSiteNameFromQueryString(),
             dataType: JSON
         });
     };
     this.editDetail = function () {
         return $http({
             method: "GET",
-            url: "http://localhost:62527/api/locationIndicators/Edit?id="+getParameterByName()+"&SiteName=" + GetSiteNameFromQueryString(),
-            dataType:JSON
+            url: a8DashboardBaseUrl + "/locationIndicators/Edit?id=" + getParameterByName() + "&SiteName=" + GetSiteNameFromQueryString(),
+            dataType: JSON
         });
     };
 
     this.editPop = function (id) {
         return $http({
             method: "GET",
-            url: "http://localhost:62527/api/locationIndicators/Edit?id=" +id + "&SiteName=" + GetSiteNameFromQueryString(),
-            dataType:JSON
+            url: a8DashboardBaseUrl + "/locationIndicators/Edit?id=" + id + "&SiteName=" + GetSiteNameFromQueryString(),
+            dataType: JSON
 
         });
     };
 
     this.deleteLocIndicator = function (AreaOfInterestId, LoctionIndicatorId) {
-        var objLocation = {SiteName:GetSiteNameFromQueryString(),LoctionIndicatorId:LoctionIndicatorId}
+        var objLocation = { SiteName: GetSiteNameFromQueryString(), LoctionIndicatorId: LoctionIndicatorId }
         return $http({
             method: "POST",
             data: objLocation,
-            url: "http://localhost:62527/api/locationIndicators/DeleteLocationIndicator"
+            url: a8DashboardBaseUrl + "/locationIndicators/DeleteLocationIndicator"
 
         });
 
     };
-
-    this.editLocAndNegh = function (editInfo)
-    {
+    this.deleteNeighArea = function (AreaOfInterestId, NeighBourId) {
+        var objLocation = { SiteName: GetSiteNameFromQueryString(), AreaOfInterestId: AreaOfInterestId, NeighBourId: NeighBourId }
         return $http({
             method: "POST",
-            data:editInfo,
-            url: "http://localhost:62527/api/locationIndicators/Edit"
+            data: objLocation,
+            url: a8DashboardBaseUrl + "/locationIndicators/DeleteNeighBourArea"
+        });
+    };
+
+    this.deleteLocation = function (AreaOfInterestId) {
+        var objLocation = { SiteName: GetSiteNameFromQueryString(), AreaOfInterestId: AreaOfInterestId }
+        return $http({
+            method: "POST",
+            data: objLocation,
+            url: a8DashboardBaseUrl + "/locationIndicators/Delete"
+
+        });
+    }
+
+    this.editLocAndNegh = function (editInfo) {
+        return $http({
+            method: "POST",
+            data: editInfo,
+            url: a8DashboardBaseUrl + "/locationIndicators/Edit"
 
         });
     }

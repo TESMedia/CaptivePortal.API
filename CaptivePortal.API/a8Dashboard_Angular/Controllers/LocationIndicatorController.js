@@ -40,8 +40,20 @@
         }, function (error) { });
     };
 
+     $scope.delete = function (id) {
+        LocationIndicatorService.deleteLocation(id).success(function (d) {
+            location.href = "Locations?SiteId=2";
+        }, function (error) { });
+    };
+
     $scope.deleteLocationIndicator = function (AreaOfInterestId, LoctionIndicatorId) {
         LocationIndicatorService.deleteLocIndicator(AreaOfInterestId, LoctionIndicatorId).success(function (d) {
+            location.href = "EditLocation?id=" + AreaOfInterestId;
+        }, function (error) { });
+    };
+
+     $scope.deleteNeighBourArea = function (AreaOfInterestId, NeighBourId) {
+        LocationIndicatorService.deleteNeighArea(AreaOfInterestId, NeighBourId).success(function (d) {
             location.href = "EditLocation?id=" + AreaOfInterestId;
         }, function (error) { });
     };

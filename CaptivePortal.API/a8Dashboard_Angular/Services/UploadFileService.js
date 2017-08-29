@@ -18,7 +18,7 @@ function GetSiteNameFromQueryString() {
 }
 
 this.filedownload = function (object) {
-    var URL = "http://localhost:62527/api/ImportSftpData/LoadSftpData?strDateFormat=" + object + "&&ConnectionString=" + GetSiteNameFromQueryString();
+    var URL = a8DashboardBaseUrl+"/ImportSftpData/LoadSftpData?strDateFormat=" + object + "&&ConnectionString=" + GetSiteNameFromQueryString();
     return $http.get(URL);
 };
 
@@ -26,24 +26,24 @@ this.filedownload = function (object) {
 this.GetFileNames = function () {
     return $http({
         method: "GET",
-        url: "http://localhost:62527/api/ImportSftpData/GetFileNames?ConnectionString=" + GetSiteNameFromQueryString(),
+        url: a8DashboardBaseUrl+"/ImportSftpData/GetFileNames?ConnectionString=" + GetSiteNameFromQueryString(),
         dataType: JSON
     });
 }
 
 this.ImportSftpFile = function (data) {
-    var URL = "http://localhost:62527/api/ImportSftpData/ImportCSVFile?lstDataFileIds=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString();
+    var URL = a8DashboardBaseUrl+"/ImportSftpData/ImportCSVFile?lstDataFileIds=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString();
     return $http.get(URL);
 }
 
 this.ClearSftpFile = function (data) {
-    var URL = "http://localhost:62527/api/ImportSftpData/ClearFile?lstDataFileIds=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString();
+    var URL = a8DashboardBaseUrl+"/ImportSftpData/ClearFile?lstDataFileIds=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString();
     return $http.get(URL);
 }
 this.DeleteFile = function (data) {
     return $http({
         method: "GET",
-        url: "http://localhost:62527/api/ImportSftpData/DeleteFileData?Id=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString(),
+        url: a8DashboardBaseUrl+"/ImportSftpData/DeleteFileData?Id=" + data + "&&ConnectionString=" + GetSiteNameFromQueryString(),
         dataType: JSON
     });
 }
@@ -51,7 +51,7 @@ this.DeleteFile = function (data) {
 this.SaveSftpPath = function (sftpfilePath) {
     return $http({
         method: "GET",
-        url: "http://localhost:62527/api/ImportSftpData/SaveSftpRemotePath?sftpRemotePath=" + sftpfilePath + "&&ConnectionString=" + GetSiteNameFromQueryString(),
+        url: a8DashboardBaseUrl+"/ImportSftpData/SaveSftpRemotePath?sftpRemotePath=" + sftpfilePath + "&&ConnectionString=" + GetSiteNameFromQueryString(),
         dataType: JSON
     });
 }
